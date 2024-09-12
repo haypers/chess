@@ -50,7 +50,7 @@ public class ChessPosition {
     @Override
     public int hashCode() {
         int result = row;
-        result = 31 * result + col;
+        result = 31 * result + col; //should be a prime for more randomness
         return result;
     }
 }
