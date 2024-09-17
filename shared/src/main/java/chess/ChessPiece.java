@@ -14,7 +14,7 @@ public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -55,8 +55,15 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         System.out.println("pieceMoves() called");
+
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        ChessPosition start = new ChessPosition(0, 0);
+        ChessPosition end = null;
+
         if (this.type == PieceType.BISHOP){
             System.out.println("this is a bishop");
+            end = new ChessPosition(1, 1);
+            moves.add(new ChessMove(start, end));
         }
         else if (this.type == PieceType.KING){
             System.out.println("this is a king");
@@ -73,7 +80,7 @@ public class ChessPiece {
         else if (this.type == PieceType.QUEEN){
             System.out.println("this is a queen");
         }
-        return new ArrayList<>();
+        return moves;
     }
 
     @Override
