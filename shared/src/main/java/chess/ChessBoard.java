@@ -11,7 +11,7 @@ public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
-
+        System.out.println("ChessBoard() called");
     }
 
     /**
@@ -21,6 +21,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
+        System.out.println("addPiece() called");
         squares[position.getRow()][position.getColumn()] = piece;
     }
 
@@ -32,6 +33,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        System.out.println("getPiece() called");
         return squares[position.getRow()][position.getColumn()];
     }
 
@@ -40,7 +42,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-
+        System.out.println("resetBoard() called");
         squares = new ChessPiece[8][8];
 
     }
