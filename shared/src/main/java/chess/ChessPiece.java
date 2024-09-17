@@ -54,6 +54,25 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        System.out.println("pieceMoves() called");
+        if (this.type == PieceType.BISHOP){
+            System.out.println("this is a bishop");
+        }
+        else if (this.type == PieceType.KING){
+            System.out.println("this is a king");
+        }
+        else if (this.type == PieceType.ROOK){
+            System.out.println("this is a rook");
+        }
+        else if (this.type == PieceType.PAWN){
+            System.out.println("this is a pawn");
+        }
+        else if (this.type == PieceType.KNIGHT){
+            System.out.println("this is a knight");
+        }
+        else if (this.type == PieceType.QUEEN){
+            System.out.println("this is a queen");
+        }
         return new ArrayList<>();
     }
 

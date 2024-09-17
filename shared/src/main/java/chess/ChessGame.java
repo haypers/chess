@@ -63,9 +63,8 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         System.out.println("validMoves called on: " + startPosition.toString());
-        /*
-        Collection<ChessMove> chessMoves = (Collection<ChessMove>) new ChessMove(new ChessPosition(4, 2), new ChessPosition(3, 2), ChessPiece.PieceType.BISHOP);
-        return chessMoves;*/
+        /*Collection<ChessMove> returnChessMoves = (Collection<ChessMove>);*/
+        /*return returnChessMoves;*/
         throw new RuntimeException("Not implemented");
     }
 
