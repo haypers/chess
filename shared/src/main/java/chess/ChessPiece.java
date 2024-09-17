@@ -57,13 +57,12 @@ public class ChessPiece {
         System.out.println("pieceMoves() called");
 
         ArrayList<ChessMove> moves = new ArrayList<>();
-        ChessPosition start = new ChessPosition(0, 0);
         ChessPosition end = null;
 
         if (this.type == PieceType.BISHOP){
             System.out.println("this is a bishop");
             end = new ChessPosition(1, 1);
-            moves.add(new ChessMove(start, end));
+            moves.add(new ChessMove(myPosition, end));
         }
         else if (this.type == PieceType.KING){
             System.out.println("this is a king");
