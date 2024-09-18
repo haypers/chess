@@ -58,29 +58,108 @@ public class ChessPiece {
 
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessPosition end = null;
+        //select piece type
 
+
+        //----------------------------BISHOP------------------------------
         if (this.type == PieceType.BISHOP){
             System.out.println("this is a bishop");
-            end = new ChessPosition(1, 1);
-            moves.add(new ChessMove(myPosition, end));
+
+            //check all up and to the right positions
+            for (int i = 1; i <= 7; i++) {
+
+                //check if out of bounds
+                if(myPosition.getRow() != 8 && myPosition.getColumn() != 8) {
+                    System.out.println("Checking up right space " + i);
+
+                    //check if colliding with a piece
+                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)) != null) {
+                        System.out.println("Piece Collision");
+
+                        //check if piece is friendly
+                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
+                            System.out.println("Friendly Collision");
+                            break;
+                        }
+                        //piece is not friendly
+                        else {
+                            System.out.println("Enemy Collision");
+                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
+                            moves.add(new ChessMove(myPosition, end));
+                            break;
+                        }
+                    }
+                    //valid move, no collision yet
+                    else{
+                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
+                        moves.add(new ChessMove(myPosition, end));
+                    }
+
+                }
+
+                else{
+                    System.out.println("Wall Collision");
+                    break;
+                }
+            }
+
         }
+
+
+
+
+
+        //----------------------------KING------------------------------
         else if (this.type == PieceType.KING){
             System.out.println("this is a king");
         }
+
+
+
+
+        //----------------------------ROOK------------------------------
         else if (this.type == PieceType.ROOK){
             System.out.println("this is a rook");
         }
+
+
+
+
+        //----------------------------PAWN------------------------------
         else if (this.type == PieceType.PAWN){
             System.out.println("this is a pawn");
         }
+
+
+
+        //----------------------------KNIGHT------------------------------
         else if (this.type == PieceType.KNIGHT){
             System.out.println("this is a knight");
         }
+
+
+
+
+
+        //----------------------------QUEEN------------------------------
         else if (this.type == PieceType.QUEEN){
             System.out.println("this is a queen");
         }
         return moves;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public String toString() {
