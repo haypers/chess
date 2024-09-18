@@ -57,7 +57,7 @@ public class ChessPiece {
         System.out.println("pieceMoves() called");
 
         ArrayList<ChessMove> moves = new ArrayList<>();
-        ChessPosition end = null;
+        ChessPosition end;
         //select piece type
 
 
@@ -79,15 +79,14 @@ public class ChessPiece {
                         //check if piece is friendly
                         if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
                             System.out.println("Friendly Collision");
-                            break;
                         }
                         //piece is not friendly
                         else {
                             System.out.println("Enemy Collision");
                             end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
                             moves.add(new ChessMove(myPosition, end));
-                            break;
                         }
+                        break;
                     }
                     //valid move, no collision yet
                     else{
@@ -117,15 +116,14 @@ public class ChessPiece {
                         //check if piece is friendly
                         if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
                             System.out.println("Friendly Collision");
-                            break;
                         }
                         //piece is not friendly
                         else {
                             System.out.println("Enemy Collision");
                             end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
                             moves.add(new ChessMove(myPosition, end));
-                            break;
                         }
+                        break;
                     }
                     //valid move, no collision yet
                     else{
@@ -155,15 +153,14 @@ public class ChessPiece {
                         //check if piece is friendly
                         if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
                             System.out.println("Friendly Collision");
-                            break;
                         }
                         //piece is not friendly
                         else {
                             System.out.println("Enemy Collision");
                             end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
                             moves.add(new ChessMove(myPosition, end));
-                            break;
                         }
+                        break;
                     }
                     //valid move, no collision yet
                     else{
@@ -193,15 +190,14 @@ public class ChessPiece {
                         //check if piece is friendly
                         if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
                             System.out.println("Friendly Collision");
-                            break;
                         }
                         //piece is not friendly
                         else {
                             System.out.println("Enemy Collision");
                             end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()-i);
                             moves.add(new ChessMove(myPosition, end));
-                            break;
                         }
+                        break;
                     }
                     //valid move, no collision yet
                     else{
@@ -234,6 +230,8 @@ public class ChessPiece {
         //----------------------------ROOK------------------------------
         else if (this.type == PieceType.ROOK){
             System.out.println("this is a rook");
+
+
         }
 
 
@@ -258,7 +256,155 @@ public class ChessPiece {
         //----------------------------QUEEN------------------------------
         else if (this.type == PieceType.QUEEN){
             System.out.println("this is a queen");
+
+            //check all up and to the right positions
+            for (int i = 1; i <= 7; i++) {
+
+                //check if out of bounds
+                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()+i <= 8) {
+                    System.out.println("Checking up right space " + i);
+
+                    //check if colliding with a piece
+                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)) != null) {
+                        System.out.println("Piece Collision");
+
+                        //check if piece is friendly
+                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
+                            System.out.println("Friendly Collision");
+                        }
+                        //piece is not friendly
+                        else {
+                            System.out.println("Enemy Collision");
+                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
+                            moves.add(new ChessMove(myPosition, end));
+                        }
+                        break;
+                    }
+                    //valid move, no collision yet
+                    else{
+                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
+                        moves.add(new ChessMove(myPosition, end));
+                    }
+
+                }
+
+                else{
+                    System.out.println("Wall Collision");
+                    break;
+                }
+            }
+
+            //check all down and to the right positions
+            for (int i = 1; i <= 7; i++) {
+
+                //check if out of bounds
+                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()+i <= 8) {
+                    System.out.println("Checking down right space " + i);
+
+                    //check if colliding with a piece
+                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)) != null) {
+                        System.out.println("Piece Collision");
+
+                        //check if piece is friendly
+                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
+                            System.out.println("Friendly Collision");
+                        }
+                        //piece is not friendly
+                        else {
+                            System.out.println("Enemy Collision");
+                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
+                            moves.add(new ChessMove(myPosition, end));
+                        }
+                        break;
+                    }
+                    //valid move, no collision yet
+                    else{
+                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
+                        moves.add(new ChessMove(myPosition, end));
+                    }
+
+                }
+
+                else{
+                    System.out.println("Wall Collision");
+                    break;
+                }
+            }
+
+            //check all up and to the left positions
+            for (int i = 1; i <= 7; i++) {
+
+                //check if out of bounds
+                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()-i >= 1) {
+                    System.out.println("Checking up left space " + i);
+
+                    //check if colliding with a piece
+                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)) != null) {
+                        System.out.println("Piece Collision");
+
+                        //check if piece is friendly
+                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
+                            System.out.println("Friendly Collision");
+                        }
+                        //piece is not friendly
+                        else {
+                            System.out.println("Enemy Collision");
+                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
+                            moves.add(new ChessMove(myPosition, end));
+                        }
+                        break;
+                    }
+                    //valid move, no collision yet
+                    else{
+                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
+                        moves.add(new ChessMove(myPosition, end));
+                    }
+
+                }
+
+                else{
+                    System.out.println("Wall Collision");
+                    break;
+                }
+            }
+
+            //check all down and to the left positions
+            for (int i = 1; i <= 7; i++) {
+
+                //check if out of bounds
+                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()-i >= 1) {
+                    System.out.println("Checking down left space " + i);
+
+                    //check if colliding with a piece
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)) != null) {
+                        System.out.println("Piece Collision");
+
+                        //check if piece is friendly
+                        if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)).getTeamColor() == this.pieceColor) {
+                            System.out.println("Friendly Collision");
+                        }
+                        //piece is not friendly
+                        else {
+                            System.out.println("Enemy Collision");
+                            end = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
+                            moves.add(new ChessMove(myPosition, end));
+                        }
+                        break;
+                    }
+                    //valid move, no collision yet
+                    else {
+                        end = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
+                        moves.add(new ChessMove(myPosition, end));
+                    }
+                }
+                else{
+                    System.out.println("Wall Collision");
+                    break;
+                }
+            }
+
         }
+
         return moves;
     }
 
