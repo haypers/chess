@@ -10,7 +10,7 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    private Boolean isWhite = true;
+    public ChessGame.TeamColor turnColor = TeamColor.WHITE;
 
     private ChessBoard board = new ChessBoard();
 
@@ -23,12 +23,7 @@ public class ChessGame {
      */
     public TeamColor getTeamTurn() {
         System.out.println("getTeamTurn() called");
-        if (isWhite) {
-            return TeamColor.WHITE;
-        }
-        else{
-            return TeamColor.BLACK;
-        }
+        return turnColor;
     }
 
     /**
@@ -38,12 +33,7 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         System.out.println("setTeamTurn() called");
-        if (team == TeamColor.BLACK){
-            isWhite = false;
-        }
-        else if(team == TeamColor.WHITE){
-            isWhite = true;
-        }
+        turnColor = team;
     }
 
     /**
