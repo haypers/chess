@@ -16,6 +16,7 @@ public class ChessGame {
 
     public ChessGame() {
         System.out.println("ChessGame() called");
+        board.resetBoard();
     }
 
     /**
@@ -75,6 +76,7 @@ public class ChessGame {
             ChessPiece pieceToMove = new ChessPiece(board.getPiece(move.getStartPosition()));
             board.addPiece(move.getEndPosition(), pieceToMove);
             board.addPiece(move.getStartPosition(), null);
+            System.out.println("piece moved");
         }
         else{
             System.out.println("trying to move null!!");
