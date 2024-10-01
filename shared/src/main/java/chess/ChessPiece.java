@@ -12,16 +12,16 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    private final ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor color;
     private final PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
-        this.pieceColor = pieceColor;
+        this.color = pieceColor;
         this.type = type;
     }
 
     public ChessPiece(ChessPiece piece) {
-        this.pieceColor = piece.getTeamColor();
+        this.color = piece.getTeamColor();
         this.type = piece.getPieceType();
     }
 
@@ -41,7 +41,7 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return pieceColor;
+        return color;
     }
 
     /**
@@ -60,1093 +60,993 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
         System.out.println("pieceMoves() called");
 
-        ArrayList<ChessMove> moves = new ArrayList<>();
-        ChessPosition end;
-        //select piece type
+        ArrayList<ChessMove> validMoves = new ArrayList<>(); //where a list of valid moves is stored
 
+        int row = myPosition.getRow(); //quick access to my cords
+        int col = myPosition.getColumn(); //quick access to my cords
 
-        //----------------------------BISHOP------------------------------
-        if (this.type == PieceType.BISHOP){
-            System.out.println("this is a bishop");
+        ChessPosition beingScanned; //the position being scanned in the script
+        ChessMove newMove; //a new move made from the position beingScanned
 
-            //check all up and to the right positions
-            for (int i = 1; i <= 7; i++) {
+        ChessPiece encounter = null; //the piece located at the position beingScanned, if any.
 
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking up right space " + i);
+        //uppercase is white, so the bottom 2 rows (1, 2) are white
 
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
+        System.out.println(board.toString());
 
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+        if(this.type == PieceType.ROOK){
+            System.out.println("I'm a Rook");
+            for(int i = row+1; i <= 8; i++){
+                beingScanned = new ChessPosition(i, col);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
-            //check all down and to the right positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking down right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+            for(int i = row-1; i >= 1; i--){
+                beingScanned = new ChessPosition(i, col);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
-            //check all up and to the left positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking up left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+            for(int i = col+1; i <= 8; i++){
+                beingScanned = new ChessPosition(row, i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
-            //check all down and to the left positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking down left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+            for(int i = col-1; i >= 1; i--){
+                beingScanned = new ChessPosition(row, i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
         }
 
-
-
-
-
-        //----------------------------KING------------------------------
-        else if (this.type == PieceType.KING){
-            System.out.println("this is a king");
-
-            //check all up and to the right positions
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking up right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+        if(this.type == PieceType.BISHOP){
+            System.out.println("I'm a Bishop");
+            for(int i = 1; (row+i <= 8) && (col+i <= 8); i++){
+                beingScanned = new ChessPosition(row+i, col+i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
-            //check all down and to the right positions
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking down right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+            for(int i = 1; (row+i <= 8) && (col-i >= 1); i++){
+                beingScanned = new ChessPosition(row+i, col-i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
-            //check all up and to the left positions
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking up left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
+            for(int i = 1; (row-i >= 1) && (col+i <= 8); i++){
+                beingScanned = new ChessPosition(row-i, col+i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-
                 else{
-                    System.out.println("Wall Collision");
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                     break;
                 }
             }
 
-            //check all down and to the left positions
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking down left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)).getTeamColor() == this.pieceColor) {
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else {
-                        end = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            for(int i = 1; (row-i >= 1) && (col-i >= 1); i++){
+                beingScanned = new ChessPosition(row-i, col-i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //up
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8) {
-                    System.out.println("Checking up space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
                     }
-                    //valid move, no collision yet
                     else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn());
-                        moves.add(new ChessMove(myPosition, end));
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
                     }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //down
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1) {
-                    System.out.println("Checking down space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn());
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //right
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //left
-            for (int i = 1; i <= 1; i++) {
-
-                //check if out of bounds
-                if(myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-
-        }
-
-
-
-
-        //----------------------------ROOK------------------------------
-        else if (this.type == PieceType.ROOK){
-            System.out.println("this is a rook");
-
-            //up
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8) {
-                    System.out.println("Checking up space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn());
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //down
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1) {
-                    System.out.println("Checking down space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn());
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //right
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //left
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
                     break;
                 }
             }
 
         }
 
+        if(this.type == PieceType.QUEEN){
+            System.out.println("I'm a Queen");
+            for(int i = 1; (row+i <= 8) && (col+i <= 8); i++){
+                beingScanned = new ChessPosition(row+i, col+i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
+            for(int i = 1; (row+i <= 8) && (col-i >= 1); i++){
+                beingScanned = new ChessPosition(row+i, col-i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
+            for(int i = 1; (row-i >= 1) && (col+i <= 8); i++){
+                beingScanned = new ChessPosition(row-i, col+i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
-        //----------------------------PAWN------------------------------
-        else if (this.type == PieceType.PAWN){
-            System.out.println("this is a pawn");
+            for(int i = 1; (row-i >= 1) && (col-i >= 1); i++){
+                beingScanned = new ChessPosition(row-i, col-i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
-            //determine what direction we travel in via color
-            if(this.pieceColor == ChessGame.TeamColor.BLACK){
+            for(int i = row+1; i <= 8; i++){
+                beingScanned = new ChessPosition(i, col);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
-                if(myPosition.getRow() >= 2) {
-                    System.out.println("Checking down space");
+            for(int i = row-1; i >= 1; i--){
+                beingScanned = new ChessPosition(i, col);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
+            for(int i = col+1; i <= 8; i++){
+                beingScanned = new ChessPosition(row, i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
 
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
+            for(int i = col-1; i >= 1; i--){
+                beingScanned = new ChessPosition(row, i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+        }
+
+        if(this.type == PieceType.KING){
+            System.out.println("I'm a King");
+            for(int i = 1; (row+i <= 8) && (col+i <= 8); i++){
+                beingScanned = new ChessPosition(row+i, col+i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = 1; (row+i <= 8) && (col-i >= 1); i++){
+                beingScanned = new ChessPosition(row+i, col-i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = 1; (row-i >= 1) && (col+i <= 8); i++){
+                beingScanned = new ChessPosition(row-i, col+i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = 1; (row-i >= 1) && (col-i >= 1); i++){
+                beingScanned = new ChessPosition(row-i, col-i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = row+1; i <= 8; i++){
+                beingScanned = new ChessPosition(i, col);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = row-1; i >= 1; i--){
+                beingScanned = new ChessPosition(i, col);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = col+1; i <= 8; i++){
+                beingScanned = new ChessPosition(row, i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+            for(int i = col-1; i >= 1; i--){
+                beingScanned = new ChessPosition(row, i);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
+                    break;
+                }
+                else{
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
+                    break;
+                }
+            }
+
+        }
+
+        if(this.type == PieceType.PAWN){
+            System.out.println("I'm a Pawn");
+
+            if(color == ChessGame.TeamColor.WHITE){
+                if(row+1 <= 8){
+                    beingScanned = new ChessPosition(row+1, col);
+                    encounter = board.getPiece(beingScanned);
+                    System.out.println("testing at " + beingScanned.toString());
+                    if(encounter == null){
+                        if(row == 2){
+                            System.out.println("clear at " + beingScanned.toString());
+                            newMove = new ChessMove(myPosition, beingScanned, null);
+                            validMoves.add(newMove);
+                            beingScanned = new ChessPosition(row+2, col);
+                            encounter = board.getPiece(beingScanned);
+                            System.out.println("testing double forward " + beingScanned.toString());
+                            if(encounter == null) {
+                                System.out.println("clear at double forward" + beingScanned.toString());
+                                newMove = new ChessMove(myPosition, beingScanned, null);
+                                validMoves.add(newMove);
+                            }
+
                         }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
+                        else if(row == 7){
+                            System.out.println("clear to promote at " + beingScanned.toString());
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
+                            validMoves.add(newMove);
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
+                            validMoves.add(newMove);
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
+                            validMoves.add(newMove);
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
+                            validMoves.add(newMove);
+
+                        } else {
+                            System.out.println("clear at " + beingScanned.toString());
+                            newMove = new ChessMove(myPosition, beingScanned, null);
+                            validMoves.add(newMove);
                         }
                     }
-                    //valid move, no collision yet
                     else{
-                        System.out.println("No Collision Forward");
-
-                        //check for promotion
-                        if(myPosition.getRow() == 2){
-                            end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end, PieceType.QUEEN));
-                            moves.add(new ChessMove(myPosition, end, PieceType.ROOK));
-                            moves.add(new ChessMove(myPosition, end, PieceType.BISHOP));
-                            moves.add(new ChessMove(myPosition, end, PieceType.KNIGHT));
+                        System.out.println("found a piece");
+                        if(encounter.getTeamColor() == this.color){
+                            System.out.println("friendly");
                         }
                         else{
-                            end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-
-                        //Check double move
-                        if(myPosition.getRow() == 7) {
-                            System.out.println("Checking down down space");
-
-                            //check if colliding with a piece
-                            if (board.getPiece(new ChessPosition(myPosition.getRow()-2, myPosition.getColumn())) != null) {
-                                System.out.println("Piece Collision");
-
-                                //check if piece is friendly
-                                if(board.getPiece(new ChessPosition(myPosition.getRow()-2, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                                    System.out.println("Friendly Collision");
-                                }
-                                //piece is not friendly
-                                else {
-                                    System.out.println("Enemy Collision");
-                                }
-                            }
-                            //valid move, no collision yet
-                            else{
-                                System.out.println("No Collision Forward");
-                                end = new ChessPosition(myPosition.getRow()-2, myPosition.getColumn());
-                                moves.add(new ChessMove(myPosition, end));
-                            }
-
+                            System.out.println("enemy");
                         }
                     }
-
                 }
-
-                if(myPosition.getRow() >= 2 && myPosition.getColumn() <= 7) {
-                    System.out.println("Checking down and right space");
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
+                if(row+1 <= 8 && col+1 <= 8){
+                    beingScanned = new ChessPosition(row+1, col+1);
+                    encounter = board.getPiece(beingScanned);
+                    System.out.println("testing at " + beingScanned.toString());
+                    if(encounter == null){
+                        System.out.println("clear at " + beingScanned.toString());
+                    }
+                    else{
+                        System.out.println("found a piece");
+                        if(encounter.getTeamColor() == this.color){
+                            System.out.println("friendly");
                         }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-
-                            //check for promotion
-                            if(myPosition.getRow() == 2){
-                                end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1);
-                                moves.add(new ChessMove(myPosition, end, PieceType.QUEEN));
-                                moves.add(new ChessMove(myPosition, end, PieceType.ROOK));
-                                moves.add(new ChessMove(myPosition, end, PieceType.BISHOP));
-                                moves.add(new ChessMove(myPosition, end, PieceType.KNIGHT));
-
-                            }
-                            else{
-                                end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1);
-                                moves.add(new ChessMove(myPosition, end));
+                        else{
+                            if(row == 7) {
+                                System.out.println("clear to promote at " + beingScanned.toString());
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
+                                validMoves.add(newMove);
+                            } else {
+                                System.out.println("enemy");
+                                newMove = new ChessMove(myPosition, beingScanned, null);
+                                validMoves.add(newMove);
                             }
                         }
                     }
-
                 }
-
-                if(myPosition.getRow() >= 2 && myPosition.getColumn() >= 2) {
-                    System.out.println("Checking down and left space");
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
+                if(row+1 <= 8 && col-1 >= 1){
+                    beingScanned = new ChessPosition(row+1, col-1);
+                    encounter = board.getPiece(beingScanned);
+                    System.out.println("testing at " + beingScanned.toString());
+                    if(encounter == null){
+                        System.out.println("clear at " + beingScanned.toString());
+                    }
+                    else{
+                        System.out.println("found a piece");
+                        if(encounter.getTeamColor() == this.color){
+                            System.out.println("friendly");
                         }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-
-                            //check for promotion
-                            if(myPosition.getRow() == 2){
-                                end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1);
-                                moves.add(new ChessMove(myPosition, end, PieceType.QUEEN));
-                                moves.add(new ChessMove(myPosition, end, PieceType.ROOK));
-                                moves.add(new ChessMove(myPosition, end, PieceType.BISHOP));
-                                moves.add(new ChessMove(myPosition, end, PieceType.KNIGHT));
+                        else{
+                            if(row == 7) {
+                                System.out.println("clear to promote at " + beingScanned.toString());
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
+                                validMoves.add(newMove);
+                            } else {
+                                System.out.println("enemy");
+                                newMove = new ChessMove(myPosition, beingScanned, null);
+                                validMoves.add(newMove);
                             }
-                            else{
-                                end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1);
-                                moves.add(new ChessMove(myPosition, end));
-                            }
-
                         }
                     }
-
                 }
-
             }
             else{
+                if(row-1 >= 1){
+                    beingScanned = new ChessPosition(row-1, col);
+                    encounter = board.getPiece(beingScanned);
+                    System.out.println("testing at " + beingScanned.toString());
+                    if(encounter == null){
+                        if(row == 7){
+                            System.out.println("clear at " + beingScanned.toString());
+                            newMove = new ChessMove(myPosition, beingScanned, null);
+                            validMoves.add(newMove);
+                            beingScanned = new ChessPosition(row-2, col);
+                            encounter = board.getPiece(beingScanned);
+                            System.out.println("testing double forward " + beingScanned.toString());
+                            if(encounter == null) {
+                                System.out.println("clear at double forward" + beingScanned.toString());
+                                newMove = new ChessMove(myPosition, beingScanned, null);
+                                validMoves.add(newMove);
+                            }
 
-                if(myPosition.getRow() <= 7) {
-                    System.out.println("Checking up space");
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
                         }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
+                        else if(row == 2){
+                            System.out.println("clear to promote at " + beingScanned.toString());
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
+                            validMoves.add(newMove);
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
+                            validMoves.add(newMove);
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
+                            validMoves.add(newMove);
+                            newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
+                            validMoves.add(newMove);
+
+                        } else {
+                            System.out.println("clear at " + beingScanned.toString());
+                            newMove = new ChessMove(myPosition, beingScanned, null);
+                            validMoves.add(newMove);
                         }
                     }
-                    //valid move, no collision yet
                     else{
-                        System.out.println("No Collision Forward");
-
-                        //check for promotion
-                        if(myPosition.getRow() == 7){
-                            end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end, PieceType.QUEEN));
-                            moves.add(new ChessMove(myPosition, end, PieceType.ROOK));
-                            moves.add(new ChessMove(myPosition, end, PieceType.BISHOP));
-                            moves.add(new ChessMove(myPosition, end, PieceType.KNIGHT));
+                        System.out.println("found a piece");
+                        if(encounter.getTeamColor() == this.color){
+                            System.out.println("friendly");
                         }
                         else{
-                            end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-
-                        //check double move
-                        if(myPosition.getRow() == 2) {
-                            System.out.println("Checking up up space");
-
-                            //check if colliding with a piece
-                            if (board.getPiece(new ChessPosition(myPosition.getRow()+2, myPosition.getColumn())) != null) {
-                                System.out.println("Piece Collision");
-
-                                //check if piece is friendly
-                                if(board.getPiece(new ChessPosition(myPosition.getRow()+2, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                                    System.out.println("Friendly Collision");
-                                }
-                                //piece is not friendly
-                                else {
-                                    System.out.println("Enemy Collision");
-                                }
-                            }
-                            //valid move, no collision yet
-                            else{
-                                System.out.println("No Collision Forward");
-                                end = new ChessPosition(myPosition.getRow()+2, myPosition.getColumn());
-                                moves.add(new ChessMove(myPosition, end));
-                            }
-
+                            System.out.println("enemy");
                         }
                     }
-
                 }
-
-                if(myPosition.getRow() <= 7 && myPosition.getColumn() <= 7) {
-                    System.out.println("Checking up and right space");
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
+                if(row-1 >= 1 && col+1 <= 8){
+                    beingScanned = new ChessPosition(row-1, col+1);
+                    encounter = board.getPiece(beingScanned);
+                    System.out.println("testing at " + beingScanned.toString());
+                    if(encounter == null){
+                        System.out.println("clear at " + beingScanned.toString());
+                    }
+                    else{
+                        System.out.println("found a piece");
+                        if(encounter.getTeamColor() == this.color){
+                            System.out.println("friendly");
                         }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-
-                            //check for promotion
-                            if(myPosition.getRow() == 7){
-                                end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
-                                moves.add(new ChessMove(myPosition, end, PieceType.QUEEN));
-                                moves.add(new ChessMove(myPosition, end, PieceType.ROOK));
-                                moves.add(new ChessMove(myPosition, end, PieceType.BISHOP));
-                                moves.add(new ChessMove(myPosition, end, PieceType.KNIGHT));
-                            }
-                            else{
-                                end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
-                                moves.add(new ChessMove(myPosition, end));
+                        else{
+                            if(row == 2) {
+                                System.out.println("clear to promote at " + beingScanned.toString());
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
+                                validMoves.add(newMove);
+                            } else {
+                                System.out.println("enemy");
+                                newMove = new ChessMove(myPosition, beingScanned, null);
+                                validMoves.add(newMove);
                             }
                         }
                     }
-
                 }
-
-                if(myPosition.getRow() <= 7 && myPosition.getColumn() >= 2) {
-                    System.out.println("Checking up and left space");
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
+                if(row-1 >= 1 && col-1 >= 1){
+                    beingScanned = new ChessPosition(row-1, col-1);
+                    encounter = board.getPiece(beingScanned);
+                    System.out.println("testing at " + beingScanned.toString());
+                    if(encounter == null){
+                        System.out.println("clear at " + beingScanned.toString());
+                    }
+                    else{
+                        System.out.println("found a piece");
+                        if(encounter.getTeamColor() == this.color){
+                            System.out.println("friendly");
                         }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-
-                            //check for promotion
-                            if(myPosition.getRow() == 7){
-                                end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
-                                moves.add(new ChessMove(myPosition, end, PieceType.QUEEN));
-                                moves.add(new ChessMove(myPosition, end, PieceType.ROOK));
-                                moves.add(new ChessMove(myPosition, end, PieceType.BISHOP));
-                                moves.add(new ChessMove(myPosition, end, PieceType.KNIGHT));
-                            }
-                            else{
-                                end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
-                                moves.add(new ChessMove(myPosition, end));
+                        else{
+                            if(row == 2) {
+                                System.out.println("clear to promote at " + beingScanned.toString());
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
+                                validMoves.add(newMove);
+                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
+                                validMoves.add(newMove);
+                            } else {
+                                System.out.println("enemy");
+                                newMove = new ChessMove(myPosition, beingScanned, null);
+                                validMoves.add(newMove);
                             }
                         }
                     }
-
                 }
-
             }
+
         }
 
-
-
-        //----------------------------KNIGHT------------------------------
-        else if (this.type == PieceType.KNIGHT){
-
-            //Up and Right
-            if(myPosition.getRow()+2 <= 8 && myPosition.getColumn()+1 <= 8) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()+1)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()+1)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()+1);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+        if(this.type == PieceType.KNIGHT){
+            System.out.println("I'm a Knight");
+            if(row+1 <= 8 && col+2 <= 8){
+                beingScanned = new ChessPosition(row+1, col+2);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()+1);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Up and Left
-            if(myPosition.getRow()+2 <= 8 && myPosition.getColumn()-1 >= 1) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()-1)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()-1)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()-1);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row+2 <= 8 && col+1 <= 8){
+                beingScanned = new ChessPosition(row+2, col+1);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()+2, myPosition.getColumn()-1);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Right and Up
-            if(myPosition.getRow()+1 <= 8 && myPosition.getColumn()+2 <= 8) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+2)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+2)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+2);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row-1 >= 1 && col+2 <= 8){
+                beingScanned = new ChessPosition(row-1, col+2);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+2);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Right and Down
-            if(myPosition.getRow()-1 >= 1 && myPosition.getColumn()+2 <= 8) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+2)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+2)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+2);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row-2 >= 1 && col+1 <= 8){
+                beingScanned = new ChessPosition(row-2, col+1);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+2);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Down and Right
-            if(myPosition.getRow()-2 >= 1 && myPosition.getColumn()+1 <= 8) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()-2, myPosition.getColumn()+1)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()-2, myPosition.getColumn()+1)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()+-2, myPosition.getColumn()+1);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row+1 <= 8 && col-2 >= 1){
+                beingScanned = new ChessPosition(row+1, col-2);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()-2, myPosition.getColumn()+1);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Down and Left
-            if(myPosition.getRow()-2 >= 1 && myPosition.getColumn()-1 >= 1) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()-2, myPosition.getColumn()-1)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()-2, myPosition.getColumn()-1)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()+-2, myPosition.getColumn()-1);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row+2 <= 8 && col-1 >= 1){
+                beingScanned = new ChessPosition(row+2, col-1);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()-2, myPosition.getColumn()-1);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Left and Up
-            if(myPosition.getRow()+1 <= 8 && myPosition.getColumn()-2 >= 1) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-2)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-2)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-2);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row-1 >= 1 && col-2 >= 1){
+                beingScanned = new ChessPosition(row-1, col-2);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-2);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
-
-            //Left and Down
-            if(myPosition.getRow()-1 >= 1 && myPosition.getColumn()-2 >= 1) {
-                //check if colliding with a piece
-                if (board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-2)) != null) {
-                    System.out.println("Piece Collision");
-
-                    //check if piece is friendly
-                    if(board.getPiece(new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-2)).getTeamColor() == this.pieceColor){
-                        System.out.println("Friendly Collision");
-                    }
-                    //piece is not friendly
-                    else {
-                        System.out.println("Enemy Collision");
-                        end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-2);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
+            if(row-2 >= 1 && col-1 >= 1){
+                beingScanned = new ChessPosition(row-2, col-1);
+                encounter = board.getPiece(beingScanned);
+                System.out.println("testing at " + beingScanned.toString());
+                if(encounter == null){
+                    System.out.println("clear at " + beingScanned.toString());
+                    newMove = new ChessMove(myPosition, beingScanned, null);
+                    validMoves.add(newMove);
                 }
-                //valid move, no collision yet
                 else{
-                    end = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-2);
-                    moves.add(new ChessMove(myPosition, end));
+                    System.out.println("found a piece");
+                    if(encounter.getTeamColor() == this.color){
+                        System.out.println("friendly");
+                    }
+                    else{
+                        System.out.println("enemy");
+                        newMove = new ChessMove(myPosition, beingScanned, null);
+                        validMoves.add(newMove);
+                    }
                 }
             }
 
@@ -1154,309 +1054,10 @@ public class ChessPiece {
 
 
 
+        return validMoves;
 
 
-        //----------------------------QUEEN------------------------------
-        else if (this.type == PieceType.QUEEN){
-            System.out.println("this is a queen");
 
-            //check all up and to the right positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking up right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //check all down and to the right positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking down right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //check all up and to the left positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8 && myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking up left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //check all down and to the left positions
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1 && myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking down left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if (board.getPiece(new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i)).getTeamColor() == this.pieceColor) {
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else {
-                        end = new ChessPosition(myPosition.getRow() - i, myPosition.getColumn() - i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-                }
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //up
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()+i <= 8) {
-                    System.out.println("Checking up space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()+i, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()+i, myPosition.getColumn());
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //down
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getRow()-i >= 1) {
-                    System.out.println("Checking down space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn())) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow()-i, myPosition.getColumn())).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn());
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow()-i, myPosition.getColumn());
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //right
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getColumn()+i <= 8) {
-                    System.out.println("Checking right space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-            //left
-            for (int i = 1; i <= 7; i++) {
-
-                //check if out of bounds
-                if(myPosition.getColumn()-i >= 1) {
-                    System.out.println("Checking left space " + i);
-
-                    //check if colliding with a piece
-                    if (board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i)) != null) {
-                        System.out.println("Piece Collision");
-
-                        //check if piece is friendly
-                        if(board.getPiece(new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i)).getTeamColor() == this.pieceColor){
-                            System.out.println("Friendly Collision");
-                        }
-                        //piece is not friendly
-                        else {
-                            System.out.println("Enemy Collision");
-                            end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i);
-                            moves.add(new ChessMove(myPosition, end));
-                        }
-                        break;
-                    }
-                    //valid move, no collision yet
-                    else{
-                        end = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-i);
-                        moves.add(new ChessMove(myPosition, end));
-                    }
-
-                }
-
-                else{
-                    System.out.println("Wall Collision");
-                    break;
-                }
-            }
-
-        }
-
-        return moves;
     }
 
 
@@ -1466,12 +1067,12 @@ public class ChessPiece {
         if (o == null || getClass() != o.getClass()) return false;
 
         ChessPiece that = (ChessPiece) o;
-        return pieceColor == that.pieceColor && type == that.type;
+        return color == that.color && type == that.type;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(pieceColor);
+        int result = Objects.hashCode(color);
         result = 31 * result + Objects.hashCode(type);
         return result;
     }
@@ -1479,7 +1080,7 @@ public class ChessPiece {
     @Override
     public String toString() {
         return "ChessPiece{" +
-                "pieceColor=" + pieceColor +
+                "pieceColor=" + color +
                 ", type=" + type +
                 '}';
     }

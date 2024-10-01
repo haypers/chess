@@ -71,7 +71,15 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         System.out.println("makeMove() called");
-        throw new RuntimeException("Not implemented");
+        if(board.getPiece(move.getStartPosition()) != null){
+            ChessPiece pieceToMove = new ChessPiece(board.getPiece(move.getStartPosition()));
+            board.addPiece(move.getEndPosition(), pieceToMove);
+            board.addPiece(move.getStartPosition(), null);
+        }
+        else{
+            System.out.println("trying to move null!!");
+            //throw new InvalidMoveException("trying to move null");
+        }
     }
 
     /**
