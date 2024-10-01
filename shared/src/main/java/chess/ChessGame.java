@@ -78,7 +78,7 @@ public class ChessGame {
         }
         else{
             System.out.println("trying to move null!!");
-            //throw new InvalidMoveException("trying to move null");
+            throw new InvalidMoveException("trying to move null");
         }
     }
 
@@ -90,11 +90,28 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         System.out.println("isInCheck() called");
+        ChessPosition king = null;
         for(int row = 1; row < 8; row ++){
             for(int col = 1; col < 8; col++){
-                if(board.getPiece(new ChessPosition(row, col)) != null && board.getPiece(new ChessPosition(row, col)).getTeamColor() != teamColor){
+                if(board.getPiece(new ChessPosition(row, col)) != null && board.getPiece(new ChessPosition(row, col)).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(new ChessPosition(row, col)).getTeamColor() == teamColor){
+                    king = new ChessPosition(row, col);
+                }
+            }
+        }
+        if (king == null){
+            System.out.println("can't find king to check for check!");
+        }
+        for(int row = 1; row < 8; row ++){
+            for(int col = 1; col < 8; col++){
+                ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                if(toScan != null && toScan.getTeamColor() != teamColor){
                     System.out.println("found an enemy piece");
-
+                    Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
+                    for (ChessMove move : options){
+                        if (move.getEndPosition() == king){
+                            return true;
+                        }
+                    }
                 }
             }
         }
