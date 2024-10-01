@@ -90,6 +90,14 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         System.out.println("isInCheck() called");
+        for(int row = 1; row < 8; row ++){
+            for(int col = 1; col < 8; col++){
+                if(board.getPiece(new ChessPosition(row, col)) != null && board.getPiece(new ChessPosition(row, col)).getTeamColor() != teamColor){
+                    System.out.println("found an enemy piece");
+
+                }
+            }
+        }
         return false;
     }
 
