@@ -52,10 +52,15 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        System.out.println("validMoves called on: " + startPosition.toString());
-        /*Collection<ChessMove> returnChessMoves = (Collection<ChessMove>);*/
-        /*return returnChessMoves;*/
-        throw new RuntimeException("Not implemented");
+        System.out.println("validMoves() called");
+        if (board.getPiece(startPosition) != null){
+            ChessPiece piece = new ChessPiece(board.getPiece(startPosition));
+            return piece.pieceMoves(board, startPosition);
+        }
+        else{
+            return null;
+        }
+
     }
 
     /**
