@@ -59,6 +59,7 @@ public class ChessGame {
             return piece.pieceMoves(board, startPosition);
         }
         else{
+            System.out.println("there are no valid moves at the position checked.");
             return null;
         }
 
@@ -95,13 +96,16 @@ public class ChessGame {
         ChessPosition king = null;
         for(int row = 1; row < 8; row ++){
             for(int col = 1; col < 8; col++){
-                if(board.getPiece(new ChessPosition(row, col)) != null && board.getPiece(new ChessPosition(row, col)).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(new ChessPosition(row, col)).getTeamColor() == teamColor){
+                ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
+                if(scanMe != null && scanMe.getPieceType() == ChessPiece.PieceType.KING && scanMe.getTeamColor() == teamColor){
                     king = new ChessPosition(row, col);
                 }
             }
         }
         if (king == null){
+            //somehow in the full game test, this print statement is called, but the function returns true?!
             System.out.println("can't find king to check for check!");
+            //return false;
         }
         for(int row = 1; row < 8; row ++){
             for(int col = 1; col < 8; col++){
@@ -110,7 +114,8 @@ public class ChessGame {
                     System.out.println("found an enemy piece");
                     Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
                     for (ChessMove move : options){
-                        if (move.getEndPosition() == king){
+                        if (move.getEndPosition().equals(king)){
+                            System.out.println("found an attack making this board in check: " + move.toString());
                             return true;
                         }
                     }
