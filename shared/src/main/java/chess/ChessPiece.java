@@ -534,7 +534,7 @@ public class ChessPiece {
             for(int i = 1; (row-i >= 1) && (col-i >= 1); i++){
                 beingScanned = new ChessPosition(row-i, col-i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
                     System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
