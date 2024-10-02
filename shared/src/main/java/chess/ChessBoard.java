@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -27,6 +28,23 @@ public class ChessBoard {
                 }
             }
         }*/
+    }
+
+    public ChessBoard(ChessBoard board) {
+        this.squares = new ChessPiece[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board.squares[i][j] != null) {
+
+                    this.squares[i][j] = new ChessPiece(board.squares[i][j]);
+
+                } else {
+
+                    this.squares[i][j] = null;
+
+                }
+            }
+        }
     }
 
     /**
@@ -103,6 +121,45 @@ public class ChessBoard {
                 }
             }
         }*/
+    }
+
+    public boolean isInCheck(ChessGame.TeamColor teamColor) {
+        System.out.println("is in check inside a board called");
+        ChessPosition king = null;
+        for(int row = 1; row <= 8; row ++){
+            for(int col = 1; col <= 8; col++){
+                ChessPiece scanMe = this.getPiece(new ChessPosition(row, col));
+                if(scanMe != null && scanMe.getPieceType() == ChessPiece.PieceType.KING){
+                    //System.out.println("found a potential king");
+                    if(scanMe.getTeamColor() == teamColor){
+                        //System.out.println("the king is the right color");
+                        king = new ChessPosition(row, col);
+                        break;
+                    }
+                }
+            }
+        }
+        if (king == null){
+            //somehow in the full game test, this print statement is called, but the function returns true?!
+            System.out.println("can't find king to check for check!");
+            return false;
+        }
+        for(int row = 1; row < 8; row ++){
+            for(int col = 1; col < 8; col++){
+                ChessPiece toScan = this.getPiece(new ChessPosition(row, col));
+                if(toScan != null && toScan.getTeamColor() != teamColor){
+                    System.out.println("found an enemy piece");
+                    Collection<ChessMove> options = toScan.pieceMoves(this, new ChessPosition(row, col));
+                    for (ChessMove move : options){
+                        if (move.getEndPosition().equals(king)){
+                            System.out.println("found an attack making this board in check: " + move.toString());
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

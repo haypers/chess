@@ -12,7 +12,7 @@ public class ChessGame {
 
     public ChessGame.TeamColor turnColor = TeamColor.WHITE;
 
-    private ChessBoard board = new ChessBoard();
+    private final ChessBoard board = new ChessBoard();
 
     public ChessGame() {
         System.out.println("ChessGame() called");
@@ -56,7 +56,25 @@ public class ChessGame {
         System.out.println("validMoves() called");
         if (board.getPiece(startPosition) != null){
             ChessPiece piece = new ChessPiece(board.getPiece(startPosition));
-            return piece.pieceMoves(board, startPosition);
+
+            Collection<ChessMove> possibleMovesToFilter = piece.pieceMoves(board, startPosition);
+
+            for (ChessMove move : possibleMovesToFilter){
+                ChessBoard testBoard = new ChessBoard(board);
+
+                ChessPiece pieceToMove = new ChessPiece(testBoard.getPiece(move.getStartPosition()));
+                testBoard.addPiece(move.getEndPosition(), pieceToMove);
+                testBoard.addPiece(move.getStartPosition(), null);
+
+                if(testBoard.isInCheck(piece.getTeamColor())){
+                    possibleMovesToFilter.remove(move);
+                    System.out.println("removed a move that would put us in check.");
+                }
+
+            }
+
+
+            return possibleMovesToFilter;
         }
         else{
             System.out.println("there are no valid moves at the position checked.");
@@ -94,18 +112,23 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         System.out.println("isInCheck() called");
         ChessPosition king = null;
-        for(int row = 1; row < 8; row ++){
-            for(int col = 1; col < 8; col++){
+        for(int row = 1; row <= 8; row ++){
+            for(int col = 1; col <= 8; col++){
                 ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
-                if(scanMe != null && scanMe.getPieceType() == ChessPiece.PieceType.KING && scanMe.getTeamColor() == teamColor){
-                    king = new ChessPosition(row, col);
+                if(scanMe != null && scanMe.getPieceType() == ChessPiece.PieceType.KING){
+                    //System.out.println("found a potential king");
+                    if(scanMe.getTeamColor() == teamColor){
+                        //System.out.println("the king is the right color");
+                        king = new ChessPosition(row, col);
+                        break;
+                    }
                 }
             }
         }
         if (king == null){
             //somehow in the full game test, this print statement is called, but the function returns true?!
             System.out.println("can't find king to check for check!");
-            //return false;
+            return false;
         }
         for(int row = 1; row < 8; row ++){
             for(int col = 1; col < 8; col++){
@@ -115,7 +138,7 @@ public class ChessGame {
                     Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
                     for (ChessMove move : options){
                         if (move.getEndPosition().equals(king)){
-                            System.out.println("found an attack making this board in check: " + move.toString());
+                            System.out.println("found an attack making this board in check: " + move);
                             return true;
                         }
                     }

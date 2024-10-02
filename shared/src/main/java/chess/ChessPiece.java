@@ -78,23 +78,23 @@ public class ChessPiece {
         System.out.println(board.toString());
 
         if(this.type == PieceType.ROOK){
-            System.out.println("I'm a Rook");
+            //System.out.println("I'm a Rook");
             for(int i = row+1; i <= 8; i++){
                 beingScanned = new ChessPosition(i, col);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -105,19 +105,19 @@ public class ChessPiece {
             for(int i = row-1; i >= 1; i--){
                 beingScanned = new ChessPosition(i, col);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -128,19 +128,19 @@ public class ChessPiece {
             for(int i = col+1; i <= 8; i++){
                 beingScanned = new ChessPosition(row, i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -151,19 +151,19 @@ public class ChessPiece {
             for(int i = col-1; i >= 1; i--){
                 beingScanned = new ChessPosition(row, i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -174,23 +174,23 @@ public class ChessPiece {
         }
 
         if(this.type == PieceType.BISHOP){
-            System.out.println("I'm a Bishop");
+            //System.out.println("I'm a Bishop");
             for(int i = 1; (row+i <= 8) && (col+i <= 8); i++){
                 beingScanned = new ChessPosition(row+i, col+i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -201,19 +201,19 @@ public class ChessPiece {
             for(int i = 1; (row+i <= 8) && (col-i >= 1); i++){
                 beingScanned = new ChessPosition(row+i, col-i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -224,19 +224,19 @@ public class ChessPiece {
             for(int i = 1; (row-i >= 1) && (col+i <= 8); i++){
                 beingScanned = new ChessPosition(row-i, col+i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -247,19 +247,19 @@ public class ChessPiece {
             for(int i = 1; (row-i >= 1) && (col-i >= 1); i++){
                 beingScanned = new ChessPosition(row-i, col-i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -270,23 +270,23 @@ public class ChessPiece {
         }
 
         if(this.type == PieceType.QUEEN){
-            System.out.println("I'm a Queen");
+            //System.out.println("I'm a Queen");
             for(int i = 1; (row+i <= 8) && (col+i <= 8); i++){
                 beingScanned = new ChessPosition(row+i, col+i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -297,19 +297,19 @@ public class ChessPiece {
             for(int i = 1; (row+i <= 8) && (col-i >= 1); i++){
                 beingScanned = new ChessPosition(row+i, col-i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -320,19 +320,19 @@ public class ChessPiece {
             for(int i = 1; (row-i >= 1) && (col+i <= 8); i++){
                 beingScanned = new ChessPosition(row-i, col+i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -343,19 +343,19 @@ public class ChessPiece {
             for(int i = 1; (row-i >= 1) && (col-i >= 1); i++){
                 beingScanned = new ChessPosition(row-i, col-i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -366,19 +366,19 @@ public class ChessPiece {
             for(int i = row+1; i <= 8; i++){
                 beingScanned = new ChessPosition(i, col);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -389,19 +389,19 @@ public class ChessPiece {
             for(int i = row-1; i >= 1; i--){
                 beingScanned = new ChessPosition(i, col);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -412,19 +412,19 @@ public class ChessPiece {
             for(int i = col+1; i <= 8; i++){
                 beingScanned = new ChessPosition(row, i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -435,19 +435,19 @@ public class ChessPiece {
             for(int i = col-1; i >= 1; i--){
                 beingScanned = new ChessPosition(row, i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -458,24 +458,24 @@ public class ChessPiece {
         }
 
         if(this.type == PieceType.KING){
-            System.out.println("I'm a King");
+            //System.out.println("I'm a King");
             for(int i = 1; (row+i <= 8) && (col+i <= 8); i++){
                 beingScanned = new ChessPosition(row+i, col+i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                     break;
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -486,20 +486,20 @@ public class ChessPiece {
             for(int i = 1; (row+i <= 8) && (col-i >= 1); i++){
                 beingScanned = new ChessPosition(row+i, col-i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                     break;
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
@@ -510,20 +510,20 @@ public class ChessPiece {
             for(int i = 1; (row-i >= 1) && (col+i <= 8); i++){
                 beingScanned = new ChessPosition(row-i, col+i);
                 encounter = board.getPiece(beingScanned);
-                System.out.println("testing at " + beingScanned.toString());
+                //System.out.println("testing at " + beingScanned.toString());
                 if(encounter == null){
-                    System.out.println("clear at " + beingScanned.toString());
+                    //System.out.println("clear at " + beingScanned.toString());
                     newMove = new ChessMove(myPosition, beingScanned, null);
                     validMoves.add(newMove);
                     break;
                 }
                 else{
-                    System.out.println("found a piece");
+                    //System.out.println("found a piece");
                     if(encounter.getTeamColor() == this.color){
-                        System.out.println("friendly");
+                        //System.out.println("friendly");
                     }
                     else{
-                        System.out.println("enemy");
+                        //System.out.println("enemy");
                         newMove = new ChessMove(myPosition, beingScanned, null);
                         validMoves.add(newMove);
                     }
