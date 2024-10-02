@@ -111,7 +111,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         System.out.println("isInCheck() called");
-        System.out.println(board.toString());
+        //System.out.println(board.toString());
         ChessPosition king = null;
         for(int row = 1; row <= 8; row ++){
             for(int col = 1; col <= 8; col++){
@@ -157,6 +157,88 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         System.out.println("isInCheckmate() called");
+        ChessPosition king = null;
+
+        for(int row = 1; row <= 8; row ++){
+            for(int col = 1; col <= 8; col++){
+
+                ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
+                if(scanMe != null && scanMe.getPieceType() == ChessPiece.PieceType.KING){
+                    //System.out.println("found a potential king");
+                    if(scanMe.getTeamColor() == teamColor){
+                        //System.out.println("the king is the right color");
+                        king = new ChessPosition(row, col);
+                        break;
+                    }
+                }
+            }
+        }
+        if (king == null){
+            //somehow in the full game test, this print statement is called, but the function returns true?!
+            System.out.println("can't find king to check for check!");
+            return false;
+        }
+        for(int row = 1; row < 8; row ++){
+            for(int col = 1; col < 8; col++){
+                ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                if(toScan != null && toScan.getTeamColor() != teamColor){
+                    System.out.println("found an enemy piece");
+                    Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
+
+                    for (ChessMove move : options){
+                        int testRow = king.getRow();
+                        int testCol = king.getColumn();
+
+                        ChessPosition testPosition = new ChessPosition(testRow, testCol);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow+1, testCol);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow+1, testCol+1);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow, testCol+1);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow-1, testCol+1);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow-1, testCol);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow-1, testCol-1);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow, testCol-1);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        testPosition = new ChessPosition(testRow+1, testCol-1);
+                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+                            System.out.println("found an exit, making this board not in check: " + move);
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
