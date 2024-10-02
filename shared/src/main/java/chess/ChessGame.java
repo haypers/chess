@@ -111,6 +111,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         System.out.println("isInCheck() called");
+        System.out.println(board.toString());
         ChessPosition king = null;
         for(int row = 1; row <= 8; row ++){
             for(int col = 1; col <= 8; col++){
