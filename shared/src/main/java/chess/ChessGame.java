@@ -57,24 +57,19 @@ public class ChessGame {
         System.out.println("validMoves() called");
         if (board.getPiece(startPosition) != null){
             ChessPiece piece = new ChessPiece(board.getPiece(startPosition));
-
             Collection<ChessMove> possibleMovesToFilter = piece.pieceMoves(board, startPosition);
-
+            Collection<ChessMove> movesToRemove = new ArrayList<>();
             for (ChessMove move : possibleMovesToFilter){
                 ChessBoard testBoard = new ChessBoard(board);
-
                 ChessPiece pieceToMove = new ChessPiece(testBoard.getPiece(move.getStartPosition()));
                 testBoard.addPiece(move.getEndPosition(), pieceToMove);
                 testBoard.addPiece(move.getStartPosition(), null);
-
                 if(testBoard.isInCheck(piece.getTeamColor())){
-                    possibleMovesToFilter.remove(move);
+                    movesToRemove.add(move);
                     System.out.println("removed a move that would put us in check.");
                 }
-
             }
-
-
+            possibleMovesToFilter.removeAll(movesToRemove);
             return possibleMovesToFilter;
         }
         else{
@@ -197,9 +192,9 @@ public class ChessGame {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece ScanMe = board.getPiece(new ChessPosition(row, col));
                 if (ScanMe != null && ScanMe.getTeamColor() == teamColor){
-                    //if(!this.validMoves(new ChessPosition(row, col)).isEmpty()){
+                    if(!this.validMoves(new ChessPosition(row, col)).isEmpty()) {
                         return false;
-                    //}
+                    }
                 }
             }
         }
