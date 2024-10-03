@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -191,8 +192,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        System.out.println("isInStalemate() called");
-        return false;
+        System.out.println(board.toString());
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece ScanMe = board.getPiece(new ChessPosition(row, col));
+                if (ScanMe != null && ScanMe.getTeamColor() == teamColor){
+                    //if(!this.validMoves(new ChessPosition(row, col)).isEmpty()){
+                        return false;
+                    //}
+                }
+            }
+        }
+        return true;
     }
 
     /**
