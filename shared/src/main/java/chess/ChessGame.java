@@ -181,11 +181,12 @@ public class ChessGame {
 
         int testRow = king.getRow();
         int testCol = king.getColumn();
-        boolean positionInCheck = false;
+        boolean positionInCheck;
 
         ChessPosition testPosition = new ChessPosition(testRow, testCol);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
             positionInCheck = false;
+            outer:
             for(int row = 1; row < 8; row ++){
                 for(int col = 1; col < 8; col++){
                     ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
@@ -196,6 +197,7 @@ public class ChessGame {
                         for (ChessMove move : options){
                             if (testPosition == move.getEndPosition()){
                                 positionInCheck = true;
+                                break outer;
                             }
                         }
                     }
@@ -207,45 +209,196 @@ public class ChessGame {
         }
         testPosition = new ChessPosition(testRow+1, testCol);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow+1, testCol+1);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow, testCol+1);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow-1, testCol+1);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow-1, testCol);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow-1, testCol-1);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow, testCol-1);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
         testPosition = new ChessPosition(testRow+1, testCol-1);
         if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            outer:
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-            return false;
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!positionInCheck){
+                return false;
+            }
         }
-
         return true;
     }
 
