@@ -54,7 +54,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        System.out.println("addPiece() called");
+        //System.out.println("addPiece() called");
         squares[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
@@ -66,7 +66,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        System.out.println("getPiece() called");
+        //System.out.println("getPiece() called");
         return squares[position.getRow()-1][position.getColumn()-1];
     }
 
@@ -124,7 +124,7 @@ public class ChessBoard {
     }
 
     public boolean isInCheck(ChessGame.TeamColor teamColor) {
-        System.out.println("is in check inside a board called");
+        //System.out.println("is in check inside a board called");
         ChessPosition king = null;
         for(int row = 1; row <= 8; row ++){
             for(int col = 1; col <= 8; col++){
@@ -148,11 +148,11 @@ public class ChessBoard {
             for(int col = 1; col < 8; col++){
                 ChessPiece toScan = this.getPiece(new ChessPosition(row, col));
                 if(toScan != null && toScan.getTeamColor() != teamColor){
-                    System.out.println("found an enemy piece");
+                    //System.out.println("found an enemy piece");
                     Collection<ChessMove> options = toScan.pieceMoves(this, new ChessPosition(row, col));
                     for (ChessMove move : options){
                         if (move.getEndPosition().equals(king)){
-                            System.out.println("found an attack making this board in check: " + move.toString());
+                            //System.out.println("found an attack making this board in check: " + move.toString());
                             return true;
                         }
                     }
@@ -178,8 +178,20 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        return "ChessBoard{" +
-                "squares=" + Arrays.toString(squares) +
-                '}';
+        StringBuilder sb = new StringBuilder();
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = squares[row][col];
+                if (piece != null) {
+                    sb.append(piece.toString());
+                } else {
+                    sb.append("[empty space]");
+                }
+                sb.append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

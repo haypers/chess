@@ -75,7 +75,7 @@ public class ChessPiece {
 
         //uppercase is white, so the bottom 2 rows (1, 2) are white
 
-        System.out.println(board.toString());
+        //System.out.println(board.toString());
 
         if(this.type == PieceType.ROOK){
             //System.out.println("I'm a Rook");
@@ -1079,10 +1079,7 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return "ChessPiece{" +
-                "pieceColor=" + color +
-                ", type=" + type +
-                '}';
+        return "[" + color + " " + type + "]";
     }
 
 }

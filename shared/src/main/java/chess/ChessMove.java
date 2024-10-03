@@ -31,7 +31,7 @@ public class ChessMove {
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        System.out.println("getStartPosition() called");
+        //System.out.println("getStartPosition() called");
         return startPosition;
     }
 
@@ -39,7 +39,7 @@ public class ChessMove {
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        System.out.println("getEndPosition() called");
+        //System.out.println("getEndPosition() called");
         return endPosition;
     }
 
