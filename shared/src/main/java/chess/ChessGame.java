@@ -12,7 +12,7 @@ public class ChessGame {
 
     public ChessGame.TeamColor turnColor = TeamColor.WHITE;
 
-    private final ChessBoard board = new ChessBoard();
+    private ChessBoard board = new ChessBoard();
 
     public ChessGame() {
         System.out.println("ChessGame() called");
@@ -113,15 +113,15 @@ public class ChessGame {
         System.out.println("isInCheck() called");
         //System.out.println(board.toString());
         ChessPosition king = null;
+        outer:
         for(int row = 1; row <= 8; row ++){
             for(int col = 1; col <= 8; col++){
                 ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
                 if(scanMe != null && scanMe.getPieceType() == ChessPiece.PieceType.KING){
-                    //System.out.println("found a potential king");
                     if(scanMe.getTeamColor() == teamColor){
                         //System.out.println("the king is the right color");
                         king = new ChessPosition(row, col);
-                        break;
+                        break outer;
                     }
                 }
             }
@@ -171,6 +171,8 @@ public class ChessGame {
                         testBoard.addPiece(move.getStartPosition(), null);
 
                         if(!testBoard.isInCheck(teamColor)){
+                            System.out.println("Found a way out of checkmate: " + move.toString());
+                            System.out.println(board.toString());
                             return false;
                         }
                     }
@@ -200,7 +202,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         System.out.println("setBoard() called");
-        board.resetBoard();
+        this.board = board;
     }
 
     /**
