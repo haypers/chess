@@ -198,6 +198,10 @@ public class ChessGame {
                 }
             }
         }
+        System.out.println(board.toString());
+        if(board.isInCheck(teamColor)){
+            return false;
+        }
         return true;
     }
 
