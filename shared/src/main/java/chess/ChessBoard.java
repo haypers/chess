@@ -144,8 +144,8 @@ public class ChessBoard {
             System.out.println("can't find king to check for check!");
             return false;
         }
-        for(int row = 1; row < 8; row ++){
-            for(int col = 1; col < 8; col++){
+        for(int row = 1; row <= 8; row ++){
+            for(int col = 1; col <= 8; col++){
                 ChessPiece toScan = this.getPiece(new ChessPosition(row, col));
                 if(toScan != null && toScan.getTeamColor() != teamColor){
                     //System.out.println("found an enemy piece");
