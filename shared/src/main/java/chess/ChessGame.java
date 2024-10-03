@@ -178,68 +178,75 @@ public class ChessGame {
             System.out.println("can't find king to check for check!");
             return false;
         }
-        for(int row = 1; row < 8; row ++){
-            for(int col = 1; col < 8; col++){
-                ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
-                if(toScan != null && toScan.getTeamColor() != teamColor){
-                    System.out.println("found an enemy piece");
-                    Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
 
-                    for (ChessMove move : options){
-                        int testRow = king.getRow();
-                        int testCol = king.getColumn();
+        int testRow = king.getRow();
+        int testCol = king.getColumn();
+        boolean positionInCheck = false;
 
-                        ChessPosition testPosition = new ChessPosition(testRow, testCol);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
+        ChessPosition testPosition = new ChessPosition(testRow, testCol);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+            positionInCheck = false;
+            for(int row = 1; row < 8; row ++){
+                for(int col = 1; col < 8; col++){
+                    ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
+                    if(toScan != null && toScan.getTeamColor() != teamColor){
+                        System.out.println("found an enemy piece");
+                        Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
+
+                        for (ChessMove move : options){
+                            if (testPosition == move.getEndPosition()){
+                                positionInCheck = true;
+                            }
                         }
-                        testPosition = new ChessPosition(testRow+1, testCol);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow+1, testCol+1);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow, testCol+1);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow-1, testCol+1);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow-1, testCol);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow-1, testCol-1);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow, testCol-1);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        testPosition = new ChessPosition(testRow+1, testCol-1);
-                        if (!testPosition.equals(move.getEndPosition()) && 1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
-                            System.out.println("found an exit, making this board not in check: " + move);
-                            return false;
-                        }
-                        return true;
                     }
                 }
             }
+            if (!positionInCheck){
+                return false;
+            }
         }
-        return false;
+        testPosition = new ChessPosition(testRow+1, testCol);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow+1, testCol+1);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow, testCol+1);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow-1, testCol+1);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow-1, testCol);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow-1, testCol-1);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow, testCol-1);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+        testPosition = new ChessPosition(testRow+1, testCol-1);
+        if (1 <= testPosition.getColumn() && testPosition.getColumn() <= 8 && 1 <= testPosition.getRow() && testPosition.getRow() <= 8){
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
