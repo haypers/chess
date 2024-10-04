@@ -39,12 +39,18 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true; //check if the memory address is the same.
-        if (o == null || getClass() != o.getClass()) return false; //check if the object is null or an incorrect class.
+        boolean result;
+        if (this == o) {
+            result = true;//check if the memory address is the same.
+        } else if (o == null || getClass() != o.getClass()) {
+            result = false;//check if the object is null or an incorrect class.
+        } else {
+            ChessPosition that = (ChessPosition) o; //this is a typecast command! Because we allow comparisons to any object, ,not just other chess positions, we need to ensure that we can actually access the object as a chess peice object, so we are first checking if it is a chess position object, then we typecast it back into one, so we can pull values out and compare them.
+            result = row == that.row && col == that.col;
+        }
 
 
-        ChessPosition that = (ChessPosition) o; //this is a typecast command! Because we allow comparisons to any object, ,not just other chess positions, we need to ensure that we can actually access the object as a chess peice object, so we are first checking if it is a chess position object, then we typecast it back into one, so we can pull values out and compare them.
-        return row == that.row && col == that.col;
+        return result;
     }
 
     @Override

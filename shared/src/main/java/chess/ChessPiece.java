@@ -71,7 +71,7 @@ public class ChessPiece {
         ChessPosition beingScanned; //the position being scanned in the script
         ChessMove newMove; //a new move made from the position beingScanned
 
-        ChessPiece encounter = null; //the piece located at the position beingScanned, if any.
+        ChessPiece encounter; //the piece located at the position beingScanned, if any.
 
         //uppercase is white, so the bottom 2 rows (1, 2) are white
 

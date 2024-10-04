@@ -15,19 +15,6 @@ public class ChessBoard {
 
     public ChessBoard() {
         System.out.println("ChessBoard() called");
-
-        /*for (ChessPiece[] row : squares) {
-            // Loop through each column
-            System.out.println("-");
-            for (ChessPiece piece : row) {
-
-                if (piece != null) {
-                    System.out.print(piece.toString());
-                } else {
-                    System.out.print("  *  ");
-                }
-            }
-        }*/
     }
 
     public ChessBoard(ChessBoard board) {
@@ -109,18 +96,6 @@ public class ChessBoard {
         squares[6][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         squares[6][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         squares[6][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        /*for (ChessPiece[] row : squares) {
-            // Loop through each column
-            System.out.println("-");
-            for (ChessPiece piece : row) {
-
-                if (piece != null) {
-                    System.out.print(piece.toString());
-                } else {
-                    System.out.print("  *  ");
-                }
-            }
-        }*/
     }
 
     public boolean isInCheck(ChessGame.TeamColor teamColor) {
@@ -184,7 +159,7 @@ public class ChessBoard {
             for (int col = 0; col < 8; col++) {
                 ChessPiece piece = squares[row][col];
                 if (piece != null) {
-                    sb.append(piece.toString());
+                    sb.append(piece);
                 } else {
                     sb.append("[empty space]");
                 }

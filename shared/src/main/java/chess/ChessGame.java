@@ -104,7 +104,7 @@ public class ChessGame {
                 if (move.getPromotionPiece() != null){
                     board.addPiece(move.getEndPosition(), new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece()));
                     System.out.println(pieceToMove.getPieceType() + " wants to be a " + move.getPromotionPiece());
-                    System.out.println("valid moves for that piece: " + validLibrary.toString());
+                    //System.out.println("valid moves for that piece: " + validLibrary);
                 }
                 board.addPiece(move.getStartPosition(), null);
                 if (getTeamTurn() == TeamColor.WHITE){
@@ -181,7 +181,7 @@ public class ChessGame {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
                 if (scanMe != null && scanMe.getTeamColor() == teamColor) {
-                    System.out.println("checking if moving piece will get out of checkmate: " + scanMe.toString());
+                    //System.out.println("checking if moving piece will get out of checkmate: " + scanMe));
                     Collection<ChessMove> moves = scanMe.pieceMoves(board, new ChessPosition(row, col));
                     for (ChessMove move : moves) {
                         ChessBoard testBoard = new ChessBoard(board);
@@ -190,7 +190,7 @@ public class ChessGame {
                         testBoard.addPiece(move.getStartPosition(), null);
 
                         if(!testBoard.isInCheck(teamColor)){
-                            System.out.println("Found a way out of checkmate: " + move.toString());
+                            //System.out.println("Found a way out of checkmate: " + move);
                             System.out.println(board.toString());
                             return false;
                         }
@@ -222,10 +222,7 @@ public class ChessGame {
             }
         }
         System.out.println(board.toString());
-        if(board.isInCheck(teamColor)){
-            return false;
-        }
-        return true;
+        return !board.isInCheck(teamColor);
     }
 
     /**
