@@ -103,6 +103,8 @@ public class ChessGame {
                 board.addPiece(move.getEndPosition(), pieceToMove);
                 if (move.getPromotionPiece() != null){
                     board.addPiece(move.getEndPosition(), new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece()));
+                    System.out.println(pieceToMove.getPieceType() + " wants to be a " + move.getPromotionPiece());
+                    System.out.println("valid moves for that piece: " + validLibrary.toString());
                 }
                 board.addPiece(move.getStartPosition(), null);
                 if (getTeamTurn() == TeamColor.WHITE){
