@@ -88,10 +88,31 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         System.out.println("makeMove() called");
         if(board.getPiece(move.getStartPosition()) != null){
-            ChessPiece pieceToMove = new ChessPiece(board.getPiece(move.getStartPosition()));
-            board.addPiece(move.getEndPosition(), pieceToMove);
-            board.addPiece(move.getStartPosition(), null);
-            //System.out.println("piece moved");
+            Collection<ChessMove> validLibrary = validMoves(move.getStartPosition());
+            if(!validLibrary.contains(move)) {
+                throw new InvalidMoveException("trying to make illegal move");
+            }
+            else if(board.getPiece(move.getStartPosition()).getTeamColor() != turnColor){
+                throw new InvalidMoveException("trying to take two turns in a row.");
+            }
+            else if(move.getStartPosition().getRow() < 1 || move.getStartPosition().getRow() > 8 || move.getStartPosition().getColumn() < 1 || move.getStartPosition().getColumn() > 8 || move.getEndPosition().getRow() < 1 || move.getEndPosition().getRow() > 8 || move.getEndPosition().getColumn() < 1 || move.getEndPosition().getColumn() > 8){
+                throw new InvalidMoveException("trying to make a move out of bounds");
+            }
+            else{
+                ChessPiece pieceToMove = new ChessPiece(board.getPiece(move.getStartPosition()));
+                board.addPiece(move.getEndPosition(), pieceToMove);
+                if (move.getPromotionPiece() != null){
+                    board.addPiece(move.getEndPosition(), new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece()));
+                }
+                board.addPiece(move.getStartPosition(), null);
+                if (getTeamTurn() == TeamColor.WHITE){
+                    setTeamTurn(TeamColor.BLACK);
+                }
+                else{
+                    setTeamTurn(TeamColor.WHITE);
+                }
+                //System.out.println("piece moved");
+            }
         }
         else{
             System.out.println("trying to move null!!");
