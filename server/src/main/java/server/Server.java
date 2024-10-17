@@ -1,15 +1,17 @@
 package server;
 
+import model.UserData;
 import spark.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import service.Service;
 
 
 public class Server {
 
-    //private Service s = new Service();
+    public static Service s = new Service();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -42,34 +44,49 @@ public class Server {
                 username = jsonObject.get("username").getAsString();
                 password = jsonObject.get("password").getAsString();
                 email = jsonObject.get("email").getAsString();
-
                 System.out.println(username + " " + password + " " + email);
 
+                if(!username.isEmpty() && !password.isEmpty() && !email.isEmpty()){
+                    System.out.println("good credentials, proceed to make user");
+                    UserData user = new UserData(username, password, email);
+                    if(s.registerUser(user)) {
+                        res.status(200);
+                        return """
+                            {"username":"", "authToken":""}
+                            """;
+                    }else{
+                        res.status(403);
+                        return """
+                                {"message": "Error: already taken"}
+                                """;
+                        }
+                }
+                else{
+                    res.status(400);
+                    return """
+                    {"message": "Error: bad request"}
+                    """;
+                }
+
             } else {
-                System.out.println("invalid request");
+                res.status(400);
+                return """
+                    {"message": "Error: bad request"}
+                    """;
             }
-            res.status(201);
-            return """
-               { "username":"","authToken":""}
-               """;
         }
         catch (JsonSyntaxException e){
             res.status(400);
             return """
                     {"message": "Error: bad request"}
-                    """
-                    ;
+                    """;
         }
         catch (IllegalStateException e){
             res.status(400);
             return """
-                    {"message":"illegal state exception"}
-                    """
-                    ;
+                    {"message":"Error: bad request"}
+                    """;
         }
-        //System.out.println(body);
-
-
     }
 
     public void stop() {
