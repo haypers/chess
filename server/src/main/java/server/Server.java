@@ -1,6 +1,11 @@
 package server;
 
 import spark.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
 
 public class Server {
 
@@ -23,7 +28,13 @@ public class Server {
         return Spark.port();
     }
 
-    private String createUser(Request req, Response res){
+
+    public static String createUser(Request req, Response res) {
+        String body = req.body();
+
+        System.out.println(body);
+
+        res.status(201);
         return """
                { "username":"","password":"","email":""}
                """;
