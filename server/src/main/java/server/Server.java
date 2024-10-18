@@ -1,5 +1,6 @@
 package server;
 
+import exception.ResponseException;
 import model.UserData;
 import spark.*;
 import com.google.gson.Gson;
@@ -7,6 +8,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import service.Service;
+import exception.ResponseException;
+
 
 
 public class Server {
@@ -23,17 +26,22 @@ public class Server {
         Spark.post("/user", (req, res) -> createUser(req, res));
 
         Spark.delete("/db", (req, res) -> "{}");
-        // Register your endpoints and handle exceptions here.
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        /*Spark.post("/pet", this::addPet);
+        Spark.get("/pet", this::listPets);
+        Spark.delete("/pet/:id", this::deletePet);
+        Spark.delete("/pet", this::deleteAllPets);
+        Spark.exception(ResponseException.class, this::exceptionHandler);*/
 
         Spark.awaitInitialization();
         return Spark.port();
     }
 
+    private void exceptionHandler(ResponseException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+    }
 
-    public static String createUser(Request req, Response res) {
+
+    public static String createUser(Request req, Response res) throws ResponseException{
         String username = "";
         String password = "";
         String email = "";
@@ -75,16 +83,10 @@ public class Server {
                     """;
             }
         }
-        catch (JsonSyntaxException e){
+        catch (JsonSyntaxException | IllegalStateException e){
             res.status(400);
             return """
                     {"message": "Error: bad request"}
-                    """;
-        }
-        catch (IllegalStateException e){
-            res.status(400);
-            return """
-                    {"message":"Error: bad request"}
                     """;
         }
     }
