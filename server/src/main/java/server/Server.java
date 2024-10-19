@@ -1,21 +1,15 @@
 package server;
 
-import exception.ResponseException;
 import model.UserData;
 import spark.*;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import service.Service;
-import exception.ResponseException;
-
-import java.util.Objects;
 
 
 public class Server {
 
-    public static Service s = new Service();
+    public static Service service = new Service();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -26,8 +20,8 @@ public class Server {
         //Spark.post("/user", (req, res) -> "hello post");
         Spark.post("/user", (req, res) -> createUser(req, res));
         Spark.post("/session", (req, res) -> logIn(req, res));
-
         Spark.delete("/db", (req, res) -> clearDatabase(req, res));
+
         /*Spark.post("/pet", this::addPet);
         Spark.get("/pet", this::listPets);
         Spark.delete("/pet/:id", this::deletePet);
@@ -39,58 +33,9 @@ public class Server {
     }
 
     public static String createUser(Request req, Response res) throws Exception{
-
-        String username = "";
-        String password = "";
-        String email = "";
-        String body = req.body();
-
-        try {
-            JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-
-            if (jsonObject.has("username") && jsonObject.has("password") && jsonObject.has("email")) {
-
-                username = jsonObject.get("username").getAsString();
-                password = jsonObject.get("password").getAsString();
-                email = jsonObject.get("email").getAsString();
-
-                if(!username.isEmpty() && !password.isEmpty() && !email.isEmpty()){
-
-                    System.out.println("Good credentials sent for registration");
-                    UserData user = new UserData(username, password, email);
-
-                    //Send to service for registration. True if success, false if username taken
-                    if(s.registerUser(user)) {
-                        String newAuthToken = s.makeAuthToken(username);
-                        if (Objects.equals(newAuthToken, "")){
-                            res.status(400);
-                            return """
-                                {"message": "Error: auth token error"}
-                                """;
-                        }
-                        res.status(200);
-                        return "{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}";
-
-                    }else{
-                        res.status(403);
-                        return """
-                            {"message": "Error: already taken"}
-                            """;
-                    }
-                }
-            }
-            res.status(400);
-            return """
-                {"message": "Error: bad request"}
-                """;
-
-        }
-        catch (Exception  e){
-            res.status(400);
-            return """
-                    {"message": "Error: bad request"}
-                    """;
-        }
+        ResponseObject response = service.registerUser(req.body());
+        res.status(response.responseCode);
+        return response.responseBody;
     }
 
     public static String logIn(Request req, Response res) throws Exception{
@@ -112,7 +57,7 @@ public class Server {
                     System.out.println("Good credentials sent for login");
                     UserData credentials = new UserData(username, password, "");
 
-                    String authToken = s.loginUser(credentials);
+                    String authToken = service.loginUser(credentials);
                     if(!authToken.isEmpty()) {
 
                         res.status(200);
@@ -142,7 +87,7 @@ public class Server {
 
     public static String clearDatabase(Request req, Response res) throws Exception {
         try {
-            if (s.clearDatabase()) {
+            if (service.clearDatabase()) {
                 res.status(200);
                 return "{}";
             }

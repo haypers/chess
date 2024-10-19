@@ -5,7 +5,6 @@ import model.UserData;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.HashMap;
@@ -17,18 +16,7 @@ public class MemoryDataAccess{
     private Map<Integer, GameData> gameAccess = new HashMap<>();
     private Map<String, String> authAccess = new HashMap<>();
 
-    public boolean CheckIfUsersExists(String userName) {
-        if (dataAccess.containsKey(userName)){
-            System.out.println("username is found");
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-
-    public boolean isUser(String userName){
+    public boolean checkIfUsersExists(String userName) {
         return dataAccess.containsKey(userName);
     }
 
@@ -62,6 +50,8 @@ public class MemoryDataAccess{
 
     public boolean clearDatabase(){
         dataAccess = new HashMap<>();
+        authAccess = new HashMap<>();
+        gameAccess = new HashMap<>();
         return true;
     }
 

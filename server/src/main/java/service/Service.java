@@ -1,6 +1,9 @@
 package service;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
 import model.UserData;
+import server.ResponseObject;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -8,23 +11,45 @@ import java.util.Base64;
 
 public class Service {
 
-    private MemoryDataAccess m = new MemoryDataAccess();
+    private MemoryDataAccess memory = new MemoryDataAccess();
 
-    public Boolean registerUser(UserData newUser){
-        if(!m.CheckIfUsersExists(newUser.getUsername())){
-            m.addUser(newUser);
-            return true;
+    public ResponseObject registerUser(String body){
+        String username = "";
+        String password = "";
+        String email = "";
+        JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+
+        if (jsonObject.has("username") && jsonObject.has("password") && jsonObject.has("email")) {
+            username = jsonObject.get("username").getAsString();
+            password = jsonObject.get("password").getAsString();
+            email = jsonObject.get("email").getAsString();
+
+            if(!username.isEmpty() && !password.isEmpty() && !email.isEmpty()){
+                System.out.println("Good credentials sent for registration");
+
+                if(!memory.checkIfUsersExists(username)) {
+                    UserData user = new UserData(username, password, email);
+                    memory.addUser(user);
+                    String newAuthToken = makeAuthToken(username);
+                    return new ResponseObject(200, "{\"username\":\"" + username + "\", \"authToken\":\"" + newAuthToken + "\"}" );
+                }
+                else{
+                    return new ResponseObject(403,"""
+                        {"message": "Error: already taken"}
+                        """);
+                }
+            }
         }
-        else{
-            return false;
-        }
+        return new ResponseObject(400,"""
+                        {"message": "Error: bad request"}
+                        """);
     }
 
     public String loginUser(UserData credentials){
-        if (!m.isUser(credentials.getUsername())){
+        if (!memory.checkIfUsersExists(credentials.getUsername())){
             return "";
         }
-        String oldHash = m.getPassHash(credentials.username());
+        String oldHash = memory.getPassHash(credentials.username());
         String currentHash = "";
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -43,13 +68,13 @@ public class Service {
     }
 
     public String makeAuthToken(String userName){
-        return m.makeAuthToken(userName);
+        return memory.makeAuthToken(userName);
     }
 
 
     public Boolean clearDatabase(){
         System.out.println("clearing database");
-        return m.clearDatabase();
+        return memory.clearDatabase();
     }
 
 
