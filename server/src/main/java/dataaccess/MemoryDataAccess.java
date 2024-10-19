@@ -34,7 +34,7 @@ public class MemoryDataAccess{
     }
 
     public boolean saveAuthToken(String userName, String authToken){
-        authAccess.put(userName, authToken);
+        authAccess.put(authToken, userName);
         return true;
     }
 
@@ -47,6 +47,20 @@ public class MemoryDataAccess{
 
     public String getPassHash(String userName){
         return dataAccess.get(userName).password();
+    }
+
+    public String getUserFromToken(String authToken){
+        return authAccess.getOrDefault(authToken, "");
+    }
+
+    public boolean logoutUser(String token){
+        if (authAccess.containsKey(token)){
+            authAccess.remove(token);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 }

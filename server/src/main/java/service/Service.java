@@ -133,5 +133,28 @@ public class Service {
         }
     }
 
+    public ResponseObject logoutUser(String token){
+        if(!token.isEmpty()){
+            //System.out.println("Good authToken sent for logout");
+            String userName = memory.getUserFromToken(token);
+            if (!userName.isEmpty()){
+                //System.out.println("found user matched to token");
+                if(memory.logoutUser(token)){
+                    System.out.println("logout successful");
+                    return new ResponseObject(200,"{}");
+                }
+                else{
+                    System.out.println("logout unsuccessful");
+                    return new ResponseObject(500,"""
+                    { "message": "Error: database lost value before modifying it" }
+                    """);
+                }
+            }
+        }
+        return new ResponseObject(401,"""
+        { "message": "Error: unauthorized" }
+        """);
+    }
+
 
 }
