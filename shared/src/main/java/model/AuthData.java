@@ -1,13 +1,13 @@
 package model;
 
-public record AuthData(String userName, String username) {
+public record AuthData(String authToken, String userName) {
     @Override
     public String userName() {
         return userName;
     }
 
     @Override
-    public String username() {
-        return username;
+    public String authToken() {
+        return authToken;
     }
 }

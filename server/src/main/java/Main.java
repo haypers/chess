@@ -5,8 +5,7 @@ public class Main {
     public static void main(String[] args) {
         var server = new Server();
         var test = server.run(8080);
-
-        var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        System.out.println("♕ 240 Chess Server: " + piece);
+        System.out.println("♕ 240 Chess Server: Booting up");
+        System.out.println("♕ 240 Chess Server: running on port 8080");
     }
 }
