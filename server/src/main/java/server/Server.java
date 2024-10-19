@@ -25,6 +25,7 @@ public class Server {
 
         //Spark.post("/user", (req, res) -> "hello post");
         Spark.post("/user", (req, res) -> createUser(req, res));
+        Spark.post("/session", (req, res) -> logIn(req, res));
 
         Spark.delete("/db", (req, res) -> clearDatabase(req, res));
         /*Spark.post("/pet", this::addPet);
@@ -69,6 +70,53 @@ public class Server {
                         }
                         res.status(200);
                         return "{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}";
+
+                    }else{
+                        res.status(403);
+                        return """
+                            {"message": "Error: already taken"}
+                            """;
+                    }
+                }
+            }
+            res.status(400);
+            return """
+                {"message": "Error: bad request"}
+                """;
+
+        }
+        catch (Exception  e){
+            res.status(400);
+            return """
+                    {"message": "Error: bad request"}
+                    """;
+        }
+    }
+
+    public static String logIn(Request req, Response res) throws Exception{
+
+        String username = "";
+        String password = "";
+        String body = req.body();
+
+        try {
+            JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+
+            if (jsonObject.has("username") && jsonObject.has("password")) {
+
+                username = jsonObject.get("username").getAsString();
+                password = jsonObject.get("password").getAsString();
+
+                if(!username.isEmpty() && !password.isEmpty()){
+
+                    System.out.println("Good credentials sent for login");
+                    UserData credentials = new UserData(username, password, "");
+
+                    String authToken = s.loginUser(credentials);
+                    if(!authToken.isEmpty()) {
+
+                        res.status(200);
+                        return "{\"username\":\""+ username + "\", \"authToken\":\""+ authToken +"\"}";
 
                     }else{
                         res.status(403);

@@ -28,8 +28,21 @@ public class MemoryDataAccess{
     }
 
 
+    public boolean isUser(String userName){
+        return dataAccess.containsKey(userName);
+    }
+
     public void addUser(UserData data) {
-        dataAccess.put(data.getUsername(), data);
+        String passwordHashed = "";
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(data.getPassword().getBytes(StandardCharsets.UTF_8));
+            passwordHashed = Base64.getEncoder().encodeToString(hashBytes);
+        }
+        catch(Exception e){
+            System.out.println("error hashing new user password");
+        }
+        dataAccess.put(data.getUsername(), new UserData(data.getUsername(), passwordHashed, data.getEmail()));
     }
 
     public String makeAuthToken(String userName){
@@ -50,6 +63,10 @@ public class MemoryDataAccess{
     public boolean clearDatabase(){
         dataAccess = new HashMap<>();
         return true;
+    }
+
+    public String getPassHash(String userName){
+        return dataAccess.get(userName).password();
     }
 
 }
