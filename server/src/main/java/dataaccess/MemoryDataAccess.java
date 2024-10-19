@@ -33,21 +33,9 @@ public class MemoryDataAccess{
         dataAccess.put(data.getUsername(), new UserData(data.getUsername(), passwordHashed, data.getEmail()));
     }
 
-    public String makeAuthToken(String userName){
-        String combinedInput = "";
-        try {
-            long currentTimeMillis = Instant.now().toEpochMilli();
-            combinedInput = userName + currentTimeMillis;
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
-            String authToken = Base64.getEncoder().encodeToString(hashBytes);
-            authAccess.put(userName, authToken);
-            return authToken;
-        }
-        catch(Exception e){
-            System.out.println("Danger! Hashing failed, add redundancy");
-            return combinedInput;
-        }
+    public boolean saveAuthToken(String userName, String authToken){
+        authAccess.put(userName, authToken);
+        return true;
     }
 
     public boolean clearDatabase(){

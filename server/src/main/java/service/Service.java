@@ -4,9 +4,11 @@ import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
 import model.UserData;
 import server.ResponseObject;
+import spark.Response;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -73,7 +75,7 @@ public class Service {
                         """);
                     }
                     if (Objects.equals(oldHash, currentHash)){
-                        String newAuthToken = memory.makeAuthToken(username);
+                        String newAuthToken = makeAuthToken(username);
                         return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}");
                     }
                     else{
@@ -95,13 +97,40 @@ public class Service {
     }
 
     public String makeAuthToken(String userName){
-        return memory.makeAuthToken(userName);
+        String combinedInput = "";
+        try {
+            long currentTimeMillis = Instant.now().toEpochMilli();
+            combinedInput = userName + currentTimeMillis;
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
+            String authToken = Base64.getEncoder().encodeToString(hashBytes);
+            memory.saveAuthToken(userName, authToken);
+            return authToken;
+        }
+        catch(Exception e){
+            System.out.println("Danger! Hashing failed, add redundancy");
+            memory.saveAuthToken(userName, combinedInput);
+            return combinedInput;
+        }
     }
 
-
-    public Boolean clearDatabase(){
+    public ResponseObject clearDatabase(){
         System.out.println("clearing database");
-        return memory.clearDatabase();
+        try {
+            if (memory.clearDatabase()) {
+                return new ResponseObject(200,"{}");
+            }
+            else{
+                return new ResponseObject(500,"""
+                    {"message": "Error: database offline"}
+                    """);
+            }
+        }
+        catch(Exception e){
+            return new ResponseObject(500,"""
+                    {"message": "Error: database offline"}
+                    """);
+        }
     }
 
 

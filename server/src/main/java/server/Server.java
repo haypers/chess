@@ -45,22 +45,10 @@ public class Server {
     }
 
     public static String clearDatabase(Request req, Response res) throws Exception {
-        try {
-            if (service.clearDatabase()) {
-                res.status(200);
-                return "{}";
-            }
-            res.status(500);
-            return """
-                    {"message": "Error: database offline"}
-                    """;
-        }
-        catch(Exception e){
-            res.status(500);
-            return """
-                    {"message": "Error: database offline"}
-                    """;
-        }
+        ResponseObject response = service.clearDatabase();
+        res.status(response.responseCode);
+        return response.responseBody;
+
     }
 
     public void stop() {
