@@ -8,6 +8,7 @@ import server.ResponseObject;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.Objects;
 
 public class Service {
 
@@ -45,26 +46,52 @@ public class Service {
                         """);
     }
 
-    public String loginUser(UserData credentials){
-        if (!memory.checkIfUsersExists(credentials.getUsername())){
-            return "";
+    public ResponseObject loginUser(String body){
+        String username = "";
+        String password = "";
+        JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+
+        if (jsonObject.has("username") && jsonObject.has("password")) {
+            username = jsonObject.get("username").getAsString();
+            password = jsonObject.get("password").getAsString();
+
+            if(!username.isEmpty() && !password.isEmpty()){
+                System.out.println("Good credentials sent for login");
+
+                if (memory.checkIfUsersExists(username)){
+                    String oldHash = memory.getPassHash(username);
+                    String currentHash = "";
+                    try {
+                        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                        byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+                        currentHash = Base64.getEncoder().encodeToString(hashBytes);
+                    }
+                    catch(Exception e){
+                        System.out.println("error hashing login password");
+                        return new ResponseObject(500,"""
+                        { "message": "Error: hashing algorithm failed" }
+                        """);
+                    }
+                    if (Objects.equals(oldHash, currentHash)){
+                        String newAuthToken = memory.makeAuthToken(username);
+                        return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}");
+                    }
+                    else{
+                        return new ResponseObject(401,"""
+                        { "message": "Error: unauthorized" }
+                        """);
+                    }
+                }
+                else{
+                    return new ResponseObject(401,"""
+                        { "message": "Error: unauthorized" }
+                        """);
+                }
+            }
         }
-        String oldHash = memory.getPassHash(credentials.username());
-        String currentHash = "";
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(credentials.getPassword().getBytes(StandardCharsets.UTF_8));
-            currentHash = Base64.getEncoder().encodeToString(hashBytes);
-        }
-        catch(Exception e){
-            System.out.println("error hashing new session password");
-        }
-        if (oldHash == currentHash){
-            return makeAuthToken(credentials.username());
-        }
-        else{
-            return "";
-        }
+        return new ResponseObject(401,"""
+            { "message": "Error: unauthorized" }
+            """);
     }
 
     public String makeAuthToken(String userName){

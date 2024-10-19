@@ -34,9 +34,10 @@ public class MemoryDataAccess{
     }
 
     public String makeAuthToken(String userName){
+        String combinedInput = "";
         try {
             long currentTimeMillis = Instant.now().toEpochMilli();
-            String combinedInput = userName + currentTimeMillis;
+            combinedInput = userName + currentTimeMillis;
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
             String authToken = Base64.getEncoder().encodeToString(hashBytes);
@@ -44,7 +45,8 @@ public class MemoryDataAccess{
             return authToken;
         }
         catch(Exception e){
-            return "";
+            System.out.println("Danger! Hashing failed, add redundancy");
+            return combinedInput;
         }
     }
 
