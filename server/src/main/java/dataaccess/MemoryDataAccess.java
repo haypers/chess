@@ -1,11 +1,13 @@
 package dataaccess;
 
 import model.GameData;
+import model.PublicGameData;
 import model.UserData;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,16 @@ public class MemoryDataAccess{
     public boolean saveGameData(int gameID, GameData gameData){
         gameAccess.put(gameID, gameData);
         return true;
+    }
+
+    public ArrayList<PublicGameData> getAllGames(){
+        ArrayList<PublicGameData> allGames = new ArrayList<>();
+        for (Integer key : gameAccess.keySet()) {
+            PublicGameData game = new PublicGameData(gameAccess.get(key));
+            allGames.add(game);
+        }
+        System.out.println(allGames.toString());
+        return allGames;
     }
 
     public boolean clearDatabase(){

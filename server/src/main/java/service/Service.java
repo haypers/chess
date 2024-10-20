@@ -1,11 +1,16 @@
 package service;
 import chess.ChessGame;
+import chess.ChessMove;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
 import model.GameData;
+import model.PublicGameData;
 import model.UserData;
 import server.ResponseObject;
+
+import java.util.ArrayList;
 import java.util.Random;
 import spark.Response;
 
@@ -17,9 +22,9 @@ import java.util.Objects;
 
 public class Service {
 
-    private Random rand = new Random();
-
-    private MemoryDataAccess memory = new MemoryDataAccess();
+    private final Random rand = new Random();
+    Gson serializer = new Gson();
+    private final MemoryDataAccess memory = new MemoryDataAccess();
 
     public ResponseObject registerUser(String body){
         String username = "";
@@ -163,7 +168,6 @@ public class Service {
 
     public ResponseObject createGame(String token, String body){
         if(!token.isEmpty()){
-            //System.out.println("Good authToken sent for logout");
             String userName = memory.getUserFromToken(token);
             if (!userName.isEmpty()){
                 //System.out.println("found user matched to token");
@@ -190,6 +194,26 @@ public class Service {
                 return new ResponseObject(400,"""
                 { "message": "Error: bad request" }
                 """);
+            }
+        }
+        return new ResponseObject(401,"""
+        { "message": "Error: unauthorized" }
+        """);
+    }
+
+    public ResponseObject getGames(String token){
+        if(!token.isEmpty()){
+            String userName = memory.getUserFromToken(token);
+            if (!userName.isEmpty()){
+                ArrayList<PublicGameData> games = new ArrayList<>();
+                games = memory.getAllGames();
+                var json = serializer.toJson(games);
+                return new ResponseObject(200, "{ \"games\": " + json + "}");
+
+                /* Use this code to detect for offline database in future phase.
+                return new ResponseObject(500,"""
+                { "message": "Error: database offline" }
+                """);*/
             }
         }
         return new ResponseObject(401,"""
