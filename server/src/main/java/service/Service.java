@@ -1,6 +1,5 @@
 package service;
 import chess.ChessGame;
-import chess.ChessMove;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -11,13 +10,11 @@ import model.UserData;
 import server.ResponseObject;
 
 import java.util.ArrayList;
-import java.util.Random;
-import spark.Response;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.time.Instant;
-import java.util.Base64;
+import java.util.Random; //for making game IDs
+import java.nio.charset.StandardCharsets; //for hashing passwords
+import java.security.MessageDigest; //for hashing passwords
+import java.time.Instant; //for making authentication tokens
+import java.util.Base64; //for hashing passwords and tokens
 import java.util.Objects;
 
 public class Service {
@@ -114,7 +111,16 @@ public class Service {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
             String authToken = Base64.getEncoder().encodeToString(hashBytes);
+
+            //if this hash already exists than the same user requested several hashes in the same milisecond, just hash it again. It just needs to be unique, not deterministic.
+            while(memory.checkIfHashExists(authToken)){
+                System.out.println("hash already exists, hashing again.");
+                hashBytes = digest.digest(authToken.getBytes(StandardCharsets.UTF_8));
+                authToken = Base64.getEncoder().encodeToString(hashBytes);
+            }
+
             memory.saveAuthToken(userName, authToken);
+            System.out.println(authToken);
             return authToken;
         }
         catch(Exception e){

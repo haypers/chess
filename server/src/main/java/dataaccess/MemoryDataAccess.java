@@ -24,6 +24,9 @@ public class MemoryDataAccess{
     public boolean checkIfGameExists(int gameID) {
         return gameAccess.containsKey(gameID);
     }
+    public boolean checkIfHashExists(String hash) {
+        return authAccess.containsKey(hash);
+    }
 
     public void addUser(UserData data) {
         String passwordHashed = "";
