@@ -1,9 +1,12 @@
 package service;
+import chess.ChessGame;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
+import model.GameData;
 import model.UserData;
 import server.ResponseObject;
+import java.util.Random;
 import spark.Response;
 
 import java.nio.charset.StandardCharsets;
@@ -13,6 +16,8 @@ import java.util.Base64;
 import java.util.Objects;
 
 public class Service {
+
+    private Random rand = new Random();
 
     private MemoryDataAccess memory = new MemoryDataAccess();
 
@@ -149,6 +154,42 @@ public class Service {
                     { "message": "Error: database lost value before modifying it" }
                     """);
                 }
+            }
+        }
+        return new ResponseObject(401,"""
+        { "message": "Error: unauthorized" }
+        """);
+    }
+
+    public ResponseObject createGame(String token, String body){
+        if(!token.isEmpty()){
+            //System.out.println("Good authToken sent for logout");
+            String userName = memory.getUserFromToken(token);
+            if (!userName.isEmpty()){
+                //System.out.println("found user matched to token");
+                String gameName = "";
+                JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                if (jsonObject.has("gameName")) {
+                    gameName = jsonObject.get("gameName").getAsString();
+                    if (!gameName.isEmpty()) {
+                        int gameID = rand.nextInt(100000);
+                        while(memory.checkIfGameExists(gameID)){
+                            gameID = rand.nextInt(100000);
+                        }
+                        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
+                        if(memory.saveGameData(gameID, gameData)){
+                            return new ResponseObject(200, "{ \"gameID\": " + gameID + " }");
+                        }
+                        else{
+                            return new ResponseObject(500,"""
+                            { "message": "Error: database offline" }
+                            """);
+                        }
+                    }
+                }
+                return new ResponseObject(400,"""
+                { "message": "Error: bad request" }
+                """);
             }
         }
         return new ResponseObject(401,"""

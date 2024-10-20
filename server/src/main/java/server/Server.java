@@ -22,6 +22,7 @@ public class Server {
         Spark.post("/session", (req, res) -> logIn(req, res));
         Spark.delete("/db", (req, res) -> clearDatabase(req, res));
         Spark.delete("/session", (req, res) -> logOut(req, res));
+        Spark.post("/game", (req, res) -> createGame(req, res));
 
         /*Spark.post("/pet", this::addPet);
         Spark.get("/pet", this::listPets);
@@ -56,6 +57,12 @@ public class Server {
         res.status(response.responseCode);
         return response.responseBody;
 
+    }
+
+    public static String createGame(Request req, Response res) throws Exception{
+        ResponseObject response = service.createGame(req.headers("authorization"), req.body());
+        res.status(response.responseCode);
+        return response.responseBody;
     }
 
     public void stop() {

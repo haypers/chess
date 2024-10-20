@@ -19,6 +19,9 @@ public class MemoryDataAccess{
     public boolean checkIfUsersExists(String userName) {
         return dataAccess.containsKey(userName);
     }
+    public boolean checkIfGameExists(int gameID) {
+        return gameAccess.containsKey(gameID);
+    }
 
     public void addUser(UserData data) {
         String passwordHashed = "";
@@ -35,6 +38,11 @@ public class MemoryDataAccess{
 
     public boolean saveAuthToken(String userName, String authToken){
         authAccess.put(authToken, userName);
+        return true;
+    }
+
+    public boolean saveGameData(int gameID, GameData gameData){
+        gameAccess.put(gameID, gameData);
         return true;
     }
 
