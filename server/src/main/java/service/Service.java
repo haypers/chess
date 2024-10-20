@@ -227,5 +227,54 @@ public class Service {
         """);
     }
 
+    public ResponseObject joinGame(String token, String body){
+        if(!token.isEmpty()){
+            String userName = memory.getUserFromToken(token);
+            if (!userName.isEmpty()){
+                //System.out.println("found user matched to token");
+                int gameID;
+                String color;
+                ChessGame.TeamColor teamColor;
+                JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
+                if (jsonObject.has("gameID") && jsonObject.has("playerColor")) {
+                    gameID = jsonObject.get("gameID").getAsInt();
+                    color = jsonObject.get("playerColor").getAsString();
+                    if(color.equals("WHITE")){
+                        teamColor = ChessGame.TeamColor.WHITE;
+                    } else if (color.equals("BLACK")){
+                        teamColor = ChessGame.TeamColor.BLACK;
+                    }
+                    else{
+                        return new ResponseObject(400,"""
+                        { "message": "Error: bad request" }
+                        """);
+                    }
+                    if (memory.checkIfGameExists(gameID)) {
+                        GameData game = memory.getGame(gameID);
+                        if(teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() == null){
+                            GameData newGame = new GameData(game.gameID(), userName, game.blackUsername(), game.gameName(), game.game());
+                            memory.saveGameData(gameID, newGame);
+                            return new ResponseObject(200,"{}");
+                        } else if(teamColor == ChessGame.TeamColor.BLACK && game.blackUsername() == null){
+                            GameData newGame = new GameData(game.gameID(), game.whiteUsername(), userName, game.gameName(), game.game());
+                            memory.saveGameData(gameID, newGame);
+                            return new ResponseObject(200,"{}");
+                        } else{
+                            return new ResponseObject(403,"""
+                            { "message": "Error: already taken" }
+                            """);
+                        }
+                    }
+                }
+                return new ResponseObject(400,"""
+                { "message": "Error: bad request" }
+                """);
+            }
+        }
+        return new ResponseObject(401,"""
+        { "message": "Error: unauthorized" }
+        """);
+    }
+
 
 }

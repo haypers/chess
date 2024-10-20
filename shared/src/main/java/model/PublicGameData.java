@@ -3,7 +3,7 @@ package model;
 public record PublicGameData(Integer gameID, String whiteUsername, String blackUsername, String gameName) {
 
     public PublicGameData(GameData game){
-        this(game.gameID(), game.whiteUsername() != null ? game.whiteUsername() : "", game.blackUsername() != null ? game.blackUsername() : "", game.gameName());
+        this(game.gameID(), game.whiteUsername() != null ? game.whiteUsername() : "null", game.blackUsername() != null ? game.blackUsername() : "null", game.gameName());
     }
 
     @Override

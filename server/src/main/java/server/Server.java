@@ -24,6 +24,7 @@ public class Server {
         Spark.delete("/session", (req, res) -> logOut(req, res));
         Spark.post("/game", (req, res) -> createGame(req, res));
         Spark.get("/game", (req, res) -> getGames(req, res));
+        Spark.put("/game", (req, res) -> joinGame(req, res));
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -61,6 +62,12 @@ public class Server {
 
     public static String getGames(Request req, Response res) throws Exception{
         ResponseObject response = service.getGames(req.headers("authorization"));
+        res.status(response.responseCode);
+        return response.responseBody;
+    }
+
+    public static String joinGame(Request req, Response res) throws Exception{
+        ResponseObject response = service.joinGame(req.headers("authorization"), req.body());
         res.status(response.responseCode);
         return response.responseBody;
     }

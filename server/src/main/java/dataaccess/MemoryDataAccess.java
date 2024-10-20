@@ -61,6 +61,10 @@ public class MemoryDataAccess{
         return allGames;
     }
 
+    public GameData getGame(int gameID){
+        return gameAccess.get(gameID);
+    }
+
     public boolean clearDatabase(){
         dataAccess = new HashMap<>();
         authAccess = new HashMap<>();
