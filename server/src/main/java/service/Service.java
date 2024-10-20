@@ -211,7 +211,7 @@ public class Service {
         if(!token.isEmpty()){
             String userName = memory.getUserFromToken(token);
             if (!userName.isEmpty()){
-                ArrayList<PublicGameData> games = new ArrayList<>();
+                ArrayList<PublicGameData> games;
                 games = memory.getAllGames();
                 var json = serializer.toJson(games);
                 return new ResponseObject(200, "{ \"games\": " + json + "}");
