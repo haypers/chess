@@ -24,9 +24,9 @@ public class Service {
     private final MemoryDataAccess memory = new MemoryDataAccess();
 
     public ResponseObject registerUser(String body){
-        String username = "";
-        String password = "";
-        String email = "";
+        String username;
+        String password;
+        String email;
         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
 
         if (jsonObject.has("username") && jsonObject.has("password") && jsonObject.has("email")) {
@@ -56,8 +56,8 @@ public class Service {
     }
 
     public ResponseObject loginUser(String body){
-        String username = "";
-        String password = "";
+        String username;
+        String password;
         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
 
         if (jsonObject.has("username") && jsonObject.has("password")) {
@@ -69,7 +69,7 @@ public class Service {
 
                 if (memory.checkIfUsersExists(username)){
                     String oldHash = memory.getPassHash(username);
-                    String currentHash = "";
+                    String currentHash;
                     try {
                         MessageDigest digest = MessageDigest.getInstance("SHA-256");
                         byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -112,7 +112,7 @@ public class Service {
             byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
             String authToken = Base64.getEncoder().encodeToString(hashBytes);
 
-            //if this hash already exists than the same user requested several hashes in the same milisecond, just hash it again. It just needs to be unique, not deterministic.
+            //if this hash already exists than the same user requested several hashes in the same millisecond, just hash it again. It just needs to be unique, not deterministic.
             while(memory.checkIfHashExists(authToken)){
                 System.out.println("hash already exists, hashing again.");
                 hashBytes = digest.digest(authToken.getBytes(StandardCharsets.UTF_8));
@@ -177,7 +177,7 @@ public class Service {
             String userName = memory.getUserFromToken(token);
             if (!userName.isEmpty()){
                 //System.out.println("found user matched to token");
-                String gameName = "";
+                String gameName;
                 JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                 if (jsonObject.has("gameName")) {
                     gameName = jsonObject.get("gameName").getAsString();

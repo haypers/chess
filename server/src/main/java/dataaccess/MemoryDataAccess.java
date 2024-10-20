@@ -6,7 +6,6 @@ import model.UserData;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class MemoryDataAccess{
             PublicGameData game = new PublicGameData(gameAccess.get(key));
             allGames.add(game);
         }
-        System.out.println(allGames.toString());
+        System.out.println(allGames);
         return allGames;
     }
 
