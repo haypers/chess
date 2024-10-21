@@ -11,7 +11,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryDataAccess{
+public class MemoryDataAccess implements DataAccess{
 
     private Map<String, UserData> dataAccess = new HashMap<>();
     private Map<Integer, GameData> gameAccess = new HashMap<>();
