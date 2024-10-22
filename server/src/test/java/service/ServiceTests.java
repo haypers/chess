@@ -1,4 +1,6 @@
 package service;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
 import server.ResponseObject;
 import server.Server;
@@ -83,6 +85,79 @@ public class ServiceTests {
                 """;
         response = service.loginUser(body);
         assertEquals(401, response.responseCode);
+    }
+
+    @Test
+    public void positiveHashCode() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        String hash = service.makeAuthToken("username");
+        assertNotEquals("", hash);
+    }
+
+    @Test
+    public void negativeHashCode() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        String hash = service.makeAuthToken("nonuser");
+        assertEquals("", hash);
+    }
+
+
+    @Test
+    public void ClearDatabase() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        assertEquals(200, response.responseCode);
+        service.clearDatabase();
+        body = """
+                {
+                  "username": "username",
+                  "password": "password"
+                }
+                """;
+        response = service.loginUser(body);
+        assertEquals(401, response.responseCode);
+    }
+
+    @Test
+    public void PositiveLogout() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        System.out.println(authToken);
+        response = service.logoutUser(authToken);
+
+        assertEquals(200, response.responseCode);
     }
 
 }

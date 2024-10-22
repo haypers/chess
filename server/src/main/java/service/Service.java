@@ -105,28 +105,33 @@ public class Service {
 
     public String makeAuthToken(String userName){
         String combinedInput = "";
-        try {
-            long currentTimeMillis = Instant.now().toEpochMilli();
-            combinedInput = userName + currentTimeMillis;
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
-            String authToken = Base64.getEncoder().encodeToString(hashBytes);
+        if(memory.checkIfUsersExists(userName)){
+            try {
+                long currentTimeMillis = Instant.now().toEpochMilli();
+                combinedInput = userName + currentTimeMillis;
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
+                String authToken = Base64.getEncoder().encodeToString(hashBytes);
 
-            //if this hash already exists than the same user requested several hashes in the same millisecond, just hash it again. It just needs to be unique, not deterministic.
-            while(memory.checkIfHashExists(authToken)){
-                System.out.println("hash already exists, hashing again.");
-                hashBytes = digest.digest(authToken.getBytes(StandardCharsets.UTF_8));
-                authToken = Base64.getEncoder().encodeToString(hashBytes);
+                //if this hash already exists than the same user requested several hashes in the same millisecond, just hash it again. It just needs to be unique, not deterministic.
+                while(memory.checkIfHashExists(authToken)){
+                    System.out.println("hash already exists, hashing again.");
+                    hashBytes = digest.digest(authToken.getBytes(StandardCharsets.UTF_8));
+                    authToken = Base64.getEncoder().encodeToString(hashBytes);
+                }
+
+                memory.saveAuthToken(userName, authToken);
+                System.out.println(authToken);
+                return authToken;
             }
-
-            memory.saveAuthToken(userName, authToken);
-            System.out.println(authToken);
-            return authToken;
+            catch(Exception e){
+                System.out.println("Danger! Hashing failed, add redundancy");
+                memory.saveAuthToken(userName, combinedInput);
+                return combinedInput;
+            }
         }
-        catch(Exception e){
-            System.out.println("Danger! Hashing failed, add redundancy");
-            memory.saveAuthToken(userName, combinedInput);
-            return combinedInput;
+        else{
+            return "";
         }
     }
 
