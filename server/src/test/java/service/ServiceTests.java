@@ -154,10 +154,201 @@ public class ServiceTests {
         ResponseObject response = service.registerUser(body);
         JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
-        System.out.println(authToken);
         response = service.logoutUser(authToken);
 
         assertEquals(200, response.responseCode);
     }
+
+    @Test
+    public void NegativeLogout() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        response = service.logoutUser("bad token");
+
+        assertEquals(401, response.responseCode);
+    }
+
+
+    @Test
+    public void PositiveCreateGame() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        body = """
+                {
+                  "gameName": "gameName"
+                }
+                """;
+        response = service.createGame(authToken, body);
+
+        assertEquals(200, response.responseCode);
+    }
+
+    @Test
+    public void NegativeCreateGame() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        body = """
+                {
+                  "gameName": "gameName"
+                }
+                """;
+        response = service.createGame("bad auth token", body);
+
+        assertEquals(401, response.responseCode);
+    }
+
+    @Test
+    public void PositiveGetGames() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        body = """
+                {
+                  "gameName": "gameName"
+                }
+                """;
+        service.createGame(authToken, body);
+
+        response = service.getGames(authToken);
+
+
+        assertEquals(200, response.responseCode);
+    }
+
+    @Test
+    public void NegativeGetGames() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        body = """
+                {
+                  "gameName": "gameName"
+                }
+                """;
+        service.createGame(authToken, body);
+
+        response = service.getGames("bad auth token");
+
+
+        assertEquals(401, response.responseCode);
+    }
+
+    @Test
+    public void PositiveJoinGame() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        body = """
+                {
+                  "gameName": "gameName"
+                }
+                """;
+        response = service.createGame(authToken, body);
+        jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String gameID = jsonObject.get("gameID").getAsString();
+        System.out.println(gameID);
+        body = """
+                {
+                             "playerColor": "WHITE",
+                                 "gameID": 
+                """
+                + gameID + """
+                         }
+                """;
+        response = service.joinGame(authToken, body);
+
+
+        assertEquals(200, response.responseCode);
+    }
+
+
+    @Test
+    public void NegativeJoinGame() {
+        Service service = new Service();
+        String body = """
+                {
+                  "username": "username",
+                  "password": "password",
+                  "email": "email"
+                }
+                """;
+        ResponseObject response = service.registerUser(body);
+        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String authToken = jsonObject.get("authToken").getAsString();
+        body = """
+                {
+                  "gameName": "gameName"
+                }
+                """;
+        response = service.createGame(authToken, body);
+        jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
+        String gameID = jsonObject.get("gameID").getAsString();
+        System.out.println(gameID);
+        //bad game ID
+        body = """
+                {
+                             "playerColor": "WHITE",
+                                 "gameID": 
+                """
+                + (gameID + 1) + """
+                         }
+                """;
+        response = service.joinGame(authToken, body);
+
+
+        assertEquals(400, response.responseCode);
+    }
+
 
 }
