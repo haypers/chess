@@ -45,7 +45,11 @@ public class ChessPosition {
         } else if (o == null || getClass() != o.getClass()) {
             result = false;//check if the object is null or an incorrect class.
         } else {
-            ChessPosition that = (ChessPosition) o; //this is a typecast command! Because we allow comparisons to any object, ,not just other chess positions, we need to ensure that we can actually access the object as a chess peice object, so we are first checking if it is a chess position object, then we typecast it back into one, so we can pull values out and compare them.
+            ChessPosition that = (ChessPosition) o; /*this is a typecast command!
+            Because we allow comparisons to any object, ,not just other chess positions,
+            we need to ensure that we can actually access the object as a chess piece object,
+            so we are first checking if it is a chess position object, then we typecast it back
+            into one, so we can pull values out and compare them.*/
             result = row == that.row && col == that.col;
         }
 

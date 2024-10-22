@@ -113,7 +113,9 @@ public class Service {
                 byte[] hashBytes = digest.digest(combinedInput.getBytes(StandardCharsets.UTF_8));
                 String authToken = Base64.getEncoder().encodeToString(hashBytes);
 
-                //if this hash already exists than the same user requested several hashes in the same millisecond, just hash it again. It just needs to be unique, not deterministic.
+                /*if this hash already exists than the same user requested several hashes in the same millisecond,
+                 just hash it again. It just needs to be unique, not deterministic.
+                 */
                 while(memory.checkIfHashExists(authToken)){
                     System.out.println("hash already exists, hashing again.");
                     hashBytes = digest.digest(authToken.getBytes(StandardCharsets.UTF_8));

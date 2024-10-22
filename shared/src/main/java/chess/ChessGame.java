@@ -95,7 +95,10 @@ public class ChessGame {
             else if(board.getPiece(move.getStartPosition()).getTeamColor() != turnColor){
                 throw new InvalidMoveException("trying to take two turns in a row.");
             }
-            else if(move.getStartPosition().getRow() < 1 || move.getStartPosition().getRow() > 8 || move.getStartPosition().getColumn() < 1 || move.getStartPosition().getColumn() > 8 || move.getEndPosition().getRow() < 1 || move.getEndPosition().getRow() > 8 || move.getEndPosition().getColumn() < 1 || move.getEndPosition().getColumn() > 8){
+            else if(move.getStartPosition().getRow() < 1 || move.getStartPosition().getRow() > 8
+                    || move.getStartPosition().getColumn() < 1 || move.getStartPosition().getColumn() > 8
+                    || move.getEndPosition().getRow() < 1 || move.getEndPosition().getRow() > 8
+                    || move.getEndPosition().getColumn() < 1 || move.getEndPosition().getColumn() > 8){
                 throw new InvalidMoveException("trying to make a move out of bounds");
             }
             else{
