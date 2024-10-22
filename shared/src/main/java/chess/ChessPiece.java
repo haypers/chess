@@ -52,13 +52,32 @@ public class ChessPiece {
     }
 
 
-    /**
-     * Calculates all the positions a chess piece can move to
-     * Does not take into account moves that are illegal due to leaving the king in
-     * danger
-     *
-     * @return Collection of valid moves
-     */
+    /*private void generateMovesInDirection(ChessBoard board, ArrayList<ChessMove> validMoves, ChessPosition myPosition, int rowChange, int colChange, boolean repeat) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        ChessPosition beingScanned;
+        ChessPiece encounter;
+        row += rowChange;
+        col += colChange;
+        if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
+            beingScanned = new ChessPosition(row, col);
+            encounter = board.getPiece(beingScanned);
+            if (encounter == null) {
+                validMoves.add(new ChessMove(myPosition, beingScanned, null));  // Empty spot
+            } else {
+                if (encounter.getTeamColor() != this.color) {
+                    validMoves.add(new ChessMove(myPosition, beingScanned, null));  // Enemy piece
+                }
+            }
+            if (repeat){
+                generateMovesInDirection(board, validMoves, row, col, rowChange, colChange, true);
+            }
+            row += rowChange;
+            col += colChange;
+        }
+    }*/
+
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
         System.out.println("pieceMoves() called");
@@ -73,9 +92,7 @@ public class ChessPiece {
 
         ChessPiece encounter; //the piece located at the position beingScanned, if any.
 
-        //uppercase is white, so the bottom 2 rows (1, 2) are white
 
-        //System.out.println(board.toString());
 
         if(this.type == PieceType.ROOK){
             //System.out.println("I'm a Rook");
