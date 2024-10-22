@@ -3,8 +3,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
 import server.ResponseObject;
-import server.Server;
-import service.Service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,11 +22,9 @@ public class ServiceTests {
                 """;
         ResponseObject response = service.registerUser(body);
         assertEquals(200, response.responseCode);
-        assertTrue(100 == 2 * 50);
-        assertNotNull(new Object(), "Response did not return authentication String");
     }
     @Test
-    public void negitiveRegister(){
+    public void negativeRegister(){
         Service service = new Service();
         String body = """
                 {
@@ -37,9 +33,9 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        service.registerUser(body);
         //register user twice
-        response = service.registerUser(body);
+        ResponseObject response = service.registerUser(body);
         assertEquals(403, response.responseCode);
     }
 
@@ -80,7 +76,7 @@ public class ServiceTests {
         body = """
                 {
                   "username": "username",
-                  "password": "badpassword"
+                  "password": "badPassword"
                 }
                 """;
         response = service.loginUser(body);
@@ -97,7 +93,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        service.registerUser(body);
         String hash = service.makeAuthToken("username");
         assertNotEquals("", hash);
     }
@@ -112,7 +108,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        service.registerUser(body);
         String hash = service.makeAuthToken("nonuser");
         assertEquals("", hash);
     }
@@ -169,10 +165,8 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
-        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
-        String authToken = jsonObject.get("authToken").getAsString();
-        response = service.logoutUser("bad token");
+        service.registerUser(body);
+        ResponseObject response = service.logoutUser("bad token");
 
         assertEquals(401, response.responseCode);
     }
@@ -211,15 +205,13 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
-        JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
-        String authToken = jsonObject.get("authToken").getAsString();
+        service.registerUser(body);
         body = """
                 {
                   "gameName": "gameName"
                 }
                 """;
-        response = service.createGame("bad auth token", body);
+        ResponseObject response = service.createGame("bad auth token", body);
 
         assertEquals(401, response.responseCode);
     }
@@ -301,7 +293,7 @@ public class ServiceTests {
         body = """
                 {
                              "playerColor": "WHITE",
-                                 "gameID": 
+                                 "gameID":
                 """
                 + gameID + """
                          }
@@ -339,7 +331,7 @@ public class ServiceTests {
         body = """
                 {
                              "playerColor": "WHITE",
-                                 "gameID": 
+                                 "gameID":
                 """
                 + (gameID + 1) + """
                          }
