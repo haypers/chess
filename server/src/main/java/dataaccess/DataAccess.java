@@ -1,6 +1,5 @@
 package dataaccess;
 
-import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
@@ -8,27 +7,27 @@ import java.util.ArrayList;
 
 public interface DataAccess {
 
-    boolean checkIfUsersExists(String userName) throws ResponseException;
+    boolean checkIfUsersExists(String userName) throws DataAccessException;
 
-    boolean checkIfGameExists(int gameID) throws ResponseException;
+    boolean checkIfGameExists(int gameID) throws DataAccessException;
 
-    boolean checkIfHashExists(String hash) throws ResponseException;
+    boolean checkIfHashExists(String hash) throws DataAccessException;
 
-    void addUser(UserData data) throws ResponseException;
+    void addUser(UserData data) throws DataAccessException;
 
-    boolean saveAuthToken(String userName, String authToken) throws ResponseException;
+    boolean saveAuthToken(String userName, String authToken) throws DataAccessException;
 
-    boolean saveGameData(int gameID, GameData gameData) throws ResponseException;
+    boolean saveGameData(int gameID, GameData gameData) throws DataAccessException;
 
-    ArrayList<PublicGameData> getAllGames() throws ResponseException;
+    ArrayList<PublicGameData> getAllGames() throws DataAccessException;
 
-    GameData getGame(int gameID) throws ResponseException;
+    GameData getGame(int gameID) throws DataAccessException;
 
-    boolean clearDatabase() throws ResponseException;
+    boolean clearDatabase() throws DataAccessException;
 
-    String getPassHash(String userName) throws ResponseException;
+    String getPassHash(String userName) throws DataAccessException;
 
-    String getUserFromToken(String authToken) throws ResponseException;
+    String getUserFromToken(String authToken) throws DataAccessException;
 
-    boolean logoutUser(String token) throws ResponseException;
+    boolean logoutUser(String token) throws DataAccessException;
 }
