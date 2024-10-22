@@ -20,7 +20,7 @@ public class StandardAPITests {
 
     private static TestCreateRequest createRequest;
 
-    private static TestServerFacade serverFacade;
+    private static passoff.server.TestServerFacade serverFacade;
     private static Server server;
 
     private String existingAuth;
@@ -36,7 +36,7 @@ public class StandardAPITests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
 
-        serverFacade = new TestServerFacade("localhost", Integer.toString(port));
+        serverFacade = new passoff.server.TestServerFacade("localhost", Integer.toString(port));
 
         existingUser = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
 
