@@ -213,8 +213,8 @@ public class ChessGame {
         System.out.println(board.toString());
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPiece ScanMe = board.getPiece(new ChessPosition(row, col));
-                if (ScanMe != null && ScanMe.getTeamColor() == teamColor){
+                ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
+                if (scanMe != null && scanMe.getTeamColor() == teamColor){
                     if(!this.validMoves(new ChessPosition(row, col)).isEmpty()) {
                         return false;
                     }

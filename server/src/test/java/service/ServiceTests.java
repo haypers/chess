@@ -115,7 +115,7 @@ public class ServiceTests {
 
 
     @Test
-    public void ClearDatabase() {
+    public void clearDatabase() {
         Service service = new Service();
         String body = """
                 {
@@ -138,7 +138,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void PositiveLogout() {
+    public void positiveLogout() {
         Service service = new Service();
         String body = """
                 {
@@ -156,7 +156,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void NegativeLogout() {
+    public void negativeLogout() {
         Service service = new Service();
         String body = """
                 {
@@ -173,7 +173,7 @@ public class ServiceTests {
 
 
     @Test
-    public void PositiveCreateGame() {
+    public void positiveCreateGame() {
         Service service = new Service();
         String body = """
                 {
@@ -196,7 +196,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void NegativeCreateGame() {
+    public void negativeCreateGame() {
         Service service = new Service();
         String body = """
                 {
@@ -217,7 +217,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void PositiveGetGames() {
+    public void positiveGetGames() {
         Service service = new Service();
         String body = """
                 {
@@ -243,7 +243,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void NegativeGetGames() {
+    public void negativeGetGames() {
         Service service = new Service();
         String body = """
                 {
@@ -269,7 +269,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void PositiveJoinGame() {
+    public void positiveJoinGame() {
         Service service = new Service();
         String body = """
                 {
@@ -306,7 +306,7 @@ public class ServiceTests {
 
 
     @Test
-    public void NegativeJoinGame() {
+    public void negativeJoinGame() {
         Service service = new Service();
         String body = """
                 {
