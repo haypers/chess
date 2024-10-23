@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
-import exception.ResponseException;
+//import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
