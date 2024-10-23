@@ -70,12 +70,14 @@ public class ChessGame {
                 }
             }
             possibleMovesToFilter.removeAll(movesToRemove);
+            System.out.println(possibleMovesToFilter);
             return possibleMovesToFilter;
         }
         else{
             System.out.println("there are no valid moves at the position checked.");
             return null;
         }
+
 
     }
 

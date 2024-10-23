@@ -14,6 +14,7 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor color;
     private final PieceType type;
+    ArrayList<ChessMove> validMoves = new ArrayList<>();
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.color = pieceColor;
@@ -52,9 +53,9 @@ public class ChessPiece {
     }
 
 
-    /*private void generateMovesInDirection(ChessBoard board, ArrayList<ChessMove> validMoves, ChessPosition myPosition, int rowChange, int colChange, boolean repeat) {
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
+    private void generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange, int colChange, boolean repeat) {
+        int row = startRow;
+        int col = startCol;
         ChessPosition beingScanned;
         ChessPiece encounter;
         row += rowChange;
@@ -63,26 +64,30 @@ public class ChessPiece {
             beingScanned = new ChessPosition(row, col);
             encounter = board.getPiece(beingScanned);
             if (encounter == null) {
-                validMoves.add(new ChessMove(myPosition, beingScanned, null));  // Empty spot
+                System.out.println("added a move for being empty");
+                validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));  // Empty spot
+                if (repeat){
+                    if(rowChange >= 1){ rowChange++;}
+                    if(rowChange <= -1){ rowChange--;}
+                    if(colChange >= 1){ colChange++;}
+                    if(colChange <= -1){ colChange--;}
+                    this.generateMovesInDirection(board, startRow, startCol, rowChange, colChange, true);
+                }
             } else {
                 if (encounter.getTeamColor() != this.color) {
-                    validMoves.add(new ChessMove(myPosition, beingScanned, null));  // Enemy piece
+                    System.out.println("added a move for being an enemy");
+                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));  // Enemy piece
                 }
             }
-            if (repeat){
-                generateMovesInDirection(board, validMoves, row, col, rowChange, colChange, true);
-            }
-            row += rowChange;
-            col += colChange;
         }
-    }*/
+    }
 
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
         System.out.println("pieceMoves() called");
 
-        ArrayList<ChessMove> validMoves = new ArrayList<>(); //where a list of valid moves is stored
+        validMoves = new ArrayList<>();
 
         int row = myPosition.getRow(); //quick access to my cords
         int col = myPosition.getColumn(); //quick access to my cords
@@ -96,65 +101,11 @@ public class ChessPiece {
 
         if(this.type == PieceType.ROOK){
             //System.out.println("I'm a Rook");
-            for(int i = row+1; i <= 8; i++){
-                beingScanned = new ChessPosition(i, col);
-                encounter = board.getPiece(beingScanned);
-                //System.out.println("testing at " + beingScanned.toString());
-                if(encounter == null){
-                    //System.out.println("clear at " + beingScanned.toString());
-                    newMove = new ChessMove(myPosition, beingScanned, null);
-                    validMoves.add(newMove);
-                }
-                else{
-                    //System.out.println("found a piece");
-                    if (encounter.getTeamColor() != this.color) {
-                        //System.out.println("enemy");
-                        newMove = new ChessMove(myPosition, beingScanned, null);
-                        validMoves.add(newMove);
-                    }
-                    break;
-                }
-            }
+            this.generateMovesInDirection(board, row, col, 1, 0, true);
+            this.generateMovesInDirection(board, row, col, -1, 0, true);
+            this.generateMovesInDirection(board, row, col, 0, 1, true);
+            this.generateMovesInDirection(board, row, col, 0, -1, true);
 
-            for(int i = row-1; i >= 1; i--){
-                beingScanned = new ChessPosition(i, col);
-                encounter = board.getPiece(beingScanned);
-                //System.out.println("testing at " + beingScanned.toString());
-                if(encounter == null){
-                    //System.out.println("clear at " + beingScanned.toString());
-                    newMove = new ChessMove(myPosition, beingScanned, null);
-                    validMoves.add(newMove);
-                }
-                else{
-                    //System.out.println("found a piece");
-                    if (encounter.getTeamColor() != this.color) {
-                        //System.out.println("enemy");
-                        newMove = new ChessMove(myPosition, beingScanned, null);
-                        validMoves.add(newMove);
-                    }
-                    break;
-                }
-            }
-
-            for(int i = col+1; i <= 8; i++){
-                beingScanned = new ChessPosition(row, i);
-                encounter = board.getPiece(beingScanned);
-                //System.out.println("testing at " + beingScanned.toString());
-                if(encounter == null){
-                    //System.out.println("clear at " + beingScanned.toString());
-                    newMove = new ChessMove(myPosition, beingScanned, null);
-                    validMoves.add(newMove);
-                }
-                else{
-                    //System.out.println("found a piece");
-                    if (encounter.getTeamColor() != this.color) {
-                        //System.out.println("enemy");
-                        newMove = new ChessMove(myPosition, beingScanned, null);
-                        validMoves.add(newMove);
-                    }
-                    break;
-                }
-            }
 
             for(int i = col-1; i >= 1; i--){
                 beingScanned = new ChessPosition(row, i);
