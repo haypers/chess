@@ -53,7 +53,7 @@ public class ChessPiece {
     }
 
 
-    private void generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange, int colChange, boolean repeat) {
+    private void generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange, int colChange, boolean repeat, boolean pawnMode) {
         int row = startRow + rowChange;
         int col = startCol + colChange;
         ChessPosition beingScanned;
@@ -71,7 +71,7 @@ public class ChessPiece {
                     if(colChange >= 1){ colChange++;}
                     else if(colChange <= -1){ colChange--;}
                     //System.out.println(rowChange + " == " + colChange);
-                    this.generateMovesInDirection(board, startRow, startCol, rowChange, colChange, true);
+                    this.generateMovesInDirection(board, startRow, startCol, rowChange, colChange, true, pawnMode);
                 }
             } else {
                 if (encounter.getTeamColor() != this.color) {
@@ -101,43 +101,43 @@ public class ChessPiece {
 
         if(this.type == PieceType.ROOK){
             //System.out.println("I'm a Rook");
-            this.generateMovesInDirection(board, row, col, 1, 0, true);
-            this.generateMovesInDirection(board, row, col, -1, 0, true);
-            this.generateMovesInDirection(board, row, col, 0, -1, true);
-            this.generateMovesInDirection(board, row, col, 0, 1, true);
+            this.generateMovesInDirection(board, row, col, 1, 0, true, false);
+            this.generateMovesInDirection(board, row, col, -1, 0, true, false);
+            this.generateMovesInDirection(board, row, col, 0, -1, true, false);
+            this.generateMovesInDirection(board, row, col, 0, 1, true, false);
 
         }
 
         if(this.type == PieceType.BISHOP){
             //System.out.println("I'm a Bishop");
-            this.generateMovesInDirection(board, row, col, 1, 1, true);
-            this.generateMovesInDirection(board, row, col, -1, 1, true);
-            this.generateMovesInDirection(board, row, col, 1, -1, true);
-            this.generateMovesInDirection(board, row, col, -1, -1, true);
+            this.generateMovesInDirection(board, row, col, 1, 1, true, false);
+            this.generateMovesInDirection(board, row, col, -1, 1, true, false);
+            this.generateMovesInDirection(board, row, col, 1, -1, true, false);
+            this.generateMovesInDirection(board, row, col, -1, -1, true, false);
 
         }
 
         if(this.type == PieceType.QUEEN){
-            this.generateMovesInDirection(board, row, col, 1, 1, true);
-            this.generateMovesInDirection(board, row, col, -1, 1, true);
-            this.generateMovesInDirection(board, row, col, 1, -1, true);
-            this.generateMovesInDirection(board, row, col, -1, -1, true);
-            this.generateMovesInDirection(board, row, col, 1, 0, true);
-            this.generateMovesInDirection(board, row, col, -1, 0, true);
-            this.generateMovesInDirection(board, row, col, 0, -1, true);
-            this.generateMovesInDirection(board, row, col, 0, 1, true);
+            this.generateMovesInDirection(board, row, col, 1, 1, true, false);
+            this.generateMovesInDirection(board, row, col, -1, 1, true, false);
+            this.generateMovesInDirection(board, row, col, 1, -1, true, false);
+            this.generateMovesInDirection(board, row, col, -1, -1, true, false);
+            this.generateMovesInDirection(board, row, col, 1, 0, true, false);
+            this.generateMovesInDirection(board, row, col, -1, 0, true, false);
+            this.generateMovesInDirection(board, row, col, 0, -1, true, false);
+            this.generateMovesInDirection(board, row, col, 0, 1, true, false);
 
         }
 
         if(this.type == PieceType.KING){
-            this.generateMovesInDirection(board, row, col, 1, 1, false);
-            this.generateMovesInDirection(board, row, col, -1, 1, false);
-            this.generateMovesInDirection(board, row, col, 1, -1, false);
-            this.generateMovesInDirection(board, row, col, -1, -1, false);
-            this.generateMovesInDirection(board, row, col, 1, 0, false);
-            this.generateMovesInDirection(board, row, col, -1, 0, false);
-            this.generateMovesInDirection(board, row, col, 0, -1, false);
-            this.generateMovesInDirection(board, row, col, 0, 1, false);
+            this.generateMovesInDirection(board, row, col, 1, 1, false, false);
+            this.generateMovesInDirection(board, row, col, -1, 1, false, false);
+            this.generateMovesInDirection(board, row, col, 1, -1, false, false);
+            this.generateMovesInDirection(board, row, col, -1, -1, false, false);
+            this.generateMovesInDirection(board, row, col, 1, 0, false, false);
+            this.generateMovesInDirection(board, row, col, -1, 0, false, false);
+            this.generateMovesInDirection(board, row, col, 0, -1, false, false);
+            this.generateMovesInDirection(board, row, col, 0, 1, false, false);
         }
 
         if(this.type == PieceType.PAWN){
@@ -326,14 +326,14 @@ public class ChessPiece {
         }
 
         if(this.type == PieceType.KNIGHT){
-            this.generateMovesInDirection(board, row, col, 1, 2, false);
-            this.generateMovesInDirection(board, row, col, 2, 1, false);
-            this.generateMovesInDirection(board, row, col, -1, 2, false);
-            this.generateMovesInDirection(board, row, col, -2, 1, false);
-            this.generateMovesInDirection(board, row, col, 1, -2, false);
-            this.generateMovesInDirection(board, row, col, 2, -1, false);
-            this.generateMovesInDirection(board, row, col, -1, -2, false);
-            this.generateMovesInDirection(board, row, col, -2, -1, false);
+            this.generateMovesInDirection(board, row, col, 1, 2, false, false);
+            this.generateMovesInDirection(board, row, col, 2, 1, false, false);
+            this.generateMovesInDirection(board, row, col, -1, 2, false, false);
+            this.generateMovesInDirection(board, row, col, -2, 1, false, false);
+            this.generateMovesInDirection(board, row, col, 1, -2, false, false);
+            this.generateMovesInDirection(board, row, col, 2, -1, false, false);
+            this.generateMovesInDirection(board, row, col, -1, -2, false, false);
+            this.generateMovesInDirection(board, row, col, -2, -1, false, false);
         }
 
 
