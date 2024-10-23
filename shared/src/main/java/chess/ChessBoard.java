@@ -122,14 +122,15 @@ public class ChessBoard {
         for(int row = 1; row <= 8; row ++){
             for(int col = 1; col <= 8; col++){
                 ChessPiece toScan = this.getPiece(new ChessPosition(row, col));
-                if(toScan != null && toScan.getTeamColor() != teamColor){
-                    //System.out.println("found an enemy piece");
-                    Collection<ChessMove> options = toScan.pieceMoves(this, new ChessPosition(row, col));
-                    for (ChessMove move : options){
-                        if (move.getEndPosition().equals(king)){
-                            //System.out.println("found an attack making this board in check: " + move.toString());
-                            return true;
-                        }
+                if(toScan == null || toScan.getTeamColor() == teamColor){
+                    continue;
+                }
+                //System.out.println("found an enemy piece");
+                Collection<ChessMove> options = toScan.pieceMoves(this, new ChessPosition(row, col));
+                for (ChessMove move : options){
+                    if (move.getEndPosition().equals(king)){
+                        //System.out.println("found an attack making this board in check: " + move.toString());
+                        return true;
                     }
                 }
             }

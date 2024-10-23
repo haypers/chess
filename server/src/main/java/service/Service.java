@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
-//import exception.ResponseException;
+import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
@@ -144,12 +144,15 @@ public class Service {
                 return new ResponseObject(200,"{}");
             }
             else{
-                return new ResponseObject(500,"""
+                throw new ResponseException(200, """
                     {"message": "Error: database offline"}
                     """);
+                /*return new ResponseObject(500,"""
+                    {"message": "Error: database offline"}
+                    """);*/
             }
         }
-        catch(Exception e){
+        catch(ResponseException e){
             return new ResponseObject(500,"""
                     {"message": "Error: database offline"}
                     """);
@@ -186,27 +189,27 @@ public class Service {
                 //System.out.println("found user matched to token");
                 String gameName;
                 JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-                if (jsonObject.has("gameName")) {
-                    gameName = jsonObject.get("gameName").getAsString();
-                    if (!gameName.isEmpty()) {
-                        int gameID = rand.nextInt(100000);
-                        while(memory.checkIfGameExists(gameID)){
-                            gameID = rand.nextInt(100000);
-                        }
-                        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
-                        if(memory.saveGameData(gameID, gameData)){
-                            return new ResponseObject(200, "{ \"gameID\": " + gameID + " }");
-                        }
-                        else{
-                            return new ResponseObject(500,"""
+                if (!jsonObject.has("gameName")) {
+                    return new ResponseObject(400,"""
+                    { "message": "Error: bad request" }
+                    """);
+                }
+                gameName = jsonObject.get("gameName").getAsString();
+                if (!gameName.isEmpty()) {
+                    int gameID = rand.nextInt(100000);
+                    while(memory.checkIfGameExists(gameID)){
+                        gameID = rand.nextInt(100000);
+                    }
+                    GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
+                    if(memory.saveGameData(gameID, gameData)){
+                        return new ResponseObject(200, "{ \"gameID\": " + gameID + " }");
+                    }
+                    else{
+                        return new ResponseObject(500,"""
                             { "message": "Error: database offline" }
                             """);
-                        }
                     }
                 }
-                return new ResponseObject(400,"""
-                { "message": "Error: bad request" }
-                """);
             }
         }
         return new ResponseObject(401,"""

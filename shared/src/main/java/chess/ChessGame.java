@@ -157,20 +157,23 @@ public class ChessGame {
         for(int row = 1; row <= 8; row ++){
             for(int col = 1; col <= 8; col++){
                 ChessPiece toScan = board.getPiece(new ChessPosition(row, col));
-                if(toScan != null && toScan.getTeamColor() != teamColor){
-                    //System.out.println("found an enemy piece");
-                    Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
-                    for (ChessMove move : options){
-                        if (move.getEndPosition().equals(king)){
-                            //System.out.println("found an attack making this board in check: " + move);
-                            return true;
-                        }
+                if(toScan == null || toScan.getTeamColor() == teamColor){
+                    continue;
+                }
+                //System.out.println("found an enemy piece");
+                Collection<ChessMove> options = toScan.pieceMoves(board, new ChessPosition(row, col));
+                for (ChessMove move : options){
+                    if (move.getEndPosition().equals(king)){
+                        //System.out.println("found an attack making this board in check: " + move);
+                        return true;
                     }
                 }
             }
         }
         return false;
     }
+
+
 
     /**
      * Determines if the given team is in checkmate
@@ -184,20 +187,21 @@ public class ChessGame {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
-                if (scanMe != null && scanMe.getTeamColor() == teamColor) {
-                    //System.out.println("checking if moving piece will get out of checkmate: " + scanMe));
-                    Collection<ChessMove> moves = scanMe.pieceMoves(board, new ChessPosition(row, col));
-                    for (ChessMove move : moves) {
-                        ChessBoard testBoard = new ChessBoard(board);
+                if (scanMe == null || scanMe.getTeamColor() != teamColor) {
+                    continue;
+                }
+                //System.out.println("checking if moving piece will get out of checkmate: " + scanMe));
+                Collection<ChessMove> moves = scanMe.pieceMoves(board, new ChessPosition(row, col));
+                for (ChessMove move : moves) {
+                    ChessBoard testBoard = new ChessBoard(board);
 
-                        testBoard.addPiece(move.getEndPosition(), new ChessPiece(scanMe));
-                        testBoard.addPiece(move.getStartPosition(), null);
+                    testBoard.addPiece(move.getEndPosition(), new ChessPiece(scanMe));
+                    testBoard.addPiece(move.getStartPosition(), null);
 
-                        if(!testBoard.isInCheck(teamColor)){
-                            //System.out.println("Found a way out of checkmate: " + move);
-                            System.out.println(board.toString());
-                            return false;
-                        }
+                    if(!testBoard.isInCheck(teamColor)){
+                        //System.out.println("Found a way out of checkmate: " + move);
+                        System.out.println(board.toString());
+                        return false;
                     }
                 }
             }
