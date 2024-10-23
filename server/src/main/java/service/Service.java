@@ -153,6 +153,7 @@ public class Service {
             }
         }
         catch(ResponseException e){
+            System.out.println(e.statusCode());
             return new ResponseObject(500,"""
                     {"message": "Error: database offline"}
                     """);
@@ -259,21 +260,24 @@ public class Service {
                         { "message": "Error: bad request" }
                         """);
                     }
-                    if (memory.checkIfGameExists(gameID)) {
-                        GameData game = memory.getGame(gameID);
-                        if(teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() == null){
-                            GameData newGame = new GameData(game.gameID(), userName, game.blackUsername(), game.gameName(), game.game());
-                            memory.saveGameData(gameID, newGame);
-                            return new ResponseObject(200,"{}");
-                        } else if(teamColor == ChessGame.TeamColor.BLACK && game.blackUsername() == null){
-                            GameData newGame = new GameData(game.gameID(), game.whiteUsername(), userName, game.gameName(), game.game());
-                            memory.saveGameData(gameID, newGame);
-                            return new ResponseObject(200,"{}");
-                        } else{
-                            return new ResponseObject(403,"""
+                    if (!memory.checkIfGameExists(gameID)) {
+                        return new ResponseObject(400,"""
+                        { "message": "Error: bad request" }
+                        """);
+                    }
+                    GameData game = memory.getGame(gameID);
+                    if(teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() == null){
+                        GameData newGame = new GameData(game.gameID(), userName, game.blackUsername(), game.gameName(), game.game());
+                        memory.saveGameData(gameID, newGame);
+                        return new ResponseObject(200,"{}");
+                    } else if(teamColor == ChessGame.TeamColor.BLACK && game.blackUsername() == null){
+                        GameData newGame = new GameData(game.gameID(), game.whiteUsername(), userName, game.gameName(), game.game());
+                        memory.saveGameData(gameID, newGame);
+                        return new ResponseObject(200,"{}");
+                    } else{
+                        return new ResponseObject(403,"""
                             { "message": "Error: already taken" }
                             """);
-                        }
                     }
                 }
                 return new ResponseObject(400,"""
