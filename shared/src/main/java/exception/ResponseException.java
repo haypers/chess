@@ -1,4 +1,4 @@
-package exception;
+/*package exception;
 
 public class ResponseException extends Exception {
     final private int statusCode;
@@ -12,3 +12,4 @@ public class ResponseException extends Exception {
         return statusCode;
     }
 }
+*/

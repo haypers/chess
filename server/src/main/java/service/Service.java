@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.MemoryDataAccess;
+import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
@@ -34,25 +35,24 @@ public class Service {
             password = jsonObject.get("password").getAsString();
             email = jsonObject.get("email").getAsString();
 
-            if(!username.isEmpty() && !password.isEmpty() && !email.isEmpty()){
+            if (!username.isEmpty() && !password.isEmpty() && !email.isEmpty()) {
                 System.out.println("Good credentials sent for registration");
 
-                if(!memory.checkIfUsersExists(username)) {
+                if (!memory.checkIfUsersExists(username)) {
                     UserData user = new UserData(username, password, email);
                     memory.addUser(user);
                     String newAuthToken = makeAuthToken(username);
-                    return new ResponseObject(200, "{\"username\":\"" + username + "\", \"authToken\":\"" + newAuthToken + "\"}" );
-                }
-                else{
-                    return new ResponseObject(403,"""
-                        {"message": "Error: already taken"}
-                        """);
+                    return new ResponseObject(200, "{\"username\":\"" + username + "\", \"authToken\":\"" + newAuthToken + "\"}");
+                } else {
+                    return new ResponseObject(403, """
+                            {"message": "Error: already taken"}
+                            """);
                 }
             }
         }
-        return new ResponseObject(400,"""
-                        {"message": "Error: bad request"}
-                        """);
+        return new ResponseObject(400, """
+                {"message": "Error: bad request"}
+                """);
     }
 
     public ResponseObject loginUser(String body){

@@ -53,7 +53,8 @@ public class ChessPiece {
     }
 
 
-    private boolean generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange, int colChange, boolean repeat, boolean pawnMode) {
+    private boolean generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange,
+                                             int colChange, boolean repeat, boolean pawnMode) {
         int row = startRow + rowChange;
         int col = startCol + colChange;
         ChessPosition beingScanned;
@@ -86,10 +87,10 @@ public class ChessPiece {
                 if (encounter != null && encounter.getTeamColor() != this.color && (!pawnMode || colChange != 0)) {
                     //System.out.println("added a move for being an enemy");
                     if(pawnMode && (row == 1 || row == 8)){
-                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.QUEEN));
-                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.ROOK));
                         validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.BISHOP));
                         validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.KNIGHT));
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.QUEEN));
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.ROOK));
                     }
                     else{
                         validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));

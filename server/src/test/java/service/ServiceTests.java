@@ -174,7 +174,7 @@ public class ServiceTests {
 
     @Test
     public void positiveCreateGame() {
-        Service service = new Service();
+        Service service3 = new Service();
         String body = """
                 {
                   "username": "username",
@@ -182,7 +182,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        ResponseObject response = service3.registerUser(body);
         JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         body = """
@@ -190,14 +190,14 @@ public class ServiceTests {
                   "gameName": "gameName"
                 }
                 """;
-        response = service.createGame(authToken, body);
+        response = service3.createGame(authToken, body);
 
         assertEquals(200, response.responseCode);
     }
 
     @Test
     public void negativeCreateGame() {
-        Service service = new Service();
+        Service service5 = new Service();
         String body = """
                 {
                   "username": "username",
@@ -205,20 +205,20 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        service.registerUser(body);
+        service5.registerUser(body);
         body = """
                 {
                   "gameName": "gameName"
                 }
                 """;
-        ResponseObject response = service.createGame("bad auth token", body);
+        ResponseObject response = service5.createGame("bad auth token", body);
 
         assertEquals(401, response.responseCode);
     }
 
     @Test
     public void positiveGetGames() {
-        Service service = new Service();
+        Service service1 = new Service();
         String body = """
                 {
                   "username": "username",
@@ -226,7 +226,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        ResponseObject response = service1.registerUser(body);
         JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         body = """
@@ -234,9 +234,9 @@ public class ServiceTests {
                   "gameName": "gameName"
                 }
                 """;
-        service.createGame(authToken, body);
+        service1.createGame(authToken, body);
 
-        response = service.getGames(authToken);
+        response = service1.getGames(authToken);
 
 
         assertEquals(200, response.responseCode);
@@ -244,7 +244,7 @@ public class ServiceTests {
 
     @Test
     public void negativeGetGames() {
-        Service service = new Service();
+        Service service2 = new Service();
         String body = """
                 {
                   "username": "username",
@@ -252,7 +252,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        ResponseObject response = service2.registerUser(body);
         JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         body = """
@@ -260,9 +260,9 @@ public class ServiceTests {
                   "gameName": "gameName"
                 }
                 """;
-        service.createGame(authToken, body);
+        service2.createGame(authToken, body);
 
-        response = service.getGames("bad auth token");
+        response = service2.getGames("bad auth token");
 
 
         assertEquals(401, response.responseCode);
@@ -270,7 +270,7 @@ public class ServiceTests {
 
     @Test
     public void positiveJoinGame() {
-        Service service = new Service();
+        Service service4 = new Service();
         String body = """
                 {
                   "username": "username",
@@ -278,7 +278,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        ResponseObject response = service4.registerUser(body);
         JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         body = """
@@ -286,7 +286,7 @@ public class ServiceTests {
                   "gameName": "gameName"
                 }
                 """;
-        response = service.createGame(authToken, body);
+        response = service4.createGame(authToken, body);
         jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String gameID = jsonObject.get("gameID").getAsString();
         System.out.println(gameID);
@@ -298,7 +298,7 @@ public class ServiceTests {
                 + gameID + """
                          }
                 """;
-        response = service.joinGame(authToken, body);
+        response = service4.joinGame(authToken, body);
 
 
         assertEquals(200, response.responseCode);
@@ -307,7 +307,7 @@ public class ServiceTests {
 
     @Test
     public void negativeJoinGame() {
-        Service service = new Service();
+        Service service6 = new Service();
         String body = """
                 {
                   "username": "username",
@@ -315,7 +315,7 @@ public class ServiceTests {
                   "email": "email"
                 }
                 """;
-        ResponseObject response = service.registerUser(body);
+        ResponseObject response = service6.registerUser(body);
         JsonObject jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String authToken = jsonObject.get("authToken").getAsString();
         body = """
@@ -323,7 +323,7 @@ public class ServiceTests {
                   "gameName": "gameName"
                 }
                 """;
-        response = service.createGame(authToken, body);
+        response = service6.createGame(authToken, body);
         jsonObject = JsonParser.parseString(response.responseBody).getAsJsonObject();
         String gameID = jsonObject.get("gameID").getAsString();
         System.out.println(gameID);
@@ -336,7 +336,7 @@ public class ServiceTests {
                 + (gameID + 1) + """
                          }
                 """;
-        response = service.joinGame(authToken, body);
+        response = service6.joinGame(authToken, body);
 
 
         assertEquals(400, response.responseCode);
