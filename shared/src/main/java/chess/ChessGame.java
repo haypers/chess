@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 /**
  * For a class that can manage a chess game, making moves on a board
  * <p>
