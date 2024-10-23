@@ -53,7 +53,7 @@ public class ChessPiece {
     }
 
 
-    private void generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange, int colChange, boolean repeat, boolean pawnMode) {
+    private boolean generateMovesInDirection(ChessBoard board, int startRow, int startCol, int rowChange, int colChange, boolean repeat, boolean pawnMode) {
         int row = startRow + rowChange;
         int col = startCol + colChange;
         ChessPosition beingScanned;
@@ -61,9 +61,17 @@ public class ChessPiece {
         if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
             beingScanned = new ChessPosition(row, col);
             encounter = board.getPiece(beingScanned);
-            if (encounter == null) {
+            if (encounter == null && (!pawnMode || colChange == 0)) {
                 //System.out.println("added a move for being empty");
-                validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));  // Empty spot
+                if(pawnMode && (row == 1 || row == 8)){
+                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.QUEEN));
+                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.ROOK));
+                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.BISHOP));
+                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.KNIGHT));
+                }
+                else{
+                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));
+                }
                 if (repeat){
                     //System.out.println(rowChange + " == " + colChange);
                     if(rowChange >= 1){ rowChange++;}
@@ -73,13 +81,24 @@ public class ChessPiece {
                     //System.out.println(rowChange + " == " + colChange);
                     this.generateMovesInDirection(board, startRow, startCol, rowChange, colChange, true, pawnMode);
                 }
+                return true;
             } else {
-                if (encounter.getTeamColor() != this.color) {
+                if (encounter != null && encounter.getTeamColor() != this.color && (!pawnMode || colChange != 0)) {
                     //System.out.println("added a move for being an enemy");
-                    validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));  // Enemy piece
+                    if(pawnMode && (row == 1 || row == 8)){
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.QUEEN));
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.ROOK));
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.BISHOP));
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, PieceType.KNIGHT));
+                    }
+                    else{
+                        validMoves.add(new ChessMove(new ChessPosition(startRow, startCol), beingScanned, null));
+                    }
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 
@@ -144,183 +163,20 @@ public class ChessPiece {
             //System.out.println("I'm a Pawn");
 
             if(color == ChessGame.TeamColor.WHITE){
-                if(row+1 <= 8){
-                    beingScanned = new ChessPosition(row+1, col);
-                    encounter = board.getPiece(beingScanned);
-                    //System.out.println("testing at " + beingScanned.toString());
-                    if(encounter == null){
-                        if(row == 2){
-                            //System.out.println("clear at " + beingScanned.toString());
-                            newMove = new ChessMove(myPosition, beingScanned, null);
-                            validMoves.add(newMove);
-                            beingScanned = new ChessPosition(row+2, col);
-                            encounter = board.getPiece(beingScanned);
-                            //System.out.println("testing double forward " + beingScanned.toString());
-                            if(encounter == null) {
-                                //System.out.println("clear at double forward" + beingScanned.toString());
-                                newMove = new ChessMove(myPosition, beingScanned, null);
-                                validMoves.add(newMove);
-                            }
-
-                        }
-                        else if(row == 7){
-                            //System.out.println("clear to promote at " + beingScanned.toString());
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
-                            validMoves.add(newMove);
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
-                            validMoves.add(newMove);
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
-                            validMoves.add(newMove);
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
-                            validMoves.add(newMove);
-
-                        } else {
-                            //System.out.println("clear at " + beingScanned.toString());
-                            newMove = new ChessMove(myPosition, beingScanned, null);
-                            validMoves.add(newMove);
-                        }
-                    }
-
+                boolean notBlocked = this.generateMovesInDirection(board, row, col, 1, 0, false, true);
+                if(row == 2 && notBlocked) {
+                    this.generateMovesInDirection(board, row, col, 2, 0, false, true);
                 }
-                if(row+1 <= 8 && col+1 <= 8){
-                    beingScanned = new ChessPosition(row+1, col+1);
-                    encounter = board.getPiece(beingScanned);
-                    //System.out.println("testing at " + beingScanned.toString());
-                    if (encounter != null) {
-                        //System.out.println("found a piece");
-                        if (encounter.getTeamColor() != this.color) {
-                            if(row == 7) {
-                                //System.out.println("clear to promote at " + beingScanned.toString());
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
-                                validMoves.add(newMove);
-                            } else {
-                                //System.out.println("enemy");
-                                newMove = new ChessMove(myPosition, beingScanned, null);
-                                validMoves.add(newMove);
-                            }
-                        }
-                    }
-                }
-                if(row+1 <= 8 && col-1 >= 1){
-                    beingScanned = new ChessPosition(row+1, col-1);
-                    encounter = board.getPiece(beingScanned);
-                    //System.out.println("testing at " + beingScanned.toString());
-                    if (encounter != null) {
-                        //System.out.println("found a piece");
-                        if (encounter.getTeamColor() != this.color) {
-                            if(row == 7) {
-                                //System.out.println("clear to promote at " + beingScanned.toString());
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
-                                validMoves.add(newMove);
-                            } else {
-                                //System.out.println("enemy");
-                                newMove = new ChessMove(myPosition, beingScanned, null);
-                                validMoves.add(newMove);
-                            }
-                        }
-                    }
-                }
+                this.generateMovesInDirection(board, row, col, 1, 1, false, true);
+                this.generateMovesInDirection(board, row, col, 1, -1, false, true);
             }
             else{
-                if(row-1 >= 1){
-                    beingScanned = new ChessPosition(row-1, col);
-                    encounter = board.getPiece(beingScanned);
-                    //System.out.println("testing at " + beingScanned.toString());
-                    if(encounter == null){
-                        if(row == 7){
-                            //System.out.println("clear at " + beingScanned.toString());
-                            newMove = new ChessMove(myPosition, beingScanned, null);
-                            validMoves.add(newMove);
-                            beingScanned = new ChessPosition(row-2, col);
-                            encounter = board.getPiece(beingScanned);
-                            //System.out.println("testing double forward " + beingScanned.toString());
-                            if(encounter == null) {
-                                //System.out.println("clear at double forward" + beingScanned.toString());
-                                newMove = new ChessMove(myPosition, beingScanned, null);
-                                validMoves.add(newMove);
-                            }
-
-                        }
-                        else if(row == 2){
-                            //System.out.println("clear to promote at " + beingScanned.toString());
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
-                            validMoves.add(newMove);
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
-                            validMoves.add(newMove);
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
-                            validMoves.add(newMove);
-                            newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
-                            validMoves.add(newMove);
-
-                        } else {
-                            //System.out.println("clear at " + beingScanned.toString());
-                            newMove = new ChessMove(myPosition, beingScanned, null);
-                            validMoves.add(newMove);
-                        }
-                    }
+                boolean notBlocked = this.generateMovesInDirection(board, row, col, -1, 0, false, true);
+                if(row == 7 && notBlocked) {
+                    this.generateMovesInDirection(board, row, col, -2, 0, false, true);
                 }
-                if(row-1 >= 1 && col+1 <= 8){
-                    beingScanned = new ChessPosition(row-1, col+1);
-                    encounter = board.getPiece(beingScanned);
-                    //System.out.println("testing at " + beingScanned.toString());
-                    if (encounter != null) {
-                        //System.out.println("found a piece");
-                        if (encounter.getTeamColor() != this.color) {
-                            if(row == 2) {
-                                //System.out.println("clear to promote at " + beingScanned.toString());
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
-                                validMoves.add(newMove);
-                            } else {
-                                //System.out.println("enemy");
-                                newMove = new ChessMove(myPosition, beingScanned, null);
-                                validMoves.add(newMove);
-                            }
-                        }
-                    }
-                }
-                if(row-1 >= 1 && col-1 >= 1){
-                    beingScanned = new ChessPosition(row-1, col-1);
-                    encounter = board.getPiece(beingScanned);
-                    //System.out.println("testing at " + beingScanned.toString());
-                    if (encounter != null) {
-                        //System.out.println("found a piece");
-                        if (encounter.getTeamColor() != this.color) {
-                            if(row == 2) {
-                                //System.out.println("clear to promote at " + beingScanned.toString());
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.QUEEN);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.ROOK);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.BISHOP);
-                                validMoves.add(newMove);
-                                newMove = new ChessMove(myPosition, beingScanned, PieceType.KNIGHT);
-                                validMoves.add(newMove);
-                            } else {
-                                //System.out.println("enemy");
-                                newMove = new ChessMove(myPosition, beingScanned, null);
-                                validMoves.add(newMove);
-                            }
-                        }
-                    }
-                }
+                this.generateMovesInDirection(board, row, col, -1, 1, false, true);
+                this.generateMovesInDirection(board, row, col, -1, -1, false, true);
             }
 
         }
