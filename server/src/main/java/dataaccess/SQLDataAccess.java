@@ -72,7 +72,7 @@ public class SQLDataAccess implements DataAccess {
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int count = rs.getInt(1);
-                    return count > 0; // If count > 0, user exists
+                    return count > 0;
                 }
             }
         } catch (Exception e) {
