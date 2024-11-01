@@ -3,7 +3,9 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
+import dataaccess.SQLDataAccess;
 import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
@@ -22,7 +24,9 @@ public class Service {
 
     private final Random rand = new Random();
     Gson serializer = new Gson();
-    private final MemoryDataAccess memory = new MemoryDataAccess();
+    //private final MemoryDataAccess memory = new MemoryDataAccess();
+    private final DataAccess memory = new SQLDataAccess();
+
 
     public ResponseObject registerUser(String body){
         String username;

@@ -7,27 +7,27 @@ import java.util.ArrayList;
 
 public interface DataAccess {
 
-    boolean checkIfUsersExists(String userName) throws DataAccessException;
+    boolean checkIfUsersExists(String userName);
 
-    boolean checkIfGameExists(int gameID) throws DataAccessException;
+    boolean checkIfGameExists(int gameID) ;
 
-    boolean checkIfHashExists(String hash) throws DataAccessException;
+    boolean checkIfHashExists(String hash) ;
 
-    void addUser(UserData data) throws DataAccessException;
+    void addUser(UserData data) ;
 
-    boolean saveAuthToken(String userName, String authToken) throws DataAccessException;
+    boolean saveAuthToken(String userName, String authToken) ;
 
-    boolean saveGameData(int gameID, GameData gameData) throws DataAccessException;
+    boolean saveGameData(int gameID, GameData gameData);
 
-    ArrayList<PublicGameData> getAllGames() throws DataAccessException;
+    ArrayList<PublicGameData> getAllGames() ;
 
-    GameData getGame(int gameID) throws DataAccessException;
+    GameData getGame(int gameID) ;
 
-    boolean clearDatabase() throws DataAccessException;
+    boolean clearDatabase();
 
-    String getPassHash(String userName) throws DataAccessException;
+    String getPassHash(String userName) ;
 
-    String getUserFromToken(String authToken) throws DataAccessException;
+    String getUserFromToken(String authToken) ;
 
-    boolean logoutUser(String token) throws DataAccessException;
+    boolean logoutUser(String token) ;
 }
