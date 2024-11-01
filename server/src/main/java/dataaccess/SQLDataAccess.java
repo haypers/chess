@@ -43,16 +43,28 @@ public class SQLDataAccess implements DataAccess {
 
     private final String[] createStatements = {
             """
-                CREATE TABLE IF NOT EXISTS users (
-                  `id` int NOT NULL AUTO_INCREMENT,
-                  `username` varchar(256) NOT NULL,
-                  `password` TEXT NOT NULL,
-                  `email` TEXT,
-                  PRIMARY KEY (`id`),
-                  INDEX idx_username (`username`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        CREATE TABLE IF NOT EXISTS auth (
+          `id` int NOT NULL AUTO_INCREMENT,
+          `username` varchar(256) NOT NULL,
+          `password` TEXT NOT NULL,
+          `email` TEXT,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY unique_username (`username`),
+          INDEX idx_username (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    """,
             """
+        CREATE TABLE IF NOT EXISTS user_tokens (
+          `token` varchar(256) NOT NULL,
+          `username` varchar(256) NOT NULL,
+          PRIMARY KEY (`token`),
+          INDEX idx_username (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    """
     };
+
+
+
 
 
     public boolean checkIfUsersExists(String userName) {
