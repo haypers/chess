@@ -24,6 +24,8 @@ public class Service {
 
     private final Random rand = new Random();
     Gson serializer = new Gson();
+
+    //Chose what kind of storage type you will use
     //private final MemoryDataAccess memory = new MemoryDataAccess();
     private final DataAccess memory = new SQLDataAccess();
 
