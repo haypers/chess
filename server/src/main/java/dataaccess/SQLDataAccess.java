@@ -43,7 +43,7 @@ public class SQLDataAccess implements DataAccess {
 
     private final String[] createStatements = {
             """
-        CREATE TABLE IF NOT EXISTS auth (
+        CREATE TABLE IF NOT EXISTS users (
           `id` int NOT NULL AUTO_INCREMENT,
           `username` varchar(256) NOT NULL,
           `password` TEXT NOT NULL,
@@ -54,7 +54,7 @@ public class SQLDataAccess implements DataAccess {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
     """,
             """
-        CREATE TABLE IF NOT EXISTS user_tokens (
+        CREATE TABLE IF NOT EXISTS auth (
           `token` varchar(256) NOT NULL,
           `username` varchar(256) NOT NULL,
           PRIMARY KEY (`token`),
@@ -62,10 +62,6 @@ public class SQLDataAccess implements DataAccess {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
     """
     };
-
-
-
-
 
     public boolean checkIfUsersExists(String userName) {
         String query = "SELECT COUNT(*) FROM users WHERE username = ?";
@@ -90,6 +86,20 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean checkIfHashExists(String hash) {
+        String query = "SELECT COUNT(*) FROM auth WHERE token = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+            ps.setString(1, hash);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking if auth token exists: " + e.getMessage());
+        }
         return false;
     }
 
@@ -106,7 +116,15 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean saveAuthToken(String userName, String authToken) {
-        return false;
+        String statement = "INSERT INTO auth (token, username) VALUES (?, ?)";
+        try {
+            executeUpdate(statement, authToken, userName);
+            return true;
+        } catch (DataAccessException e) {
+            System.out.println("DataAccess Error!!! Unable to save token");
+            System.out.println(e);
+            return false;
+        }
     }
 
     public boolean saveGameData(int gameID, GameData gameData)  {
