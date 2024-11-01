@@ -54,8 +54,22 @@ public class SQLDataAccess implements DataAccess {
             """
     };
 
-    @Override
+
     public boolean checkIfUsersExists(String userName) {
+        String query = "SELECT COUNT(*) FROM users WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+            ps.setString(1, userName);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0; // If count > 0, user exists
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking if user exists: " + e.getMessage());
+        }
         return false;
     }
 
