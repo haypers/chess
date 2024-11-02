@@ -10,6 +10,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.ResponseObject;
 
 import java.util.ArrayList;
@@ -75,25 +76,21 @@ public class Service {
 
                 if (memory.checkIfUsersExists(username)){
                     String oldHash = memory.getPassHash(username);
-                    String currentHash;
                     try {
-                        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                        byte[] hashBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-                        currentHash = Base64.getEncoder().encodeToString(hashBytes);
+                        if(BCrypt.checkpw(password, oldHash)){
+                            String newAuthToken = makeAuthToken(username);
+                            return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}");
+                        }
+                        else{
+                            return new ResponseObject(401,"""
+                        { "message": "Error: unauthorized" }
+                        """);
+                        }
                     }
                     catch(Exception e){
                         System.out.println("error hashing login password");
                         return new ResponseObject(500,"""
                         { "message": "Error: hashing algorithm failed" }
-                        """);
-                    }
-                    if (Objects.equals(oldHash, currentHash)){
-                        String newAuthToken = makeAuthToken(username);
-                        return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}");
-                    }
-                    else{
-                        return new ResponseObject(401,"""
-                        { "message": "Error: unauthorized" }
                         """);
                     }
                 }

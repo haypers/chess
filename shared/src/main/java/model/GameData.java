@@ -1,6 +1,7 @@
 package model;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 
 public record GameData(Integer gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
     @Override
@@ -26,5 +27,12 @@ public record GameData(Integer gameID, String whiteUsername, String blackUsernam
     @Override
     public ChessGame game() {
         return game;
+    }
+
+    @Override
+    public String toString(){
+        Gson serializer = new Gson();
+        var json = serializer.toJson(this);
+        return json;
     }
 }

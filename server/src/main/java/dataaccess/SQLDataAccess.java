@@ -5,6 +5,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -48,6 +49,13 @@ public class SQLDataAccess implements DataAccess {
           PRIMARY KEY (`token`),
           INDEX idx_username (`username`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    """,
+                    """
+        CREATE TABLE IF NOT EXISTS games (
+          `id` int NOT NULL,
+          `gameData` TEXT,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
     """
             };
             for (var statement : createStatements) {
@@ -55,6 +63,7 @@ public class SQLDataAccess implements DataAccess {
                     preparedStatement.executeUpdate();
                 }
             }
+            clearAuthTable();
         }
         catch (Exception e){
             System.out.println("Sever Startup Failure!");
@@ -65,10 +74,10 @@ public class SQLDataAccess implements DataAccess {
     public boolean checkIfUsersExists(String userName) {
         String query = "SELECT COUNT(*) FROM users WHERE username = ?";
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(query)) {
-            ps.setString(1, userName);
+             var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setString(1, userName);
 
-            try (var rs = ps.executeQuery()) {
+            try (var rs = prepStatement.executeQuery()) {
                 if (rs.next()) {
                     int count = rs.getInt(1);
                     return count > 0;
@@ -87,10 +96,10 @@ public class SQLDataAccess implements DataAccess {
     public boolean checkIfHashExists(String hash) {
         String query = "SELECT COUNT(*) FROM auth WHERE token = ?";
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(query)) {
-            ps.setString(1, hash);
+             var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setString(1, hash);
 
-            try (var rs = ps.executeQuery()) {
+            try (var rs = prepStatement.executeQuery()) {
                 if (rs.next()) {
                     int count = rs.getInt(1);
                     return count > 0;
@@ -106,7 +115,8 @@ public class SQLDataAccess implements DataAccess {
         String statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         int id = 0;
         try {
-            id = executeUpdate(statement, data.username(), data.getPassword(), data.email());
+            String hashedPassword = BCrypt.hashpw(data.password(), BCrypt.gensalt());
+            id = executeUpdate(statement, data.username(), hashedPassword, data.email());
             System.out.println("new user: " + id);
         } catch (DataAccessException e) {
             System.out.println("DataAccess Error! SQL error");
@@ -115,9 +125,26 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean saveAuthToken(String userName, String authToken) {
-        String statement = "INSERT INTO auth (token, username) VALUES (?, ?)";
+        String lookForOldToken = "SELECT COUNT(*) FROM auth WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var prepStatement = conn.prepareStatement(lookForOldToken)) {
+            prepStatement.setString(1, userName);
+            try (var rs = prepStatement.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    String deleteQuery = "DELETE FROM auth WHERE username = ?";
+                    try (var deletePrepStatement = conn.prepareStatement(deleteQuery)) {
+                        deletePrepStatement.setString(1, userName);
+                        deletePrepStatement.executeUpdate();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking for existing auth token: " + e.getMessage());
+            return false;
+        }
+        String insertQuery = "INSERT INTO auth (token, username) VALUES (?, ?)";
         try {
-            executeUpdate(statement, authToken, userName);
+            executeUpdate(insertQuery, authToken, userName);
             return true;
         } catch (DataAccessException e) {
             System.out.println("DataAccess Error!!! Unable to save token");
@@ -127,7 +154,32 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean saveGameData(int gameID, GameData gameData)  {
-        return false;
+        String lookForOldGame = "SELECT COUNT(*) FROM games WHERE id = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var prepStatement = conn.prepareStatement(lookForOldGame)) {
+            prepStatement.setInt(1, gameID);
+            try (var rs = prepStatement.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    String deleteQuery = "DELETE FROM games WHERE id = ?";
+                    try (var deletePrepStatement = conn.prepareStatement(deleteQuery)) {
+                        deletePrepStatement.setInt(1, gameID);
+                        deletePrepStatement.executeUpdate();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking for existing game data: " + e.getMessage());
+            return false;
+        }
+        String insertQuery = "INSERT INTO games (id, gameData) VALUES (?, ?)";
+        try {
+            executeUpdate(insertQuery, gameID, gameData.toString());
+            return true;
+        } catch (DataAccessException e) {
+            System.out.println("DataAccess Error!!! Unable to save game");
+            System.out.println(e);
+            return false;
+        }
     }
 
     public ArrayList<PublicGameData> getAllGames() {
@@ -138,6 +190,19 @@ public class SQLDataAccess implements DataAccess {
         return null;
     }
 
+    public boolean clearAuthTable() {
+        String statement = "DELETE FROM auth";
+        try {
+            int rowsAffected = executeUpdate(statement);
+            return true;
+
+        } catch (DataAccessException e) {
+            System.out.println("DataAccess Error! Unable to clear auth table");
+            System.out.println(e);
+            return false;
+        }
+    }
+
     public boolean clearDatabase() {
         return false;
     }
@@ -145,10 +210,10 @@ public class SQLDataAccess implements DataAccess {
     public String getPassHash(String userName) {
         String query = "SELECT password FROM users WHERE username = ?";
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(query)) {
-            ps.setString(1, userName);
+             var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setString(1, userName);
 
-            try (var rs = ps.executeQuery()) {
+            try (var rs = prepStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("password");
                 }
@@ -162,10 +227,10 @@ public class SQLDataAccess implements DataAccess {
     public String getUserFromToken(String authToken) {
         String query = "SELECT username FROM auth WHERE token = ?";
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(query)) {
-            ps.setString(1, authToken);
+             var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setString(1, authToken);
 
-            try (var rs = ps.executeQuery()) {
+            try (var rs = prepStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("username");
                 }
@@ -177,30 +242,38 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean logoutUser(String token)  {
-        return false;
+        String statement = "DELETE FROM auth WHERE token = ?";
+        try {
+            executeUpdate(statement, token);
+            return true;
+        } catch (DataAccessException e) {
+            System.out.println("DataAccess Error! Unable to logout user");
+            System.out.println(e);
+            return false;
+        }
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+            try (var prepStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
                     if (param instanceof String p){
-                        ps.setString(i + 1, p);
+                        prepStatement.setString(i + 1, p);
                     }
                     else if (param instanceof Integer p ){
-                        ps.setInt(i + 1, p);
+                        prepStatement.setInt(i + 1, p);
                     }
                     else if (param instanceof UserData u){
-                        ps.setString(i + 1, u.toString());
+                        prepStatement.setString(i + 1, u.toString());
                     }
                     else if (param == null){
-                        ps.setNull(i + 1, NULL);
+                        prepStatement.setNull(i + 1, NULL);
                     }
                 }
-                ps.executeUpdate();
+                prepStatement.executeUpdate();
 
-                var rs = ps.getGeneratedKeys();
+                var rs = prepStatement.getGeneratedKeys();
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
