@@ -77,9 +77,15 @@ public class Service {
                 if (memory.checkIfUsersExists(username)){
                     String oldHash = memory.getPassHash(username);
                     try {
+                        /*String token = memory.getTokenFromUser(username);
+                        if(token.isEmpty()) {
+                            token = makeAuthToken(username);
+                        }
+                        token = makeAuthToken(username);*/
+                        String token = makeAuthToken(username);
+                        System.out.println("new login auth token: " + token);
                         if(BCrypt.checkpw(password, oldHash)){
-                            String newAuthToken = makeAuthToken(username);
-                            return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ newAuthToken +"\"}");
+                            return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ token +"\"}");
                         }
                         else{
                             return new ResponseObject(401,"""

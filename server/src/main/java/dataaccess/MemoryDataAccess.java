@@ -88,5 +88,14 @@ public class MemoryDataAccess implements DataAccess{
             return false;
         }
     }
-
+    public String getTokenFromUser(String userName){
+        if (authAccess.containsValue(userName)) {
+            for (Map.Entry<String, String> entry : authAccess.entrySet()) {
+                if (entry.getValue().equals(userName)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return "";
+    }
 }

@@ -139,23 +139,6 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean saveAuthToken(String userName, String authToken) {
-        String lookForOldToken = "SELECT COUNT(*) FROM auth WHERE username = ?";
-        try (var conn = DatabaseManager.getConnection();
-             var prepStatement = conn.prepareStatement(lookForOldToken)) {
-            prepStatement.setString(1, userName);
-            try (var rs = prepStatement.executeQuery()) {
-                if (rs.next() && rs.getInt(1) > 0) {
-                    String deleteQuery = "DELETE FROM auth WHERE username = ?";
-                    try (var deletePrepStatement = conn.prepareStatement(deleteQuery)) {
-                        deletePrepStatement.setString(1, userName);
-                        deletePrepStatement.executeUpdate();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error checking for existing auth token: " + e.getMessage());
-            return false;
-        }
         String insertQuery = "INSERT INTO auth (token, username) VALUES (?, ?)";
         try {
             executeUpdate(insertQuery, authToken, userName);
@@ -295,6 +278,23 @@ public class SQLDataAccess implements DataAccess {
             try (var rs = prepStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("username");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving user from token: " + e.getMessage());
+        }
+        return "";
+    }
+
+    public String getTokenFromUser(String userName){
+        String query = "SELECT token FROM auth WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setString(1, userName);
+
+            try (var rs = prepStatement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("token");
                 }
             }
         } catch (Exception e) {
