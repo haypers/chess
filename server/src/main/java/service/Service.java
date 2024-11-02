@@ -259,11 +259,13 @@ public class Service {
                         teamColor = ChessGame.TeamColor.BLACK;
                     }
                     else{
+                        System.out.println("error1");
                         return new ResponseObject(400,"""
                         { "message": "Error: bad request" }
                         """);
                     }
                     if (!memory.checkIfGameExists(gameID)) {
+                        System.out.println("error2");
                         return new ResponseObject(400,"""
                         { "message": "Error: bad request" }
                         """);
@@ -283,6 +285,7 @@ public class Service {
                             """);
                     }
                 }
+                System.out.println("error3");
                 return new ResponseObject(400,"""
                 { "message": "Error: bad request" }
                 """);

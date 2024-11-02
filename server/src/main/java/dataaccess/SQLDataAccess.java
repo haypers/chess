@@ -90,13 +90,27 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public boolean checkIfGameExists(int gameID) {
+        String query = "SELECT COUNT(*) FROM games WHERE id = ?";
+        try (var conn = DatabaseManager.getConnection();
+            var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setInt(1, gameID);
+
+            try (var rs = prepStatement.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return (count > 0);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error checking if game exists: " + e.getMessage());
+        }
         return false;
     }
 
     public boolean checkIfHashExists(String hash) {
         String query = "SELECT COUNT(*) FROM auth WHERE token = ?";
         try (var conn = DatabaseManager.getConnection();
-             var prepStatement = conn.prepareStatement(query)) {
+            var prepStatement = conn.prepareStatement(query)) {
             prepStatement.setString(1, hash);
 
             try (var rs = prepStatement.executeQuery()) {
