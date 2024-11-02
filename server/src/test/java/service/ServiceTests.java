@@ -13,6 +13,7 @@ public class ServiceTests {
     @Test
     public void positiveRegister() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -26,6 +27,7 @@ public class ServiceTests {
     @Test
     public void negativeRegister(){
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -42,6 +44,7 @@ public class ServiceTests {
     @Test
     public void positiveLogin() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -64,6 +67,7 @@ public class ServiceTests {
     @Test
     public void negativeLogin() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -86,6 +90,7 @@ public class ServiceTests {
     @Test
     public void positiveHashCode() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -101,6 +106,7 @@ public class ServiceTests {
     @Test
     public void negativeHashCode() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -117,6 +123,7 @@ public class ServiceTests {
     @Test
     public void clearDatabase() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -140,6 +147,7 @@ public class ServiceTests {
     @Test
     public void positiveLogout() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -158,6 +166,7 @@ public class ServiceTests {
     @Test
     public void negativeLogout() {
         Service service = new Service();
+        service.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -175,6 +184,7 @@ public class ServiceTests {
     @Test
     public void positiveCreateGame() {
         Service service3 = new Service();
+        service3.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -198,6 +208,7 @@ public class ServiceTests {
     @Test
     public void negativeCreateGame() {
         Service service5 = new Service();
+        service5.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -219,6 +230,7 @@ public class ServiceTests {
     @Test
     public void positiveGetGames() {
         Service service1 = new Service();
+        service1.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -245,6 +257,7 @@ public class ServiceTests {
     @Test
     public void negativeGetGames() {
         Service service2 = new Service();
+        service2.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -271,6 +284,7 @@ public class ServiceTests {
     @Test
     public void positiveJoinGame() {
         Service service4 = new Service();
+        service4.clearDatabase();
         String body = """
                 {
                   "username": "username",
@@ -308,6 +322,7 @@ public class ServiceTests {
     @Test
     public void negativeJoinGame() {
         Service service6 = new Service();
+        service6.clearDatabase();
         String body = """
                 {
                   "username": "username",
