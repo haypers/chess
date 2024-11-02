@@ -184,7 +184,7 @@ public class SQLDataAccess implements DataAccess {
 
     public ArrayList<PublicGameData> getAllGames() {
         ArrayList<PublicGameData> gamesList = new ArrayList<>();
-        String query = "SELECT id, gamedata FROM games";
+        String query = "SELECT id, gameData FROM games";
 
         try (var conn = DatabaseManager.getConnection();
              var prepStatement = conn.prepareStatement(query);
@@ -192,7 +192,7 @@ public class SQLDataAccess implements DataAccess {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String gameData = rs.getString("gamedata");
+                String gameData = rs.getString("gameData");
                 Gson deserializer = new Gson();
                 GameData data = deserializer.fromJson(gameData, GameData.class);
                 System.out.println(data.toString());
@@ -207,24 +207,52 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public GameData getGame(int gameID) {
+        String query = "SELECT id, gameData FROM games WHERE id = ?";
+        GameData gameData = null;
+
+        try (var conn = DatabaseManager.getConnection();
+             var prepStatement = conn.prepareStatement(query)) {
+            prepStatement.setInt(1, gameID);
+
+            try (var rs = prepStatement.executeQuery()) {
+                if (rs.next()) {
+                    String gameDataJson = rs.getString("gameData");
+                    Gson deserializer = new Gson();
+                    gameData = deserializer.fromJson(gameDataJson, GameData.class);
+                    return gameData;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving game with ID " + gameID + ": " + e.getMessage());
+        }
         return null;
     }
 
     public boolean clearAuthTable() {
         String statement = "DELETE FROM auth";
         try {
-            int rowsAffected = executeUpdate(statement);
+            executeUpdate(statement);
             return true;
 
         } catch (DataAccessException e) {
-            System.out.println("DataAccess Error! Unable to clear auth table");
+            System.out.println("Clear auth table Error! Unable to clear auth table");
             System.out.println(e);
             return false;
         }
     }
 
     public boolean clearDatabase() {
-        return false;
+        try {
+            executeUpdate("DELETE FROM auth");
+            executeUpdate("DELETE FROM users");
+            executeUpdate("DELETE FROM games");
+            return true;
+
+        } catch (DataAccessException e) {
+            System.out.println("clear data Error! Unable to clear all tables");
+            System.out.println(e);
+            return false;
+        }
     }
 
     public String getPassHash(String userName) {
