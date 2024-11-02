@@ -71,41 +71,39 @@ public class Service {
             username = jsonObject.get("username").getAsString();
             password = jsonObject.get("password").getAsString();
 
-            if(!username.isEmpty() && !password.isEmpty()){
-                System.out.println("Good credentials sent for login");
-
-                if (memory.checkIfUsersExists(username)){
-                    String oldHash = memory.getPassHash(username);
-                    try {
-                        /*String token = memory.getTokenFromUser(username);
-                        if(token.isEmpty()) {
-                            token = makeAuthToken(username);
-                        }
-                        token = makeAuthToken(username);*/
-                        String token = makeAuthToken(username);
-                        System.out.println("new login auth token: " + token);
-                        if(BCrypt.checkpw(password, oldHash)){
-                            return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ token +"\"}");
-                        }
-                        else{
-                            return new ResponseObject(401,"""
-                        { "message": "Error: unauthorized" }
-                        """);
-                        }
+            if(username.isEmpty() || password.isEmpty()) {
+                System.out.println("bad credentials sent for login");
+                return new ResponseObject(401,"""
+                    { "message": "Error: unauthorized" }
+                    """);
+            }
+            if (memory.checkIfUsersExists(username)){
+                String oldHash = memory.getPassHash(username);
+                try {
+                    String token = makeAuthToken(username);
+                    System.out.println("new login auth token: " + token);
+                    if(BCrypt.checkpw(password, oldHash)){
+                        return new ResponseObject(200,"{\"username\":\""+ username + "\", \"authToken\":\""+ token +"\"}");
                     }
-                    catch(Exception e){
-                        System.out.println("error hashing login password");
-                        return new ResponseObject(500,"""
-                        { "message": "Error: hashing algorithm failed" }
-                        """);
+                    else{
+                        return new ResponseObject(401,"""
+                    { "message": "Error: unauthorized" }
+                    """);
                     }
                 }
-                else{
-                    return new ResponseObject(401,"""
-                        { "message": "Error: unauthorized" }
-                        """);
+                catch(Exception e){
+                    System.out.println("error hashing login password");
+                    return new ResponseObject(500,"""
+                    { "message": "Error: hashing algorithm failed" }
+                    """);
                 }
             }
+            else{
+                return new ResponseObject(401,"""
+                    { "message": "Error: unauthorized" }
+                    """);
+            }
+
         }
         return new ResponseObject(401,"""
             { "message": "Error: unauthorized" }

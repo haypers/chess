@@ -30,6 +30,4 @@ public interface DataAccess {
     String getUserFromToken(String authToken) ;
 
     boolean logoutUser(String token) ;
-
-    String getTokenFromUser(String userName);
 }
