@@ -29,6 +29,27 @@ public class SQLDataAccess implements DataAccess {
 
         }
         try (var conn = DatabaseManager.getConnection()) {
+            String[] createStatements = {
+        """
+        CREATE TABLE IF NOT EXISTS users (
+          `id` int NOT NULL AUTO_INCREMENT,
+          `username` varchar(256) NOT NULL,
+          `password` TEXT NOT NULL,
+          `email` TEXT,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY unique_username (`username`),
+          INDEX idx_username (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    """,
+        """
+        CREATE TABLE IF NOT EXISTS auth (
+          `token` varchar(256) NOT NULL,
+          `username` varchar(256) NOT NULL,
+          PRIMARY KEY (`token`),
+          INDEX idx_username (`username`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    """
+            };
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
@@ -40,28 +61,6 @@ public class SQLDataAccess implements DataAccess {
             System.out.println(e);
         }
     }
-
-    private final String[] createStatements = {
-            """
-        CREATE TABLE IF NOT EXISTS users (
-          `id` int NOT NULL AUTO_INCREMENT,
-          `username` varchar(256) NOT NULL,
-          `password` TEXT NOT NULL,
-          `email` TEXT,
-          PRIMARY KEY (`id`),
-          UNIQUE KEY unique_username (`username`),
-          INDEX idx_username (`username`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-    """,
-            """
-        CREATE TABLE IF NOT EXISTS auth (
-          `token` varchar(256) NOT NULL,
-          `username` varchar(256) NOT NULL,
-          PRIMARY KEY (`token`),
-          INDEX idx_username (`username`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-    """
-    };
 
     public boolean checkIfUsersExists(String userName) {
         String query = "SELECT COUNT(*) FROM users WHERE username = ?";
@@ -144,10 +143,36 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public String getPassHash(String userName) {
+        String query = "SELECT password FROM users WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+            ps.setString(1, userName);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving password hash: " + e.getMessage());
+        }
         return "";
     }
 
     public String getUserFromToken(String authToken) {
+        String query = "SELECT username FROM auth WHERE token = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+            ps.setString(1, authToken);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("username");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving user from token: " + e.getMessage());
+        }
         return "";
     }
 
