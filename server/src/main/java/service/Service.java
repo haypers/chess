@@ -188,18 +188,24 @@ public class Service {
 
     public ResponseObject createGame(String token, String body){
         if(!token.isEmpty()){
+            System.out.println("checkpoint1");
+            System.out.println(token);
             String userName = memory.getUserFromToken(token);
+            System.out.println(userName);
             if (!userName.isEmpty()){
+                System.out.println("checkpoint2");
                 //System.out.println("found user matched to token");
                 String gameName;
                 JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                 if (!jsonObject.has("gameName")) {
+                    System.out.println("checkpoint3");
                     return new ResponseObject(400,"""
                     { "message": "Error: bad request" }
                     """);
                 }
                 gameName = jsonObject.get("gameName").getAsString();
                 if (!gameName.isEmpty()) {
+                    System.out.println("checkpoint4");
                     int gameID = rand.nextInt(100000);
                     while(memory.checkIfGameExists(gameID)){
                         gameID = rand.nextInt(100000);
@@ -214,6 +220,7 @@ public class Service {
                             """);
                     }
                 }
+                System.out.println("checkpoint5");
             }
         }
         return new ResponseObject(401,"""
@@ -259,13 +266,13 @@ public class Service {
                         teamColor = ChessGame.TeamColor.BLACK;
                     }
                     else{
-                        System.out.println("error1");
+                        //System.out.println("error1");
                         return new ResponseObject(400,"""
                         { "message": "Error: bad request" }
                         """);
                     }
                     if (!memory.checkIfGameExists(gameID)) {
-                        System.out.println("error2");
+                        //System.out.println("error2");
                         return new ResponseObject(400,"""
                         { "message": "Error: bad request" }
                         """);
@@ -285,7 +292,7 @@ public class Service {
                             """);
                     }
                 }
-                System.out.println("error3");
+                //System.out.println("error3");
                 return new ResponseObject(400,"""
                 { "message": "Error: bad request" }
                 """);
