@@ -183,7 +183,27 @@ public class SQLDataAccess implements DataAccess {
     }
 
     public ArrayList<PublicGameData> getAllGames() {
-        return null;
+        ArrayList<PublicGameData> gamesList = new ArrayList<>();
+        String query = "SELECT id, gamedata FROM games";
+
+        try (var conn = DatabaseManager.getConnection();
+             var prepStatement = conn.prepareStatement(query);
+             var rs = prepStatement.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String gameData = rs.getString("gamedata");
+                Gson deserializer = new Gson();
+                GameData data = deserializer.fromJson(gameData, GameData.class);
+                System.out.println(data.toString());
+
+                gamesList.add(new PublicGameData(data));
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving all games: " + e.getMessage());
+        }
+
+        return gamesList;
     }
 
     public GameData getGame(int gameID) {
