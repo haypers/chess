@@ -11,12 +11,13 @@ public class ConnectRepl {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
+            System.out.print("♕>  ");
             String line = scanner.nextLine();
 
             try {
                 //result = client.eval(line);
                 result = line;
-                System.out.print(result);
+                System.out.println(result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
