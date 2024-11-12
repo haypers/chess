@@ -1,9 +1,13 @@
 package ui;
 
+import exception.ResponseException;
+
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
 import static java.awt.Color.BLUE;
+import static ui.EscapeSequences.*;
 
 public class ConnectRepl {
 
@@ -14,13 +18,13 @@ public class ConnectRepl {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
-            System.out.print("♕ > ");
+            System.out.print(RESET_TEXT_COLOR + "♕ > ");
             String line = scanner.nextLine();
 
             try {
                 result = this.eval(line);
                 //result = line;
-                System.out.println("\u001b[34m" + result);
+                System.out.println(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -29,13 +33,26 @@ public class ConnectRepl {
     }
 
     public String eval(String input){
-        input = input.trim();
-        String command = input.substring(0);
-        if (Objects.equals(input, "test")){
-            return "nice!";
-        }
-        else{
-            return command;
+        input = input.trim().toLowerCase();
+        try {
+            var tokens = input.split(" ");
+            if(input.isEmpty()){
+                return "no command";
+            }
+            String cmd = tokens[0];
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                //case "signin" -> signIn(params);
+                //case "rescue" -> rescuePet(params);
+                //case "list" -> listPets();
+                //case "signout" -> signOut();
+                //case "adopt" -> adoptPet(params);
+                //case "adoptall" -> adoptAllPets();
+                case "test" -> "nice!";
+                default -> "Unknown Command";
+            };
+        } catch (Throwable e) {
+            return e.getMessage();
         }
     }
 
