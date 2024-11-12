@@ -29,11 +29,13 @@ public class ConnectRepl {
     }
 
     public String eval(String input){
+        input = input.trim();
+        String command = input.substring(0);
         if (Objects.equals(input, "test")){
             return "nice!";
         }
         else{
-            return input;
+            return command;
         }
     }
 
