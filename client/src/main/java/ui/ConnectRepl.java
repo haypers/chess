@@ -42,7 +42,7 @@ public class ConnectRepl {
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                //case "signin" -> signIn(params);
+                case "signup" -> signUp(params);
                 //case "rescue" -> rescuePet(params);
                 //case "list" -> listPets();
                 //case "signout" -> signOut();
@@ -51,9 +51,20 @@ public class ConnectRepl {
                 case "test" -> "nice!";
                 default -> "Unknown Command";
             };
-        } catch (Throwable e) {
+        } catch (ResponseException e) {
             return e.getMessage();
         }
+    }
+
+    public String signUp(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            //state = State.SIGNEDIN;
+            String visitorName = String.join("-", params); //need to change, keep params apart.
+            //ws = new WebSocketFacade(serverUrl, notificationHandler);
+            //ws.enterPetShop(visitorName);
+            return String.format("You signed in as %s.", visitorName);
+        }
+        throw new ResponseException(400, "Expected: <yourname>");
     }
 
 
