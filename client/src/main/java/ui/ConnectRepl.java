@@ -6,14 +6,22 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static java.awt.Color.BLUE;
 import static ui.EscapeSequences.*;
 
 public class ConnectRepl {
 
 //5: help, register(http), login(http), quit
 //6:help create game(http), list games(http), join game (http then websocket), join observer (http then websocket)
-        //help, redraw, leave (remove yourself as a player or observer, someone takes your place), make move(web socket), resign (end game, lose), highlight.
+    //help, redraw, leave (remove yourself as a player or observer, someone takes your place), make move(web socket), resign (end game, lose), highlight.
+
+    String serverURL = null;
+    ServerFacade sf = null;
+
+
+    public ConnectRepl(String serverUrl){
+        serverURL = serverUrl;
+    }
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -42,7 +50,7 @@ public class ConnectRepl {
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "signup" -> signUp(params);
+                case "signup" -> registerUser(params);
                 //case "rescue" -> rescuePet(params);
                 //case "list" -> listPets();
                 //case "signout" -> signOut();
@@ -56,10 +64,11 @@ public class ConnectRepl {
         }
     }
 
-    public String signUp(String... params) throws ResponseException {
+    public String registerUser(String... params) throws ResponseException {
         if (params.length >= 1) {
             //state = State.SIGNEDIN;
             String visitorName = String.join("-", params); //need to change, keep params apart.
+            sf = new ServerFacade(serverURL);
             //ws = new WebSocketFacade(serverUrl, notificationHandler);
             //ws.enterPetShop(visitorName);
             return String.format("You signed in as %s.", visitorName);

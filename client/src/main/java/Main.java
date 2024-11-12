@@ -12,7 +12,7 @@ public class Main {
             serverUrl = args[0];
         }
 
-        new ConnectRepl().run();
+        new ConnectRepl(serverUrl).run();
     }
 
 }
