@@ -15,8 +15,10 @@ public class ConnectRepl {
 //6:help create game(http), list games(http), join game (http then websocket), join observer (http then websocket)
     //help, redraw, leave (remove yourself as a player or observer, someone takes your place), make move(web socket), resign (end game, lose), highlight.
 
-    String serverURL = null;
-    ServerFacade sf = null;
+    private String serverURL = null;
+    private ServerFacade sf = null;
+    private String username = null;
+    private String authToken = null;
 
 
     public ConnectRepl(String serverUrl){
@@ -51,10 +53,9 @@ public class ConnectRepl {
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "signup" -> registerUser(params);
-                case "s" -> registerUser(params);
-                case "login" -> loginUser(params);
-                case "h" -> RESET_TEXT_COLOR + """
+                case "signup", "s" -> registerUser(params);
+                case "login", "l" -> loginUser(params);
+                case "help", "h" -> RESET_TEXT_COLOR + """
                         
                         You are not logged in. Use the commands below to continue.
                         
@@ -62,16 +63,6 @@ public class ConnectRepl {
                         signup / s <username> <password> <email> -- Register a new user
                         login  / l <username> <password>         -- Log in to your account
                         quit   / q                               -- End this chess shession
-                        
-                        """;
-                case "help" -> RESET_TEXT_COLOR + """
-                        
-                        You are not logged in. Use the commands below to continue.
-                        
-                        help   / h                               -- Print this key
-                        signup / s <username> <password> <email> -- Register a new user
-                        login  / l <username> <password>         -- Log in to your account
-                        quit   / q                               -- End this chess session
                         
                         """;
                 default -> "Unknown Command";
@@ -90,11 +81,11 @@ public class ConnectRepl {
             json.addProperty("password", params[1]);
             json.addProperty("email", params[2]);
             ServerResponseObject reply = sf.registerUser(json);
-            String authToken = reply.authToken();
-            String username = reply.username();
+            authToken = reply.authToken();
+            username = reply.username();
 
 
-            return username + " is now authorized with code " + authToken;
+            return "You are now signed in as: " + username;
         }
         else{
             return "Expected: signup <username> <password> <email>";
@@ -107,9 +98,9 @@ public class ConnectRepl {
             json.addProperty("username", params[0]);
             json.addProperty("password", params[1]);
             ServerResponseObject reply = sf.loginUser(json);
-            String authToken = reply.authToken();
-            String username = reply.username();
-            return username + " is now authorized with code " + authToken;
+            authToken = reply.authToken();
+            username = reply.username();
+            return "You are now signed in as: " + username;
         }
         else{
             return "Expected: login <username> <password> <email>";
