@@ -1,4 +1,4 @@
-package server;
+package model;
 
 public class ResponseObject {
     public Integer responseCode;

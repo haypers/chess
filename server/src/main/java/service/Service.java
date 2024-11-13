@@ -4,14 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
 import dataaccess.SQLDataAccess;
 import exception.ResponseException;
 import model.GameData;
 import model.PublicGameData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import server.ResponseObject;
+import model.ResponseObject;
 
 import java.util.ArrayList;
 import java.util.Random; //for making game IDs
@@ -19,7 +18,7 @@ import java.nio.charset.StandardCharsets; //for hashing passwords
 import java.security.MessageDigest; //for hashing passwords
 import java.time.Instant; //for making authentication tokens
 import java.util.Base64; //for hashing passwords and tokens
-import java.util.Objects;
+
 
 public class Service {
 

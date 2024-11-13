@@ -2,7 +2,7 @@ package service;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.Test;
-import server.ResponseObject;
+import model.ResponseObject;
 
 import static org.junit.jupiter.api.Assertions.*;
 

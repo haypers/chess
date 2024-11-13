@@ -1,5 +1,6 @@
 package server;
 
+import model.ResponseObject;
 import spark.*;
 import service.Service;
 

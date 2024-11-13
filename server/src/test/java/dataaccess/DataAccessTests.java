@@ -1,13 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Test;
-import server.ResponseObject;
-import service.Service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
