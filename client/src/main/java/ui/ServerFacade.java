@@ -19,7 +19,8 @@ public class ServerFacade {
     public String registerUser(JsonObject jsonString) throws ResponseException {
         System.out.println("made it to registerUser facade");
         var path = "/user";
-        return this.makeRequest("POST", path, jsonString, String.class);
+        ServerResponseObject reply = this.makeRequest("POST", path, jsonString, ServerResponseObject.class);
+        return reply.authToken();
     }
 
     /*public void deletePet(int id) throws ResponseException {
@@ -50,7 +51,7 @@ public class ServerFacade {
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
-            var response = readBody(http, responseClass);
+            var response = readBody(http, responseClass);//this is where the error is.
             System.out.println(response);
             return response;
         } catch (Exception ex) {
@@ -81,10 +82,10 @@ public class ServerFacade {
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
         if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
+            try (InputStream respBody = http.getInputStream()) {//this is where the error is thrown.
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
+                    response = new Gson().fromJson(reader, responseClass);//this is where the error is caused. This line is trying to deserialize the message into an object.
                 }
             }
         }
