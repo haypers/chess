@@ -16,11 +16,10 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public String registerUser(JsonObject jsonString) throws ResponseException {
-        System.out.println("made it to registerUser facade");
+    public ServerResponseObject registerUser(JsonObject jsonString) throws ResponseException {
+        //System.out.println("made it to registerUser facade");
         var path = "/user";
-        ServerResponseObject reply = this.makeRequest("POST", path, jsonString, ServerResponseObject.class);
-        return reply.authToken();
+        return this.makeRequest("POST", path, jsonString, ServerResponseObject.class);
     }
 
     /*public void deletePet(int id) throws ResponseException {
@@ -47,12 +46,11 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
-            var response = readBody(http, responseClass);//this is where the error is.
-            System.out.println(response);
+            var response = readBody(http, responseClass);
+            //System.out.println(response);
             return response;
         } catch (Exception ex) {
             System.out.println("error in makeRequest:");
@@ -82,10 +80,10 @@ public class ServerFacade {
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T response = null;
         if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {//this is where the error is thrown.
+            try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);//this is where the error is caused. This line is trying to deserialize the message into an object.
+                    response = new Gson().fromJson(reader, responseClass);
                 }
             }
         }

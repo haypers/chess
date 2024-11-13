@@ -32,7 +32,7 @@ public class ConnectRepl {
 
             try {
                 result = this.eval(line);
-                System.out.println("Output: " + SET_TEXT_COLOR_BLUE + result);
+                System.out.println(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 System.out.println("error in run:");
                 System.out.print(String.valueOf(e));
@@ -68,18 +68,17 @@ public class ConnectRepl {
 
     public String registerUser(String... params) throws ResponseException {
         if (params.length >= 1) {
-            String visitorName = String.join("-", params); //need to change, keep params apart.
             sf = new ServerFacade(serverURL);
             JsonObject json = new JsonObject();
             json.addProperty("username", params[0]);
             json.addProperty("password", params[1]);
             json.addProperty("email", params[2]);
+            ServerResponseObject reply = sf.registerUser(json);
+            String authToken = reply.authToken();
+            String username = reply.username();
 
-            System.out.println("internal output:");
-            System.out.println(sf.registerUser(json));
 
-
-            return "success";
+            return username + " is now authorized with code " + authToken;
         }
         System.out.println("error in registerUser:");
         throw new ResponseException(400, "Expected: <yourname>");
