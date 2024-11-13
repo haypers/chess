@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 public class ServerResponseObject {
     public String username;
     public String authToken;

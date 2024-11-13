@@ -22,6 +22,12 @@ public class ServerFacade {
         return this.makeRequest("POST", path, jsonString, ServerResponseObject.class);
     }
 
+    public ServerResponseObject loginUser(JsonObject jsonString) throws ResponseException {
+        //System.out.println("made it to registerUser facade");
+        var path = "/session";
+        return this.makeRequest("POST", path, jsonString, ServerResponseObject.class);
+    }
+
     /*public void deletePet(int id) throws ResponseException {
         var path = String.format("/pet/%s", id);
         this.makeRequest("DELETE", path, null, null);

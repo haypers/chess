@@ -21,6 +21,7 @@ public class ConnectRepl {
 
     public ConnectRepl(String serverUrl){
         serverURL = serverUrl;
+        sf = new ServerFacade(serverURL);
     }
 
     public void run() {
@@ -51,12 +52,28 @@ public class ConnectRepl {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "signup" -> registerUser(params);
-                //case "rescue" -> rescuePet(params);
-                //case "list" -> listPets();
-                //case "signout" -> signOut();
-                //case "adopt" -> adoptPet(params);
-                //case "adoptall" -> adoptAllPets();
-                case "test" -> "nice!";
+                case "s" -> registerUser(params);
+                case "login" -> loginUser(params);
+                case "h" -> RESET_TEXT_COLOR + """
+                        
+                        You are not logged in. Use the commands below to continue.
+                        
+                        help   / h                               -- Print this key
+                        signup / s <username> <password> <email> -- Register a new user
+                        login  / l <username> <password>         -- Log in to your account
+                        quit   / q                               -- End this chess shession
+                        
+                        """;
+                case "help" -> RESET_TEXT_COLOR + """
+                        
+                        You are not logged in. Use the commands below to continue.
+                        
+                        help   / h                               -- Print this key
+                        signup / s <username> <password> <email> -- Register a new user
+                        login  / l <username> <password>         -- Log in to your account
+                        quit   / q                               -- End this chess session
+                        
+                        """;
                 default -> "Unknown Command";
             };
         } catch (ResponseException e) {
@@ -67,8 +84,7 @@ public class ConnectRepl {
     }
 
     public String registerUser(String... params) throws ResponseException {
-        if (params.length >= 1) {
-            sf = new ServerFacade(serverURL);
+        if (params.length == 3) {
             JsonObject json = new JsonObject();
             json.addProperty("username", params[0]);
             json.addProperty("password", params[1]);
@@ -80,8 +96,24 @@ public class ConnectRepl {
 
             return username + " is now authorized with code " + authToken;
         }
-        System.out.println("error in registerUser:");
-        throw new ResponseException(400, "Expected: <yourname>");
+        else{
+            return "Expected: signup <username> <password> <email>";
+        }
+    }
+
+    public String loginUser(String... params) throws ResponseException {
+        if (params.length == 2) {
+            JsonObject json = new JsonObject();
+            json.addProperty("username", params[0]);
+            json.addProperty("password", params[1]);
+            ServerResponseObject reply = sf.loginUser(json);
+            String authToken = reply.authToken();
+            String username = reply.username();
+            return username + " is now authorized with code " + authToken;
+        }
+        else{
+            return "Expected: login <username> <password> <email>";
+        }
     }
 
 
