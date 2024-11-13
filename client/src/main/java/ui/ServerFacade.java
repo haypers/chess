@@ -1,6 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import exception.ResponseException;
 
 import java.io.*;
@@ -15,7 +16,7 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public String registerUser(String jsonString) throws ResponseException {
+    public String registerUser(JsonObject jsonString) throws ResponseException {
         System.out.println("made it to registerUser facade");
         var path = "/user";
         return this.makeRequest("POST", path, jsonString, String.class);

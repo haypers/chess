@@ -1,5 +1,6 @@
 package ui;
 
+import com.google.gson.JsonObject;
 import exception.ResponseException;
 
 import java.util.Arrays;
@@ -69,7 +70,13 @@ public class ConnectRepl {
             //state = State.SIGNEDIN;
             String visitorName = String.join("-", params); //need to change, keep params apart.
             sf = new ServerFacade(serverURL);
-            System.out.println(sf.registerUser("{\"username\":\""+ "testUsername" + "\", \"password\":\""+ "testpassword" +"\", \"email\":\"" + "testemail@email.com" +"\"}"));
+            JsonObject json = new JsonObject();
+            json.addProperty("username", "tempusername");
+            json.addProperty("password", "temppass");
+            json.addProperty("email", "temp@email.com");
+
+            System.out.println(sf.registerUser(json));
+
 
             return String.format("You signed in as %s.", visitorName);
         }
