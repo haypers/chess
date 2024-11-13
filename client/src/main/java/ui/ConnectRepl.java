@@ -69,7 +69,8 @@ public class ConnectRepl {
             //state = State.SIGNEDIN;
             String visitorName = String.join("-", params); //need to change, keep params apart.
             sf = new ServerFacade(serverURL);
-            sf.registerUser("testname", "testpassword", "testemail@email.com");
+            System.out.println(sf.registerUser("{\"username\":\""+ "testUsername" + "\", \"password\":\""+ "testpassword" +"\", \"email\":\"" + "testemail@email.com" +"\"}"));
+
             return String.format("You signed in as %s.", visitorName);
         }
         throw new ResponseException(400, "Expected: <yourname>");

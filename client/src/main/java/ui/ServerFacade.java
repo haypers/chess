@@ -15,10 +15,10 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public String registerUser(String username, String password, String email) throws ResponseException {
+    public String registerUser(String jsonString) throws ResponseException {
         System.out.println("made it to registerUser facade");
-        var path = "/register";
-        return this.makeRequest("POST", path, username, String.class);
+        var path = "/user";
+        return this.makeRequest("POST", path, jsonString, String.class);
     }
 
     /*public void deletePet(int id) throws ResponseException {
