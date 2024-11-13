@@ -32,11 +32,10 @@ public class ConnectRepl {
 
             try {
                 result = this.eval(line);
-                //result = line;
-                System.out.println(SET_TEXT_COLOR_BLUE + result);
+                System.out.println("Output: " + SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+                System.out.println("error in run:");
+                System.out.print(String.valueOf(e));
             }
         }
     }
@@ -61,25 +60,28 @@ public class ConnectRepl {
                 default -> "Unknown Command";
             };
         } catch (ResponseException e) {
+            System.out.println("error in eval:");
+            System.out.println(e.toString());
             return e.getMessage();
         }
     }
 
     public String registerUser(String... params) throws ResponseException {
         if (params.length >= 1) {
-            //state = State.SIGNEDIN;
             String visitorName = String.join("-", params); //need to change, keep params apart.
             sf = new ServerFacade(serverURL);
             JsonObject json = new JsonObject();
-            json.addProperty("username", "tempusername");
-            json.addProperty("password", "temppass");
-            json.addProperty("email", "temp@email.com");
+            json.addProperty("username", params[0]);
+            json.addProperty("password", params[1]);
+            json.addProperty("email", params[2]);
 
+            System.out.println("internal output:");
             System.out.println(sf.registerUser(json));
 
 
-            return String.format("You signed in as %s.", visitorName);
+            return "success";
         }
+        System.out.println("error in registerUser:");
         throw new ResponseException(400, "Expected: <yourname>");
     }
 

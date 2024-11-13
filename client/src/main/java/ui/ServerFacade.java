@@ -50,8 +50,12 @@ public class ServerFacade {
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
-            return readBody(http, responseClass);
+            var response = readBody(http, responseClass);
+            System.out.println(response);
+            return response;
         } catch (Exception ex) {
+            System.out.println("error in makeRequest:");
+            System.out.println(ex.toString());
             throw new ResponseException(500, ex.getMessage());
         }
     }
