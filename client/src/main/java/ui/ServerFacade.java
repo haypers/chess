@@ -16,6 +16,7 @@ public class ServerFacade {
     }
 
     public String registerUser(String username, String password, String email) throws ResponseException {
+        System.out.println("made it to registerUser facade");
         var path = "/register";
         return this.makeRequest("POST", path, username, String.class);
     }
