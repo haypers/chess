@@ -37,7 +37,6 @@ public class ServerFacade {
     }
 
     public ServerResponseObject createGame(JsonObject jsonString, String authToken) throws ResponseException {
-        //System.out.println("made it to registerUser facade");
         var path = "/game";
         return this.makeRequest("POST", path, jsonString, ServerResponseObject.class, authToken);
     }
@@ -95,7 +94,7 @@ public class ServerFacade {
                 throw new ResponseException(status, SET_TEXT_COLOR_RED + "Parameter already taken.");
             }
             else if (status == 500){
-                throw new ResponseException(status, SET_TEXT_COLOR_RED + "500 Error" + status);
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Error " + status);
             }
             else {
                 throw new ResponseException(status, SET_TEXT_COLOR_RED + "Unknown Error" + status);

@@ -144,7 +144,7 @@ public class Repl {
                 case "create", "c" -> createGame(params);
                 case "list", "a" -> listGames(params);
                 case "play", "p" -> joinGame(params);
-                //case "observe", "o" -> observeGame(params);
+                case "observe", "o" -> observeGame(params);
                 case "help", "h" -> RESET_TEXT_COLOR + """
                         
                         You are logged in as:""" + username + """
@@ -235,6 +235,8 @@ public class Repl {
             else{
                 return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
             }
+            System.out.println(new RenderBoard().getBoardRender(true));
+            System.out.println(new RenderBoard().getBoardRender(false));
             return "Joined Game";
         }
         else{
@@ -242,4 +244,14 @@ public class Repl {
         }
     }
 
+    public String observeGame(String... params) throws ResponseException {
+        if (params.length == 1) {
+            System.out.println(new RenderBoard().getBoardRender(true));
+            System.out.println(new RenderBoard().getBoardRender(false));
+            return "Observing Game";
+        }
+        else{
+            return SET_TEXT_COLOR_YELLOW + "Expected: observe <gameIndex>";
+        }
+    }
 }
