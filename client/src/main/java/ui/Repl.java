@@ -140,10 +140,10 @@ public class Repl {
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "logout", "l" -> logoutUser(params);
+                case "logout", "e" -> logoutUser(params);
                 case "create", "c" -> createGame(params);
-                case "list", "s" -> listGames(params);
-                //case "play", "p" -> playGame(params);
+                case "list", "a" -> listGames(params);
+                case "play", "p" -> joinGame(params);
                 //case "observe", "o" -> observeGame(params);
                 case "help", "h" -> RESET_TEXT_COLOR + """
                         
@@ -151,11 +151,11 @@ public class Repl {
                           Use the commands below to play.
                         
                         help    / h                              -- Print this key
-                        logout  / l                              -- Logout of your account
+                        logout  / e                              -- Logout and exit your account
                         create  / c <gameName>                   -- Create a new game
-                        list    / s                              -- Show a list of all games
-                        play    / p <gameID> [BLACK|WHITE]       -- Join and play a game
-                        observe / o <gameID>                     -- Observe a game
+                        list    / a                              -- Show a list of all games
+                        play    / p <gameIndex> [BLACK|WHITE]    -- Join and play a game
+                        observe / o <gameIndex>                  -- Observe a game
                         
                         """;
                 default -> SET_TEXT_COLOR_YELLOW + "Unknown Command";
@@ -195,8 +195,11 @@ public class Repl {
             ServerResponseObject reply = sf.listGames(authToken);
             boolean needsAdded = true;
             for (PublicGameData serverGame : reply.games){
+                needsAdded = true;
                 for (GameRecord localGame : games){
                     if(localGame.getGameID() == serverGame.gameID()){
+                        localGame.setBlack(serverGame.blackUsername());
+                        localGame.setWhite(serverGame.whiteUsername());
                         needsAdded = false;
                     }
                 }
@@ -212,7 +215,26 @@ public class Repl {
             return s.toString();
         }
         else{
-            return SET_TEXT_COLOR_YELLOW + "Expected: create <gameName>";
+            return SET_TEXT_COLOR_YELLOW + "Expected: list (no parameters)";
+        }
+    }
+
+    public String joinGame(String... params) throws ResponseException {
+        if (params.length == 2) {
+            if(Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) > 0 &&
+                    (params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))){
+                JsonObject json = new JsonObject();
+                json.addProperty("gameID", Integer.parseInt(params[0]));
+                json.addProperty("playerColor", params[1].toUpperCase());
+                ServerResponseObject reply = sf.joinGame(json, authToken);
+            }
+            else{
+                return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
+            }
+            return "Joined Game";
+        }
+        else{
+            return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
         }
     }
 

@@ -47,26 +47,26 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ServerResponseObject.class, authToken);
     }
 
+    public ServerResponseObject joinGame(JsonObject jsonString, String authToken) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("PUT", path, null, ServerResponseObject.class, authToken);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
             if (authToken != null && !authToken.isEmpty()) {
                 http.setRequestProperty("authorization", authToken);
             }
-
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             var response = readBody(http, responseClass);
-            //System.out.println(response);
             return response;
         } catch (Exception ex) {
-            //System.out.println("error in makeRequest:");
-            //System.out.println(ex.toString());
             throw new ResponseException(500, ex.getMessage());
         }
     }
