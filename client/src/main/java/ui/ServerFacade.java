@@ -7,6 +7,8 @@ import exception.ResponseException;
 import java.io.*;
 import java.net.*;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
+
 
 public class ServerFacade {
 
@@ -26,6 +28,12 @@ public class ServerFacade {
         //System.out.println("made it to registerUser facade");
         var path = "/session";
         return this.makeRequest("POST", path, jsonString, ServerResponseObject.class);
+    }
+
+    public ServerResponseObject logoutUser(String authToken) throws ResponseException {
+        //System.out.println("made it to registerUser facade");
+        var path = "/session";
+        return this.makeRequest("DELETE", path, null, ServerResponseObject.class);
     }
 
     /*public void deletePet(int id) throws ResponseException {
@@ -59,8 +67,8 @@ public class ServerFacade {
             //System.out.println(response);
             return response;
         } catch (Exception ex) {
-            System.out.println("error in makeRequest:");
-            System.out.println(ex.toString());
+            //System.out.println("error in makeRequest:");
+            //System.out.println(ex.toString());
             throw new ResponseException(500, ex.getMessage());
         }
     }
@@ -79,7 +87,21 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+            if (status == 401){
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Bad credentials provided. Please try again.");
+            }
+            else if (status == 400){
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Bad request. Check your command syntax and try again.");
+            }
+            else if (status == 403){
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Already taken. Change your credentials and try again.");
+            }
+            else if (status == 500){
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "500 Error" + status);
+            }
+            else {
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Unknown Error" + status);
+            }
         }
     }
 
