@@ -224,9 +224,13 @@ public class Repl {
             if(Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) > 0 &&
                     (params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))){
                 JsonObject json = new JsonObject();
-                json.addProperty("gameID", Integer.parseInt(params[0]));
+                for (GameRecord game : games) {
+                    if (game.getIndex() == Integer.parseInt(params[0])){
+                        json.addProperty("gameID", game.getGameID());
+                    }
+                }
                 json.addProperty("playerColor", params[1].toUpperCase());
-                ServerResponseObject reply = sf.joinGame(json, authToken);
+                sf.joinGame(json, authToken);
             }
             else{
                 return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";

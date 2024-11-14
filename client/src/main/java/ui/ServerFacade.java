@@ -49,7 +49,7 @@ public class ServerFacade {
 
     public ServerResponseObject joinGame(JsonObject jsonString, String authToken) throws ResponseException {
         var path = "/game";
-        return this.makeRequest("PUT", path, null, ServerResponseObject.class, authToken);
+        return this.makeRequest("PUT", path, jsonString, ServerResponseObject.class, authToken);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
@@ -92,7 +92,7 @@ public class ServerFacade {
                 throw new ResponseException(status, SET_TEXT_COLOR_RED + "Bad request. Check your command syntax and try again.");
             }
             else if (status == 403){
-                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Already taken. Change your credentials and try again.");
+                throw new ResponseException(status, SET_TEXT_COLOR_RED + "Parameter already taken.");
             }
             else if (status == 500){
                 throw new ResponseException(status, SET_TEXT_COLOR_RED + "500 Error" + status);
