@@ -30,6 +30,7 @@ public class Repl {
 
     public void preLoginREPL() {
         var result = "";
+        System.out.println(SET_TEXT_COLOR_BLUE + this.evalPreLogin("help"));
         while (!result.equals("goodbye!")) {
             System.out.print(RESET_TEXT_COLOR + "♕ > ");
             String line = scanner.nextLine();
@@ -39,6 +40,7 @@ public class Repl {
                 System.out.println(SET_TEXT_COLOR_BLUE + result);
                 if (isSignedIn){
                     postLoginREPL();
+                    System.out.println(SET_TEXT_COLOR_BLUE + this.evalPreLogin("help"));
                 }
             } catch (Throwable e) {
                 System.out.println("error 1:");
@@ -49,6 +51,7 @@ public class Repl {
 
     public void postLoginREPL(){
         var result = "";
+        System.out.println(SET_TEXT_COLOR_BLUE + this.evalPostLogin("help"));
         while (isSignedIn) {
             System.out.print(RESET_TEXT_COLOR + username + " > ");
             String line = scanner.nextLine();
@@ -137,14 +140,14 @@ public class Repl {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "logout", "l" -> logoutUser(params);
-                //case "create", "c" -> loginUser(params);
+                case "create", "c" -> createGame(params);
                 //case "list", "s" -> listGames(params);
                 //case "play", "p" -> playGame(params);
                 //case "observe", "o" -> observeGame(params);
                 case "help", "h" -> RESET_TEXT_COLOR + """
                         
                         You are logged in as:""" + username + """
-                        Use the commands below to play.
+                          Use the commands below to play.
                         
                         help    / h                              -- Print this key
                         logout  / l                              -- Logout of your account
@@ -163,12 +166,23 @@ public class Repl {
 
     public String logoutUser(String... params) throws ResponseException {
         if (params.length == 0) {
-            ServerResponseObject reply = sf.logoutUser(authToken);
+            sf.logoutUser(authToken);
             isSignedIn = false;
             return "You are now logged out";
         }
         else{
             return SET_TEXT_COLOR_YELLOW + "Expected: logout (no parameters)";
+        }
+    }
+    public String createGame(String... params) throws ResponseException {
+        if (params.length == 1) {
+            JsonObject json = new JsonObject();
+            json.addProperty("gameName", params[0]);
+            ServerResponseObject reply = sf.createGame(json, authToken);
+            return "Created game " + params[0] + "With ID: " + reply.gameID;
+        }
+        else{
+            return SET_TEXT_COLOR_YELLOW + "Expected: create <gameName>";
         }
     }
 

@@ -6,6 +6,7 @@ public class ServerResponseObject {
     public String username;
     public String authToken;
     public String message;
+    public Integer gameID;
 
     public String username(){
         return username;
@@ -17,5 +18,9 @@ public class ServerResponseObject {
 
     public String authToken(){
         return authToken;
+    }
+
+    public Integer gameID(){
+        return gameID;
     }
 }
