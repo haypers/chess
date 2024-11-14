@@ -3,23 +3,23 @@ package ui;
 import com.google.gson.JsonObject;
 import exception.ResponseException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
 public class Repl {
 
-//5: help, register(http), login(http), quit
-//6:help create game(http), list games(http), join game (http then websocket), join observer (http then websocket)
-    //help, redraw, leave (remove yourself as a player or observer, someone takes your place), make move(web socket), resign (end game, lose), highlight.
-
     private String serverURL = null;
     private ServerFacade sf = null;
     private String username = null;
     private String authToken = null;
     private boolean isSignedIn = false;
-    Scanner scanner = null;
+    private Scanner scanner = null;
+    private List<GameRecord> games = new ArrayList<>();
+    private Integer nextGameIndex = 1;
 
 
     public Repl(String serverUrl){
@@ -179,7 +179,10 @@ public class Repl {
             JsonObject json = new JsonObject();
             json.addProperty("gameName", params[0]);
             ServerResponseObject reply = sf.createGame(json, authToken);
-            return "Created game " + params[0] + "With ID: " + reply.gameID;
+            games.add(new GameRecord(nextGameIndex, params[0], reply.gameID));
+            String s = "Created game \"" + params[0] + "\" With Index: " + nextGameIndex;
+            nextGameIndex++;
+            return s;
         }
         else{
             return SET_TEXT_COLOR_YELLOW + "Expected: create <gameName>";
