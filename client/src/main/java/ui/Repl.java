@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.JsonObject;
 import exception.ResponseException;
+import model.PublicGameData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,7 +142,7 @@ public class Repl {
             return switch (cmd) {
                 case "logout", "l" -> logoutUser(params);
                 case "create", "c" -> createGame(params);
-                //case "list", "s" -> listGames(params);
+                case "list", "s" -> listGames(params);
                 //case "play", "p" -> playGame(params);
                 //case "observe", "o" -> observeGame(params);
                 case "help", "h" -> RESET_TEXT_COLOR + """
@@ -179,10 +180,36 @@ public class Repl {
             JsonObject json = new JsonObject();
             json.addProperty("gameName", params[0]);
             ServerResponseObject reply = sf.createGame(json, authToken);
-            games.add(new GameRecord(nextGameIndex, params[0], reply.gameID));
+            games.add(new GameRecord(nextGameIndex, params[0], reply.gameID, null, null));
             String s = "Created game \"" + params[0] + "\" With Index: " + nextGameIndex;
             nextGameIndex++;
             return s;
+        }
+        else{
+            return SET_TEXT_COLOR_YELLOW + "Expected: create <gameName>";
+        }
+    }
+
+    public String listGames(String... params) throws ResponseException {
+        if (params.length == 0) {
+            ServerResponseObject reply = sf.listGames(authToken);
+            boolean needsAdded = true;
+            for (PublicGameData serverGame : reply.games){
+                for (GameRecord localGame : games){
+                    if(localGame.getGameID() == serverGame.gameID()){
+                        needsAdded = false;
+                    }
+                }
+                if (needsAdded){
+                    games.add(new GameRecord(nextGameIndex, serverGame.gameName(), serverGame.gameID(), serverGame.whiteUsername(), serverGame.blackUsername()));
+                    nextGameIndex++;
+                }
+            }
+            StringBuilder s = new StringBuilder();
+            for (GameRecord game : games) {
+                s.append(game.toString() + "\n");
+            }
+            return s.toString();
         }
         else{
             return SET_TEXT_COLOR_YELLOW + "Expected: create <gameName>";

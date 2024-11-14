@@ -4,12 +4,16 @@ public class GameRecord {
     private int index;
     private String name;
     private int gameId;
+    private String whitePlayer;
+    private String blackPlayer;
 
     // Constructor
-    public GameRecord(int index, String name, int gameId) {
+    public GameRecord(int index, String name, int gameId, String white, String black) {
         this.index = index;
         this.name = name;
         this.gameId = gameId;
+        this.whitePlayer = white;
+        this.blackPlayer = black;
     }
 
     // Getters and setters
@@ -25,8 +29,22 @@ public class GameRecord {
         return name;
     }
 
+    public void setWhite(String userName){
+        whitePlayer = userName;
+    }
+    public void setBlack(String userName){
+        blackPlayer = userName;
+    }
+    public String getWhitePlayer(){
+        return whitePlayer;
+    }
+    public String getBlackPlayer(){
+        return blackPlayer;
+    }
+
+
     @Override
     public String toString() {
-        return index + " - " + name;
+        return index + " - " + name + "   White: " + whitePlayer + "    Black: " + blackPlayer;
     }
 }
