@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessGame;
 import model.PublicGameData;
 
 import java.util.ArrayList;
@@ -16,19 +15,8 @@ public class ServerResponseObject {
         return username;
     }
 
-    public String message(){
-        return message;
-    }
-
     public String authToken(){
         return authToken;
     }
 
-    public Integer gameID(){
-        return gameID;
-    }
-
-    public ArrayList<PublicGameData> games(){
-        return games;
-    }
 }

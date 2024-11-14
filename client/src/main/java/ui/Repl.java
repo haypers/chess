@@ -204,7 +204,8 @@ public class Repl {
                     }
                 }
                 if (needsAdded){
-                    games.add(new GameRecord(nextGameIndex, serverGame.gameName(), serverGame.gameID(), serverGame.whiteUsername(), serverGame.blackUsername()));
+                    games.add(new GameRecord(nextGameIndex, serverGame.gameName(), serverGame.gameID(),
+                            serverGame.whiteUsername(), serverGame.blackUsername()));
                     nextGameIndex++;
                 }
             }
