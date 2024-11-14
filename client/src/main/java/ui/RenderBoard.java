@@ -16,7 +16,7 @@ public class RenderBoard {
                     gridColor[row][col] = 2; //blue border
                     temp.append(SET_BG_COLOR_BLUE + EMPTY + RESET_BG_COLOR);
                 }
-                else if (row % 2 == (col % 2) - 1){
+                else if (row % 2 == 1 - (col % 2)){
                     gridColor[row][col] = 0; //BLACK spaces
                     temp.append(SET_BG_COLOR_LIGHT_GREY + EMPTY + RESET_BG_COLOR);
                 }
