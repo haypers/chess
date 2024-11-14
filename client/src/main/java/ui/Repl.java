@@ -246,7 +246,7 @@ public class Repl {
     }
 
     public String observeGame(String... params) throws ResponseException {
-        if (params.length == 1) {
+        if (params.length == 1 && Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) >= 1) {
             System.out.println(new RenderBoard().getBoardRender(true));
             System.out.println(new RenderBoard().getBoardRender(false));
             return "Observing Game";

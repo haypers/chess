@@ -45,6 +45,21 @@ public class GameRecord {
 
     @Override
     public String toString() {
-        return index + " - " + name + "   White: " + whitePlayer + "    Black: " + blackPlayer;
+        StringBuilder s = new StringBuilder();
+        s.append(index + " - " + name + "   White: ");
+        if (whitePlayer == null) {
+            s.append("-----");
+        }
+        else{
+            s.append(whitePlayer);
+        }
+        s.append("    Black: " );
+        if (blackPlayer == null){
+            s.append("-----");
+        }
+        else {
+            s.append(blackPlayer);
+        }
+        return s.toString();
     }
 }
