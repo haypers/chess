@@ -133,7 +133,7 @@ public class ServerFacadeTests {
 
     }
     @Test
-    public void ListGamesPositiveTest() throws ResponseException {
+    public void listGamesPositiveTest() throws ResponseException {
         ServerFacade sf = new ServerFacade("http://localhost:8070");
         JsonObject json = new JsonObject();
         json.addProperty("username", "onceagiananotheruser");
@@ -144,7 +144,7 @@ public class ServerFacadeTests {
         assertNotNull(reply.games);
     }
     @Test
-    public void ListGamesNegativeTest() throws ResponseException {
+    public void listGamesNegativeTest() throws ResponseException {
         try {
             ServerFacade sf = new ServerFacade("http://localhost:8070");
             ServerResponseObject reply = sf.listGames("Bad auth");
