@@ -30,7 +30,7 @@ public class RenderBoard {
         //System.out.println(temp.toString());
 
 
-        if (isBLACK){
+        /*if (isBLACK){
             s.append(SET_TEXT_BOLD);
             s.append(SET_BG_COLOR_BLUE + EMPTY + " a " + "  b " + " c " + "  d " + "  e " + "  f " + " g " + "  h " +
                     EMPTY + RESET_BG_COLOR + "\n");
@@ -117,7 +117,7 @@ public class RenderBoard {
             s.append(SET_BG_COLOR_BLUE + EMPTY + " h " + "  g " + " f " + "  e " + "  d " + "  c " + " b " + "  a " +
                     EMPTY + RESET_BG_COLOR);
             s.append(RESET_TEXT_BOLD_FAINT + RESET_BG_COLOR);
-        }
-        return s.toString();
+        }*/
+        return temp.toString();
     }
 }
