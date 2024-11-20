@@ -175,6 +175,7 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: logout (no parameters)";
         }
     }
+
     public String createGame(String... params) throws ResponseException {
         if (params.length == 1) {
             JsonObject json = new JsonObject();

@@ -8,6 +8,7 @@ import service.Service;
 public class Server {
 
     public static Service service = new Service();
+    //public webSocketHandler = new WebSocketHandler();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -15,7 +16,8 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        //Spark.post("/user", (req, res) -> "hello post");
+        //Spark.webSocket("/ws", webSocketHandler);
+
         Spark.post("/user", Server::createUser);
         Spark.post("/session", Server::logIn);
         Spark.delete("/db", Server::clearDatabase);
