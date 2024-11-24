@@ -1,10 +1,13 @@
 package server;
 
 import model.ResponseObject;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.*;
 import service.Service;
 
-
+@WebSocket
 public class Server {
 
     public static Service service = new Service();
@@ -13,10 +16,10 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
+        Spark.webSocket("/ws", Server.class);
+
 
         Spark.staticFiles.location("web");
-
-        //Spark.webSocket("/ws", webSocketHandler);
 
         Spark.post("/user", Server::createUser);
         Spark.post("/session", Server::logIn);
@@ -27,6 +30,11 @@ public class Server {
         Spark.put("/game", Server::joinGame);
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) throws Exception {
+        session.getRemote().sendString("WebSocket response: " + message);
     }
 
     public static String createUser(Request req, Response res) throws Exception{

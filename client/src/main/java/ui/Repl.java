@@ -3,6 +3,7 @@ package ui;
 import com.google.gson.JsonObject;
 import exception.ResponseException;
 import model.PublicGameData;
+import websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ public class Repl {
 
     private String serverURL = null;
     private ServerFacade sf = null;
+    private WebSocketFacade ws = null;
     private String username = null;
     private String authToken = null;
     private boolean isSignedIn = false;
