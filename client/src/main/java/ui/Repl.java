@@ -28,6 +28,7 @@ public class Repl {
     public Repl(String serverUrl){
         serverURL = serverUrl;
         sf = new ServerFacade(serverURL);
+        ws = new WebSocketFacade("ws://localhost:8080/ws");
         scanner = new Scanner(System.in);
     }
 
