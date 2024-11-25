@@ -37,6 +37,14 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    public void send(String msg){
+        try {
+            this.session.getBasicRemote().sendText(msg);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
     //Endpoint requires this method, but you don't have to do anything
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {

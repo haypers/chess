@@ -1,9 +1,11 @@
 package ui;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import exception.ResponseException;
 import model.PublicGameData;
 import websocket.WebSocketFacade;
+import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,6 +82,10 @@ public class Repl {
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "test" -> {
+                    ws.send(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION)));
+                    yield "Message sent!";
+                }
                 case "signup", "s" -> registerUser(params);
                 case "login", "l" -> loginUser(params);
                 case "quit", "q" -> "goodbye!";
