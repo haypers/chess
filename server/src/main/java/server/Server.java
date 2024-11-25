@@ -34,7 +34,8 @@ public class Server {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
-        session.getRemote().sendString("WebSocket response: " + message);
+        session.getRemote().sendString(message);
+        System.out.println("message echoed");
     }
 
     public static String createUser(Request req, Response res) throws Exception{
