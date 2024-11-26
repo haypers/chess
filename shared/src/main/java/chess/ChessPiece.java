@@ -105,7 +105,7 @@ public class ChessPiece {
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-        System.out.println("pieceMoves() called");
+        //System.out.println("pieceMoves() called");
 
         validMoves = new ArrayList<>();
 

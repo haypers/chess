@@ -11,6 +11,8 @@ import model.PublicGameData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import model.ResponseObject;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
 import java.util.Random; //for making game IDs
@@ -191,24 +193,24 @@ public class Service {
 
     public ResponseObject createGame(String token, String body){
         if(!token.isEmpty()){
-            System.out.println("checkpoint1");
+            //System.out.println("checkpoint1");
             System.out.println(token);
             String userName = memory.getUserFromToken(token);
             System.out.println(userName);
             if (!userName.isEmpty()){
-                System.out.println("checkpoint2");
+                //System.out.println("checkpoint2");
                 //System.out.println("found user matched to token");
                 String gameName;
                 JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
                 if (!jsonObject.has("gameName")) {
-                    System.out.println("checkpoint3");
+                    //System.out.println("checkpoint3");
                     return new ResponseObject(400,"""
                     { "message": "Error: bad request" }
                     """);
                 }
                 gameName = jsonObject.get("gameName").getAsString();
                 if (!gameName.isEmpty()) {
-                    System.out.println("checkpoint4");
+                    //System.out.println("checkpoint4");
                     int gameID = rand.nextInt(100000);
                     while(memory.checkIfGameExists(gameID)){
                         gameID = rand.nextInt(100000);
@@ -223,7 +225,7 @@ public class Service {
                             """);
                     }
                 }
-                System.out.println("checkpoint5");
+                //System.out.println("checkpoint5");
             }
         }
         return new ResponseObject(401,"""
@@ -304,6 +306,38 @@ public class Service {
         return new ResponseObject(401,"""
         { "message": "Error: unauthorized" }
         """);
+    }
+
+    public ServerMessage connect(UserGameCommand command){
+        String userName = memory.getUserFromToken(command.getAuthToken());
+        if (userName.isEmpty()){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
+        }
+        if (memory.checkIfGameExists(command.getGameID())){
+            GameData game = memory.getGame(command.getGameID());
+            System.out.println("username for user: " + userName);
+            System.out.println("username on black record: " + game.blackUsername());
+            System.out.println("username on white record: " + game.whiteUsername());
+            if (game.blackUsername() != null && game.blackUsername().equals(userName)){
+                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as black");
+                packet.setBoard(game.game().getBoard());
+                packet.setRole(ServerMessage.clientRole.Black);
+                return packet;
+            }
+            else if (game.whiteUsername() != null && game.whiteUsername().equals(userName)){
+                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as white");
+                packet.setBoard(game.game().getBoard());
+                packet.setRole(ServerMessage.clientRole.White);
+                return packet;
+            }
+            else {
+                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as an observer");
+                packet.setBoard(game.game().getBoard());
+                packet.setRole(ServerMessage.clientRole.Observer);
+                return packet;
+            }
+        }
+        return new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
     }
 
 

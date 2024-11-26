@@ -14,7 +14,7 @@ public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
-        System.out.println("ChessBoard() called");
+        //System.out.println("ChessBoard() called");
     }
 
     public ChessBoard(ChessBoard board) {
@@ -62,7 +62,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        System.out.println("resetBoard() called");
+        //System.out.println("resetBoard() called");
         squares = new ChessPiece[8][8];
         squares[0][0] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
         squares[0][1] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);

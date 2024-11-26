@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import chess.ChessBoard;
+
 import java.util.Objects;
 
 /**
@@ -10,19 +12,52 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
+    ChessBoard boardData;
+    String message;
+    clientRole role;
 
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
         NOTIFICATION
     }
+    public enum clientRole{
+        White,
+        Black,
+        Observer
+    }
 
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
     }
 
+    public ServerMessage(ServerMessageType type, String messageForUser) {
+        this.serverMessageType = type;
+        this.message = messageForUser;
+    }
+
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public ChessBoard getBoard(){
+        return boardData;
+    }
+
+    public clientRole getRole(){
+        return this.role;
+    }
+
+    public String getNotificationMessage(){
+        return this.message;
+    }
+
+    public void setRole (clientRole newRole){
+        this.role = newRole;
+    }
+
+    public void setBoard(ChessBoard board){
+        this.boardData = board;
     }
 
     @Override

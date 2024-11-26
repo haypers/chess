@@ -2,6 +2,7 @@ package websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import ui.RenderBoard;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -9,11 +10,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static ui.EscapeSequences.RESET_TEXT_COLOR;
+
 //need to extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-
+    String userName = "err";
 
     public WebSocketFacade(String url) {
         try {
@@ -28,8 +31,8 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    System.out.println("message: " + notification.getServerMessageType());
-                    //System.out.println(message);
+                    //System.out.println("message: " + notification.getServerMessageType());
+                    process(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -47,9 +50,48 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    public void setUsername(String name){
+        this.userName = name;
+    }
+
     //Endpoint requires this method, but you don't have to do anything
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+
+    public void process(ServerMessage sm){
+        if (sm.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
+            System.out.println(sm.getNotificationMessage());
+            System.out.print(RESET_TEXT_COLOR + userName + " > ");
+        }
+        else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+            if (sm.getRole() == ServerMessage.clientRole.White){
+                System.out.println();
+                System.out.println(new RenderBoard().getBoardRender(false));
+                System.out.println(sm.getNotificationMessage());
+                System.out.print(RESET_TEXT_COLOR + userName + " > ");
+            }
+            else if(sm.getRole() == ServerMessage.clientRole.Black) {
+                System.out.println();
+                System.out.println(new RenderBoard().getBoardRender(true));
+                System.out.println(sm.getNotificationMessage());
+                System.out.print(RESET_TEXT_COLOR + userName + " > ");
+            }
+            else{
+                System.out.println();
+                System.out.println("White's view: ");
+                System.out.println(new RenderBoard().getBoardRender(false));
+                System.out.println("Blacks's view: ");
+                System.out.println(new RenderBoard().getBoardRender(true));
+                System.out.println(sm.getNotificationMessage());
+                System.out.print(RESET_TEXT_COLOR + userName + " > ");
+            }
+
+        }
+        else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
+            System.out.println("Sever error: " + sm.getNotificationMessage());
+            System.out.print(RESET_TEXT_COLOR + userName + " > ");
+        }
     }
 
 }

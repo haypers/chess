@@ -15,7 +15,7 @@ public class ChessGame {
     private ChessBoard board = new ChessBoard();
 
     public ChessGame() {
-        System.out.println("ChessGame() called");
+        //System.out.println("ChessGame() called");
         board.resetBoard();
     }
 
@@ -23,7 +23,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        System.out.println("getTeamTurn() called");
+        //System.out.println("getTeamTurn() called");
         return turnColor;
     }
 
@@ -33,7 +33,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        System.out.println("setTeamTurn() called");
+        //System.out.println("setTeamTurn() called");
         turnColor = team;
     }
 
@@ -87,7 +87,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        System.out.println("makeMove() called");
+        //System.out.println("makeMove() called");
         if(board.getPiece(move.getStartPosition()) != null){
             Collection<ChessMove> validLibrary = validMoves(move.getStartPosition());
             if(!validLibrary.contains(move)) {
@@ -133,7 +133,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        System.out.println("isInCheck() called");
+        //System.out.println("isInCheck() called");
         //System.out.println(board.toString());
         ChessPosition king = null;
         outer:
@@ -182,7 +182,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        System.out.println("isInCheckmate() called");
+        //System.out.println("isInCheckmate() called");
 
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
@@ -218,7 +218,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        System.out.println(board.toString());
+        //System.out.println(board.toString());
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece scanMe = board.getPiece(new ChessPosition(row, col));
@@ -229,7 +229,7 @@ public class ChessGame {
                 }
             }
         }
-        System.out.println(board.toString());
+        //System.out.println(board.toString());
         return !board.isInCheck(teamColor);
     }
 
@@ -239,7 +239,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        System.out.println("setBoard() called");
+        //System.out.println("setBoard() called");
         this.board = board;
     }
 
@@ -249,7 +249,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        System.out.println("getBoard() called");
+        //System.out.println("getBoard() called");
         return(board);
     }
 }

@@ -112,6 +112,7 @@ public class Repl {
             ServerResponseObject reply = sf.registerUser(json);
             authToken = reply.authToken();
             username = reply.username();
+            ws.setUsername(username);
             isSignedIn = true;
             return "You are now signed in as: " + username;
         }
@@ -128,6 +129,7 @@ public class Repl {
             ServerResponseObject reply = sf.loginUser(json);
             authToken = reply.authToken();
             username = reply.username();
+            ws.setUsername(username);
             isSignedIn = true;
             return "You are now signed in as: " + username;
         }
@@ -232,20 +234,21 @@ public class Repl {
             if(Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) > 0 &&
                     (params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))){
                 JsonObject json = new JsonObject();
+                Integer gameID = null;
                 for (GameRecord game : games) {
                     if (game.getIndex() == Integer.parseInt(params[0])){
                         json.addProperty("gameID", game.getGameID());
-                        ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.getGameID())));
+                        gameID = game.getGameID();
+
                     }
                 }
                 json.addProperty("playerColor", params[1].toUpperCase());
                 sf.joinGame(json, authToken);
+                ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID)));
             }
             else{
                 return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
             }
-            System.out.println(new RenderBoard().getBoardRender(true));
-            System.out.println(new RenderBoard().getBoardRender(false));
             return "Joined Game";
         }
         else{
@@ -255,8 +258,14 @@ public class Repl {
 
     public String observeGame(String... params) throws ResponseException {
         if (params.length == 1 && Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) >= 1) {
-            System.out.println(new RenderBoard().getBoardRender(true));
-            System.out.println(new RenderBoard().getBoardRender(false));
+            Integer gameID = null;
+            for (GameRecord game : games) {
+                if (game.getIndex() == Integer.parseInt(params[0])){
+                    gameID = game.getGameID();
+                    break;
+                }
+            }
+            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID)));
             return "Observing Game";
         }
         else{
