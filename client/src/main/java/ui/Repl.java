@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import exception.ResponseException;
 import model.PublicGameData;
 import websocket.WebSocketFacade;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
@@ -82,10 +83,6 @@ public class Repl {
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "test" -> {
-                    ws.send(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION)));
-                    yield "Message sent!";
-                }
                 case "signup", "s" -> registerUser(params);
                 case "login", "l" -> loginUser(params);
                 case "quit", "q" -> "goodbye!";
@@ -238,6 +235,7 @@ public class Repl {
                 for (GameRecord game : games) {
                     if (game.getIndex() == Integer.parseInt(params[0])){
                         json.addProperty("gameID", game.getGameID());
+                        ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, game.getGameID())));
                     }
                 }
                 json.addProperty("playerColor", params[1].toUpperCase());

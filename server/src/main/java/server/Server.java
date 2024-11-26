@@ -1,11 +1,14 @@
 package server;
 
+import com.google.gson.Gson;
 import model.ResponseObject;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.*;
 import service.Service;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 @WebSocket
 public class Server {
@@ -34,8 +37,22 @@ public class Server {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
-        session.getRemote().sendString(message);
-        System.out.println("message echoed");
+        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+        System.out.println("Got command: " + command.getCommandType());
+        if (command.getCommandType() == UserGameCommand.CommandType.CONNECT){
+            System.out.println("connect");
+        }
+        else if (command.getCommandType() == UserGameCommand.CommandType.LEAVE){
+            System.out.println("leave");
+        }
+        else if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
+            System.out.println("make move");
+        }
+        else if (command.getCommandType() == UserGameCommand.CommandType.RESIGN){
+            System.out.println("Resign");
+        }
+        session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION)));
+        System.out.println("sent response object");
     }
 
     public static String createUser(Request req, Response res) throws Exception{
