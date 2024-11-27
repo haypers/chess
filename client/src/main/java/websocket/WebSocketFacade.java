@@ -11,12 +11,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static ui.EscapeSequences.RESET_TEXT_COLOR;
+import static websocket.messages.ServerMessage.clientRole.*;
 
 //need to extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
 
     Session session;
     String userName = "err";
+    public ServerMessage.clientRole myRole = ServerMessage.clientRole.non;
 
     public WebSocketFacade(String url) {
         try {
@@ -65,19 +67,23 @@ public class WebSocketFacade extends Endpoint {
             System.out.print(RESET_TEXT_COLOR + userName + " > ");
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-            if (sm.getRole() == ServerMessage.clientRole.White){
+            if (sm.getRole() == White){
+                myRole = White;
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(false));
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
+
             }
             else if(sm.getRole() == ServerMessage.clientRole.Black) {
+                myRole = Black;
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(true));
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
             else{
+                myRole = Observer;
                 System.out.println();
                 System.out.println("White's view: ");
                 System.out.println(new RenderBoard().getBoardRender(false));

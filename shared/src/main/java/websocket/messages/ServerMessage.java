@@ -24,7 +24,8 @@ public class ServerMessage {
     public enum clientRole{
         White,
         Black,
-        Observer
+        Observer,
+        non
     }
 
     public ServerMessage(ServerMessageType type) {

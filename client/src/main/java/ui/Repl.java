@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import exception.ResponseException;
@@ -26,6 +28,8 @@ public class Repl {
     private Scanner scanner = null;
     private List<GameRecord> games = new ArrayList<>();
     private Integer nextGameIndex = 1;
+    private boolean isInGame = false;
+    private int currentGameID;
 
 
     public Repl(String serverUrl){
@@ -66,8 +70,28 @@ public class Repl {
             try {
                 result = this.evalPostLogin(line);
                 System.out.println(SET_TEXT_COLOR_BLUE + result);
+                if (isInGame){
+                    inGameREPL();
+                }
             } catch (Throwable e) {
                 System.out.println("error 2:");
+                System.out.print(String.valueOf(e));
+            }
+        }
+    }
+
+    public void inGameREPL(){
+        var result = "";
+        System.out.println(SET_TEXT_COLOR_BLUE + this.evalPostLogin("help"));
+        while (isInGame) {
+            System.out.print(RESET_TEXT_COLOR + username + " > ");
+            String line = scanner.nextLine();
+
+            try {
+                result = this.evalInGame(line);
+                System.out.println(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e) {
+                System.out.println("error 3:");
                 System.out.print(String.valueOf(e));
             }
         }
@@ -220,7 +244,7 @@ public class Repl {
             }
             StringBuilder s = new StringBuilder();
             for (GameRecord game : games) {
-                s.append(game.toString() + "\n");
+                s.append(game.toString()).append("\n");
             }
             return s.toString();
         }
@@ -234,17 +258,17 @@ public class Repl {
             if(Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) > 0 &&
                     (params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))){
                 JsonObject json = new JsonObject();
-                Integer gameID = null;
                 for (GameRecord game : games) {
                     if (game.getIndex() == Integer.parseInt(params[0])){
                         json.addProperty("gameID", game.getGameID());
-                        gameID = game.getGameID();
+                        currentGameID = game.getGameID();
 
                     }
                 }
                 json.addProperty("playerColor", params[1].toUpperCase());
                 sf.joinGame(json, authToken);
-                ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID)));
+                ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID)));
+                isInGame = true;
             }
             else{
                 return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
@@ -258,18 +282,66 @@ public class Repl {
 
     public String observeGame(String... params) throws ResponseException {
         if (params.length == 1 && Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) >= 1) {
-            Integer gameID = null;
             for (GameRecord game : games) {
                 if (game.getIndex() == Integer.parseInt(params[0])){
-                    gameID = game.getGameID();
+                    currentGameID = game.getGameID();
                     break;
                 }
             }
-            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID)));
+            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID)));
+            isInGame = true;
             return "Observing Game";
         }
         else{
             return SET_TEXT_COLOR_YELLOW + "Expected: observe <gameIndex>";
+        }
+    }
+
+    public String evalInGame(String input){
+        input = input.trim().toLowerCase();
+        try {
+            var tokens = input.split(" ");
+            if(input.isEmpty()){
+                return SET_TEXT_COLOR_YELLOW + "no command";
+            }
+            String cmd = tokens[0];
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "move", "m" -> makeMove(params);
+                //case "leave", "l" -> createGame(params);
+                //case "resign", "r" -> listGames(params);
+                //case "see" -> seeboard;
+                case "help", "h" -> RESET_TEXT_COLOR + """
+                        
+                        You are playing a game as:""" + username + """
+                          Use the commands below to make moves.
+                        
+                        help    / h                              -- Print this key
+                        
+                        """;
+                default -> SET_TEXT_COLOR_YELLOW + "Unknown Command";
+            };
+        } catch (ResponseException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String makeMove(String... params) throws ResponseException {
+        if(ws.myRole == ServerMessage.clientRole.non || ws.myRole == ServerMessage.clientRole.Observer){
+            return SET_TEXT_COLOR_YELLOW + "You are not participating in this game.";
+        }
+        if (params.length == 2) {
+            JsonObject json = new JsonObject();
+            json.addProperty("playerColor", params[1].toUpperCase());
+            ChessMove move = new ChessMove(new ChessPosition(1, 2), new ChessPosition(3,4), null);
+            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, currentGameID, move)));
+
+            //return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
+
+            return "Making Move...";
+        }
+        else{
+            return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord> <EndCord>";
         }
     }
 }
