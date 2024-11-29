@@ -179,7 +179,7 @@ public class Repl {
                 case "observe", "o" -> observeGame(params);
                 case "help", "h" -> RESET_TEXT_COLOR + """
                         
-                        You are logged in as:""" + username + """
+                        You are logged in as:""" + " " + username + """
                           Use the commands below to play.
                         
                         help    / h                              -- Print this key
@@ -316,18 +316,24 @@ public class Repl {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "move", "m" -> makeMove(params);
-                //case "leave", "l" -> createGame(params);
-                //case "resign", "r" -> listGames(params);
-                //case "see" -> seeboard;
+                case "leave", "l" -> leave(params);
+                case "resign", "r" -> resign(params);
+                case "see", "s" -> printBoard(params);
+                case "focus", "f" -> highlightSpace(params);
                 case "help", "h" -> RESET_TEXT_COLOR + """
                         
-                        You are playing a game as:""" + username + """
+                        You are playing a game as:""" + " " + username + """
                           Use the commands below to make moves.
                         
                         help    / h                              -- Print this key
+                        move    / m <startCord> <endCord>        -- Make a move
+                        see     / s                              -- Re-print Board
+                        focus   / f <Cord>                       -- Show all possible moves for a piece
+                        resign  / r                              -- Admit defeat, end game.
+                        leave   / l                              -- Stop viewing this game.
                         
                         """;
-                default -> SET_TEXT_COLOR_YELLOW + "Unknown Command";
+                default -> printBoard(params);
             };
         } catch (ResponseException e) {
             return e.getMessage();
@@ -354,5 +360,17 @@ public class Repl {
     }
     public void testMethod(){
         System.out.println("This was called from the child wsf class. Current game status: " + isInGame);
+    }
+    public String leave(String... params){
+        return "leave";
+    }
+    public String resign(String... params){
+        return "resign";
+    }
+    public String printBoard(String... params){
+        return "print";
+    }
+    public String highlightSpace(String... params){
+        return "highlight";
     }
 }
