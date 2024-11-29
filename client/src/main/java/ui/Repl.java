@@ -82,7 +82,7 @@ public class Repl {
 
     public void inGameREPL(){
         var result = "";
-        System.out.println(SET_TEXT_COLOR_BLUE + this.evalPostLogin("help"));
+        System.out.println(SET_TEXT_COLOR_BLUE + this.evalInGame("help"));
         while (isInGame) {
             System.out.print(RESET_TEXT_COLOR + username + " > ");
             String line = scanner.nextLine();
@@ -310,7 +310,7 @@ public class Repl {
         try {
             var tokens = input.split(" ");
             if(input.isEmpty()){
-                return SET_TEXT_COLOR_YELLOW + "no command";
+                return printBoard();
             }
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -333,7 +333,7 @@ public class Repl {
                         leave   / l                              -- Stop viewing this game.
                         
                         """;
-                default -> printBoard(params);
+                default -> SET_TEXT_COLOR_YELLOW + "Unknown Command";
             };
         } catch (ResponseException e) {
             return e.getMessage();
