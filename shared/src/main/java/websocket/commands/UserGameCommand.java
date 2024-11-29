@@ -1,6 +1,7 @@
 package websocket.commands;
 
 import chess.ChessMove;
+import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 
@@ -17,6 +18,7 @@ public class UserGameCommand {
     private final String authToken;
 
     private final Integer gameID;
+    private ServerMessage.clientRole requestedRole;
 
     private ChessMove move = null;
 
@@ -24,6 +26,13 @@ public class UserGameCommand {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
+    }
+
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ServerMessage.clientRole newRole) {
+        this.commandType = commandType;
+        this.authToken = authToken;
+        this.gameID = gameID;
+        this.requestedRole = newRole;
     }
 
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ChessMove newMove) {
@@ -50,6 +59,10 @@ public class UserGameCommand {
 
     public Integer getGameID() {
         return gameID;
+    }
+
+    public ServerMessage.clientRole getRequestedRole(){
+        return this.requestedRole;
     }
 
     @Override

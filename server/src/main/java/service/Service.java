@@ -318,26 +318,35 @@ public class Service {
             System.out.println("username for user: " + userName);
             System.out.println("username on black record: " + game.blackUsername());
             System.out.println("username on white record: " + game.whiteUsername());
-            if (game.blackUsername() != null && game.blackUsername().equals(userName)){
+            if (game.blackUsername() != null && game.blackUsername().equals(userName) && command.getRequestedRole() == ServerMessage.clientRole.Black){
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as black");
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.clientRole.Black);
                 return packet;
             }
-            else if (game.whiteUsername() != null && game.whiteUsername().equals(userName)){
+            else if (game.whiteUsername() != null && game.whiteUsername().equals(userName) && command.getRequestedRole() == ServerMessage.clientRole.White){
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as white");
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.clientRole.White);
                 return packet;
             }
-            else {
+            else if (command.getRequestedRole() == ServerMessage.clientRole.Observer){
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as an observer");
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.clientRole.Observer);
                 return packet;
             }
+            else{
+                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Request. Try Again.");
+                packet.setRole(ServerMessage.clientRole.non);
+                return packet;
+            }
         }
-        return new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        else{
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Request. Try Again.");
+            packet.setRole(ServerMessage.clientRole.non);
+            return packet;
+        }
     }
 
 

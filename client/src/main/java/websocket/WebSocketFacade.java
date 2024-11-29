@@ -3,6 +3,7 @@ package websocket;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import ui.RenderBoard;
+import ui.Repl;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -18,10 +19,12 @@ public class WebSocketFacade extends Endpoint {
 
     Session session;
     String userName = "err";
+    private ui.Repl parentClass = null;
     public ServerMessage.clientRole myRole = ServerMessage.clientRole.non;
 
-    public WebSocketFacade(String url) {
+    public WebSocketFacade(String url, ui.Repl parentClass) {
         try {
+            this.parentClass = parentClass;
             url = url.replace("http", "ws");
             URI socketURI = new URI(url);
 
@@ -69,6 +72,8 @@ public class WebSocketFacade extends Endpoint {
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             if (sm.getRole() == White){
                 myRole = White;
+                parentClass.isInGame = true;
+                parentClass.testMethod();
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(false));
                 System.out.println(sm.getNotificationMessage());
@@ -77,13 +82,17 @@ public class WebSocketFacade extends Endpoint {
             }
             else if(sm.getRole() == ServerMessage.clientRole.Black) {
                 myRole = Black;
+                parentClass.isInGame = true;
+                parentClass.testMethod();
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(true));
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
-            else{
+            else if (sm.getRole() == ServerMessage.clientRole.Observer){
                 myRole = Observer;
+                parentClass.isInGame = true;
+                parentClass.testMethod();
                 System.out.println();
                 System.out.println("White's view: ");
                 System.out.println(new RenderBoard().getBoardRender(false));
@@ -92,10 +101,21 @@ public class WebSocketFacade extends Endpoint {
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
+            else{
+                System.out.println("You are not currently playing a game.");
+                parentClass.isInGame = false;
+                parentClass.testMethod();
+                System.out.print(RESET_TEXT_COLOR + userName + " > ");
+            }
 
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
             System.out.println("Sever error: " + sm.getNotificationMessage());
+            if (sm.getRole() == non){
+                parentClass.isInGame = false;
+                parentClass.testMethod();
+                System.out.println("You are not currently playing a game.");
+            }
             System.out.print(RESET_TEXT_COLOR + userName + " > ");
         }
     }

@@ -28,14 +28,14 @@ public class Repl {
     private Scanner scanner = null;
     private List<GameRecord> games = new ArrayList<>();
     private Integer nextGameIndex = 1;
-    private boolean isInGame = false;
+    public boolean isInGame = false;
     private int currentGameID;
 
 
     public Repl(String serverUrl){
         serverURL = serverUrl;
         sf = new ServerFacade(serverURL);
-        ws = new WebSocketFacade("ws://localhost:8080/ws");
+        ws = new WebSocketFacade("ws://localhost:8080/ws", this);
         scanner = new Scanner(System.in);
     }
 
@@ -267,7 +267,15 @@ public class Repl {
                 }
                 json.addProperty("playerColor", params[1].toUpperCase());
                 sf.joinGame(json, authToken);
-                ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID)));
+                if(params[1].equalsIgnoreCase("WHITE")){
+                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.clientRole.White)));
+                }
+                else if(params[1].equalsIgnoreCase("BLACK")){
+                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.clientRole.Black)));
+                }
+                else{
+                    return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
+                }
                 isInGame = true;
             }
             else{
@@ -288,7 +296,7 @@ public class Repl {
                     break;
                 }
             }
-            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID)));
+            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.clientRole.Observer)));
             isInGame = true;
             return "Observing Game";
         }
@@ -343,5 +351,8 @@ public class Repl {
         else{
             return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord> <EndCord>";
         }
+    }
+    public void testMethod(){
+        System.out.println("This was called from the child wsf class. Current game status: " + isInGame);
     }
 }
