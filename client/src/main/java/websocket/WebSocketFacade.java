@@ -73,7 +73,6 @@ public class WebSocketFacade extends Endpoint {
             if (sm.getRole() == White){
                 myRole = White;
                 parentClass.isInGame = true;
-                parentClass.testMethod();
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(false));
                 System.out.println(sm.getNotificationMessage());
@@ -83,7 +82,6 @@ public class WebSocketFacade extends Endpoint {
             else if(sm.getRole() == ServerMessage.clientRole.Black) {
                 myRole = Black;
                 parentClass.isInGame = true;
-                parentClass.testMethod();
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(true));
                 System.out.println(sm.getNotificationMessage());
@@ -92,7 +90,6 @@ public class WebSocketFacade extends Endpoint {
             else if (sm.getRole() == ServerMessage.clientRole.Observer){
                 myRole = Observer;
                 parentClass.isInGame = true;
-                parentClass.testMethod();
                 System.out.println();
                 System.out.println("White's view: ");
                 System.out.println(new RenderBoard().getBoardRender(false));
@@ -104,7 +101,6 @@ public class WebSocketFacade extends Endpoint {
             else{
                 System.out.println("You are not currently playing a game.");
                 parentClass.isInGame = false;
-                parentClass.testMethod();
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
 
@@ -113,7 +109,6 @@ public class WebSocketFacade extends Endpoint {
             System.out.println("Sever error: " + sm.getNotificationMessage());
             if (sm.getRole() == non){
                 parentClass.isInGame = false;
-                parentClass.testMethod();
                 System.out.println("You are not currently playing a game.");
             }
             System.out.print(RESET_TEXT_COLOR + userName + " > ");

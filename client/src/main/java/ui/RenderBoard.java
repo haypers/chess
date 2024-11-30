@@ -114,8 +114,24 @@ public class RenderBoard {
                 return EMPTY;
             }
         }
-        else {
-            return EMPTY;
+        else if (row == 0 || row == 9){
+            return switch (col){
+                case 1 -> " A ";
+                case 2 -> "  B ";
+                case 3 -> " C ";
+                case 4 -> "  D ";
+                case 5 -> "  E ";
+                case 6 -> "  F ";
+                case 7 -> " G ";
+                case 8 -> " H ";
+                default -> EMPTY;
+            };
         }
+        else if (col == 0 || col == 9){
+            if (row >= 1 && row <= 8){
+                return " " + Integer.toString(row) + " ";
+            }
+        }
+        return EMPTY;
     }
 }

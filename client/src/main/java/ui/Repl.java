@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import static java.lang.Integer.parseInt;
 import static ui.EscapeSequences.*;
 
 public class Repl {
@@ -255,11 +256,11 @@ public class Repl {
 
     public String joinGame(String... params) throws ResponseException {
         if (params.length == 2) {
-            if(Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) > 0 &&
+            if(parseInt(params[0]) < nextGameIndex && parseInt(params[0]) > 0 &&
                     (params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))){
                 JsonObject json = new JsonObject();
                 for (GameRecord game : games) {
-                    if (game.getIndex() == Integer.parseInt(params[0])){
+                    if (game.getIndex() == parseInt(params[0])){
                         json.addProperty("gameID", game.getGameID());
                         currentGameID = game.getGameID();
 
@@ -289,9 +290,9 @@ public class Repl {
     }
 
     public String observeGame(String... params) throws ResponseException {
-        if (params.length == 1 && Integer.parseInt(params[0]) < nextGameIndex && Integer.parseInt(params[0]) >= 1) {
+        if (params.length == 1 && parseInt(params[0]) < nextGameIndex && parseInt(params[0]) >= 1) {
             for (GameRecord game : games) {
-                if (game.getIndex() == Integer.parseInt(params[0])){
+                if (game.getIndex() == parseInt(params[0])){
                     currentGameID = game.getGameID();
                     break;
                 }
@@ -345,9 +346,15 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "You are not participating in this game.";
         }
         if (params.length == 2) {
-            JsonObject json = new JsonObject();
-            json.addProperty("playerColor", params[1].toUpperCase());
-            ChessMove move = new ChessMove(new ChessPosition(1, 2), new ChessPosition(3,4), null);
+            ChessPosition start = parseCord(params[0]);
+            if (start.getRow() < 1 || start.getRow() > 8){
+                return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord (Ex:A3)> <EndCord (Ex:E5)>";
+            }
+            ChessPosition end = parseCord(params[1]);
+            if (end.getRow() < 1 || end.getRow() > 8){
+                return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord (Ex:A3)> <EndCord (Ex:E5)>";
+            }
+            ChessMove move = new ChessMove(start, end, null);
             ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, currentGameID, move)));
 
             //return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
@@ -358,9 +365,54 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord> <EndCord>";
         }
     }
-    public void testMethod(){
-        System.out.println("This was called from the child wsf class. Current game status: " + isInGame);
+
+    public ChessPosition parseCord(String input){
+        int Row = -1;
+        int Col = -1;
+        char first;
+        char second;
+        if (input.length() == 2) {
+            first = input.charAt(0);
+            second = input.charAt(1);
+            if (Character.isDigit(first)) {
+                Row = parseInt(String.valueOf(first));
+                System.out.println("new row: " + Row);
+            } else {
+                switch (first) {
+                    case 'a', 'A' -> Col = 1;
+                    case 'b', 'B' -> Col = 2;
+                    case 'c', 'C' -> Col = 3;
+                    case 'd', 'D' -> Col = 4;
+                    case 'e', 'E' -> Col = 5;
+                    case 'f', 'F' -> Col = 6;
+                    case 'g', 'G' -> Col = 7;
+                    case 'h', 'H' -> Col = 8;
+                    default -> Col = -1;
+                }
+                System.out.println("new col: " + Col);
+            }
+            if (Character.isDigit(second)) {
+                Row = parseInt(String.valueOf(second));
+                System.out.println("new row: " + Row);
+            } else {
+                switch (second) {
+                    case 'a', 'A' -> Col = 1;
+                    case 'b', 'B' -> Col = 2;
+                    case 'c', 'C' -> Col = 3;
+                    case 'd', 'D' -> Col = 4;
+                    case 'e', 'E' -> Col = 5;
+                    case 'f', 'F' -> Col = 6;
+                    case 'g', 'G' -> Col = 7;
+                    case 'h', 'H' -> Col = 8;
+                    default -> Col = -1;
+                }
+                System.out.println("new col: " + Col);
+            }
+
+        }
+        return new ChessPosition(Row, Col);
     }
+
     public String leave(String... params){
         return "leave";
     }
