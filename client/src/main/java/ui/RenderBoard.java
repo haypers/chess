@@ -11,7 +11,6 @@ public class RenderBoard {
     public String getBoardRender(Boolean isBLACK, ChessBoard board){
         StringBuilder temp = new StringBuilder();
         Integer[][] gridColor = new Integer[10][10];
-        board.resetBoard();
 
         //set background colors
         for(int row = 0; row <= 9; row++){

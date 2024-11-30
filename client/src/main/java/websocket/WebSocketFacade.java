@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static ui.EscapeSequences.RESET_TEXT_COLOR;
+import static ui.EscapeSequences.*;
 import static websocket.messages.ServerMessage.clientRole.*;
 
 //need to extend Endpoint for websocket to work properly
@@ -66,11 +66,12 @@ public class WebSocketFacade extends Endpoint {
 
     public void process(ServerMessage sm){
         if (sm.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
-            System.out.println(sm.getNotificationMessage());
+            System.out.println(SET_TEXT_COLOR_YELLOW + sm.getNotificationMessage());
             System.out.print(RESET_TEXT_COLOR + userName + " > ");
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             parentClass.board = sm.getBoard();
+            System.out.println(parentClass.board);
             if (sm.getRole() == White){
                 myRole = White;
                 parentClass.isInGame = true;
@@ -107,7 +108,7 @@ public class WebSocketFacade extends Endpoint {
 
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
-            System.out.println("Sever error: " + sm.getNotificationMessage());
+            System.out.println(SET_TEXT_COLOR_RED + "Sever error: " + sm.getNotificationMessage() + RESET_TEXT_COLOR);
             if (sm.getRole() == non){
                 parentClass.isInGame = false;
                 System.out.println("You are not currently playing a game.");

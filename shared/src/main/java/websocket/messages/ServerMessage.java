@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     ChessBoard boardData;
-    String message;
+    String message = "";
     clientRole role;
 
     public enum ServerMessageType {

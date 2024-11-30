@@ -380,7 +380,7 @@ public class Repl {
             second = input.charAt(1);
             if (Character.isDigit(first)) {
                 Row = parseInt(String.valueOf(first));
-                System.out.println("new row: " + Row);
+                //System.out.println("new row: " + Row);
             } else {
                 switch (first) {
                     case 'a', 'A' -> Col = 1;
@@ -393,11 +393,11 @@ public class Repl {
                     case 'h', 'H' -> Col = 8;
                     default -> Col = -1;
                 }
-                System.out.println("new col: " + Col);
+                //System.out.println("new col: " + Col);
             }
             if (Character.isDigit(second)) {
                 Row = parseInt(String.valueOf(second));
-                System.out.println("new row: " + Row);
+                //System.out.println("new row: " + Row);
             } else {
                 switch (second) {
                     case 'a', 'A' -> Col = 1;
@@ -410,7 +410,7 @@ public class Repl {
                     case 'h', 'H' -> Col = 8;
                     default -> Col = -1;
                 }
-                System.out.println("new col: " + Col);
+                //System.out.println("new col: " + Col);
             }
 
         }

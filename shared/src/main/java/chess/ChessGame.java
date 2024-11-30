@@ -53,7 +53,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        System.out.println("validMoves() called");
+        //System.out.println("validMoves() called");
         if (board.getPiece(startPosition) != null){
             ChessPiece piece = new ChessPiece(board.getPiece(startPosition));
             Collection<ChessMove> possibleMovesToFilter = piece.pieceMoves(board, startPosition);
@@ -65,15 +65,15 @@ public class ChessGame {
                 testBoard.addPiece(move.getStartPosition(), null);
                 if(testBoard.isInCheck(piece.getTeamColor())){
                     movesToRemove.add(move);
-                    System.out.println("removed a move that would put us in check.");
+                    //System.out.println("removed a move that would put us in check.");
                 }
             }
             possibleMovesToFilter.removeAll(movesToRemove);
-            System.out.println(possibleMovesToFilter);
+            //System.out.println(possibleMovesToFilter);
             return possibleMovesToFilter;
         }
         else{
-            System.out.println("there are no valid moves at the position checked.");
+            //System.out.println("there are no valid moves at the position checked.");
             return null;
         }
 
