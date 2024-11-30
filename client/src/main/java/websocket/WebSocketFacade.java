@@ -71,7 +71,7 @@ public class WebSocketFacade extends Endpoint {
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             parentClass.board = sm.getBoard();
-            System.out.println(parentClass.board);
+            //System.out.println(parentClass.board);
             if (sm.getRole() == White){
                 myRole = White;
                 parentClass.isInGame = true;

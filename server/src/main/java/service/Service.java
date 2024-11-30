@@ -366,14 +366,14 @@ public class Service {
         if (valid.isEmpty()){
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
         }
-        System.out.println("send move: " + command.getMove());
+        System.out.println("sent move: " + command.getMove());
         System.out.println("valid moves: " + valid.toString());
         if (game.game().turnColor == ChessGame.TeamColor.WHITE && command.getRequestedRole() == ServerMessage.clientRole.White
             || game.game().turnColor == ChessGame.TeamColor.BLACK && command.getRequestedRole() == ServerMessage.clientRole.Black){
             if(valid.contains(command.getMove())){
                 try {
                     game.game().makeMove(command.getMove());
-                    System.out.println(game.game().getBoard().toString());
+                    //System.out.println(game.game().getBoard().toString());
                     memory.saveGameData(game.gameID(), game);
                 } catch (InvalidMoveException e) {
                     System.out.println("Error making move: " + e);
@@ -384,13 +384,12 @@ public class Service {
                 packet.setRole(command.getRequestedRole());
                 return packet;
             }
+            else{
+                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
+            }
         }
         else{
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It's not your turn!");
         }
-
-        return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(3)");
     }
-
-
 }
