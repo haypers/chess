@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -31,6 +32,7 @@ public class Repl {
     private Integer nextGameIndex = 1;
     public boolean isInGame = false;
     private int currentGameID;
+    public ChessBoard board;
 
 
     public Repl(String serverUrl){
@@ -355,7 +357,9 @@ public class Repl {
                 return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord (Ex:A3)> <EndCord (Ex:E5)>";
             }
             ChessMove move = new ChessMove(start, end, null);
-            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, currentGameID, move)));
+            UserGameCommand packet = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, currentGameID, move);
+            packet.setRole(ws.myRole);
+            ws.send(new Gson().toJson(packet));
 
             //return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
 
@@ -422,19 +426,20 @@ public class Repl {
     public String printBoard(String... params){
         if (ws.myRole == ServerMessage.clientRole.White){
             System.out.println();
+            System.out.println(new RenderBoard().getBoardRender(false, board));
 
 
         }
         else if (ws.myRole == ServerMessage.clientRole.Black){
             System.out.println();
-            System.out.println(new RenderBoard().getBoardRender(true));
+            System.out.println(new RenderBoard().getBoardRender(true, board));
         }
         else if(ws.myRole == ServerMessage.clientRole.Observer){
             System.out.println();
             System.out.println("White's view: ");
-            System.out.println(new RenderBoard().getBoardRender(false));
+            System.out.println(new RenderBoard().getBoardRender(false, board));
             System.out.println("Blacks's view: ");
-            System.out.println(new RenderBoard().getBoardRender(true));
+            System.out.println(new RenderBoard().getBoardRender(true, board));
         }
         else{
             System.out.println();

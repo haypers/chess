@@ -8,10 +8,9 @@ import static ui.EscapeSequences.*;
 
 public class RenderBoard {
 
-    public String getBoardRender(Boolean isBLACK){
+    public String getBoardRender(Boolean isBLACK, ChessBoard board){
         StringBuilder temp = new StringBuilder();
         Integer[][] gridColor = new Integer[10][10];
-        ChessBoard board = new ChessBoard();
         board.resetBoard();
 
         //set background colors

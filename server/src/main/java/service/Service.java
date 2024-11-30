@@ -1,5 +1,7 @@
 package service;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,6 +17,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random; //for making game IDs
 import java.nio.charset.StandardCharsets; //for hashing passwords
 import java.security.MessageDigest; //for hashing passwords
@@ -347,6 +350,32 @@ public class Service {
             packet.setRole(ServerMessage.clientRole.non);
             return packet;
         }
+    }
+
+    public ServerMessage makeMove(UserGameCommand command){
+        String userName = memory.getUserFromToken(command.getAuthToken());
+        GameData game;
+        if (userName.isEmpty()){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
+        }
+        if (!memory.checkIfGameExists(command.getGameID())){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
+        }
+        game = memory.getGame(command.getGameID());
+        Collection<ChessMove> valid = game.game().validMoves(command.getMove().getStartPosition());
+        if(valid.contains(command.getMove())){
+            try {
+                game.game().makeMove(command.getMove());
+            } catch (InvalidMoveException e) {
+                System.out.println("Error making move");
+                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
+            }
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            packet.setBoard(game.game().getBoard());
+            packet.setRole(command.getRequestedRole());
+            return packet;
+        }
+        return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
     }
 
 

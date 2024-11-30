@@ -61,8 +61,16 @@ public class UserGameCommand {
         return gameID;
     }
 
+    public ChessMove getMove(){
+        return this.move;
+    }
+
     public ServerMessage.clientRole getRequestedRole(){
         return this.requestedRole;
+    }
+
+    public void setRole(ServerMessage.clientRole role){
+        this.requestedRole = role;
     }
 
     @Override
