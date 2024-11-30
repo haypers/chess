@@ -368,7 +368,28 @@ public class Repl {
         return "resign";
     }
     public String printBoard(String... params){
-        return "print";
+        if (ws.myRole == ServerMessage.clientRole.White){
+            System.out.println();
+
+
+        }
+        else if (ws.myRole == ServerMessage.clientRole.Black){
+            System.out.println();
+            System.out.println(new RenderBoard().getBoardRender(true));
+        }
+        else if(ws.myRole == ServerMessage.clientRole.Observer){
+            System.out.println();
+            System.out.println("White's view: ");
+            System.out.println(new RenderBoard().getBoardRender(false));
+            System.out.println("Blacks's view: ");
+            System.out.println(new RenderBoard().getBoardRender(true));
+        }
+        else{
+            System.out.println();
+            System.out.println("You are not participating in any game.");
+            isInGame = false;
+        }
+        return "";
     }
     public String highlightSpace(String... params){
         return "highlight";
