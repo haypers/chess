@@ -15,14 +15,12 @@ import org.mindrot.jbcrypt.BCrypt;
 import model.ResponseObject;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
+import org.eclipse.jetty.websocket.api.Session;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random; //for making game IDs
+import java.util.*;
 import java.nio.charset.StandardCharsets; //for hashing passwords
 import java.security.MessageDigest; //for hashing passwords
 import java.time.Instant; //for making authentication tokens
-import java.util.Base64; //for hashing passwords and tokens
 
 
 public class Service {
@@ -33,6 +31,7 @@ public class Service {
     //Chose what kind of storage type you will use
     //private final MemoryDataAccess memory = new MemoryDataAccess();
     private final DataAccess memory = new SQLDataAccess();
+    private HashMap<Integer, ArrayList<Session>> sessions = new HashMap<>();
 
 
     public ResponseObject registerUser(String body){
@@ -311,7 +310,7 @@ public class Service {
         """);
     }
 
-    public ServerMessage connect(UserGameCommand command){
+    public ServerMessage connect(UserGameCommand command, Session session){
         String userName = memory.getUserFromToken(command.getAuthToken());
         if (userName.isEmpty()){
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
@@ -322,18 +321,72 @@ public class Service {
             System.out.println("username on black record: " + game.blackUsername());
             System.out.println("username on white record: " + game.whiteUsername());
             if (game.blackUsername() != null && game.blackUsername().equals(userName) && command.getRequestedRole() == ServerMessage.clientRole.Black){
+                ArrayList<Session> peers;
+                if (!sessions.containsKey(game.gameID())){
+                    peers = new ArrayList<>();
+                }
+                else{
+                    peers = sessions.get(game.gameID());
+                }
+                for (Session peer : peers){
+                    try {
+                        peer.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                userName + " joined as black.")));
+                    }
+                    catch (Exception e){
+                        System.out.println("error sending join notification to peers");
+                    }
+                }
+                peers.add(session);
+                sessions.put(game.gameID(), peers);
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as black");
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.clientRole.Black);
                 return packet;
             }
             else if (game.whiteUsername() != null && game.whiteUsername().equals(userName) && command.getRequestedRole() == ServerMessage.clientRole.White){
+                ArrayList<Session> peers;
+                if (!sessions.containsKey(game.gameID())){
+                    peers = new ArrayList<>();
+                }
+                else{
+                    peers = sessions.get(game.gameID());
+                }
+                for (Session peer : peers){
+                    try {
+                        peer.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                userName + " joined as white.")));
+                    }
+                    catch (Exception e){
+                        System.out.println("error sending join notification to peers");
+                    }
+                }
+                peers.add(session);
+                sessions.put(game.gameID(), peers);
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as white");
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.clientRole.White);
                 return packet;
             }
             else if (command.getRequestedRole() == ServerMessage.clientRole.Observer){
+                ArrayList<Session> peers;
+                if (!sessions.containsKey(game.gameID())){
+                    peers = new ArrayList<>();
+                }
+                else{
+                    peers = sessions.get(game.gameID());
+                }
+                for (Session peer : peers){
+                    try {
+                        peer.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                userName + " joined as an observer.")));
+                    }
+                    catch (Exception e){
+                        System.out.println("error sending join notification to peers");
+                    }
+                }
+                peers.add(session);
+                sessions.put(game.gameID(), peers);
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as an observer");
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.clientRole.Observer);
@@ -352,7 +405,7 @@ public class Service {
         }
     }
 
-    public ServerMessage makeMove(UserGameCommand command){
+    public ServerMessage makeMove(UserGameCommand command, Session session){
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
         if (userName.isEmpty()){

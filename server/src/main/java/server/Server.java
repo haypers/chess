@@ -41,7 +41,7 @@ public class Server {
         System.out.println("Got command: " + command.getCommandType());
         if (command.getCommandType() == UserGameCommand.CommandType.CONNECT){
             System.out.println("connect");
-            ServerMessage reply = service.connect(command);
+            ServerMessage reply = service.connect(command, session);
             session.getRemote().sendString(new Gson().toJson(reply));
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.LEAVE){
@@ -49,7 +49,7 @@ public class Server {
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
             System.out.println("make move");
-            ServerMessage reply = service.makeMove(command);
+            ServerMessage reply = service.makeMove(command, session);
             session.getRemote().sendString(new Gson().toJson(reply));
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.RESIGN){
