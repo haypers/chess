@@ -25,7 +25,8 @@ public class ServerMessage {
         White,
         Black,
         Observer,
-        non
+        non,
+        noChange
     }
 
     public ServerMessage(ServerMessageType type) {

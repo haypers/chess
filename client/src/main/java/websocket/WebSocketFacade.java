@@ -100,6 +100,30 @@ public class WebSocketFacade extends Endpoint {
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
+            else if (sm.getRole() == ServerMessage.clientRole.noChange){
+                if (myRole == White){
+                    System.out.println();
+                    System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
+                    System.out.println(sm.getNotificationMessage());
+                    System.out.print(RESET_TEXT_COLOR + userName + " > ");
+                }
+                else if (myRole == Black){
+                    System.out.println();
+                    System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
+                    System.out.println(sm.getNotificationMessage());
+                    System.out.print(RESET_TEXT_COLOR + userName + " > ");
+                }
+                else{
+                    System.out.println();
+                    System.out.println("White's view: ");
+                    System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
+                    System.out.println("Blacks's view: ");
+                    System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
+                    System.out.println(sm.getNotificationMessage());
+                    System.out.print(RESET_TEXT_COLOR + userName + " > ");
+                }
+
+            }
             else{
                 System.out.println("You are not currently playing a game.");
                 parentClass.isInGame = false;

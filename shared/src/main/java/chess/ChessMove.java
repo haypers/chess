@@ -49,11 +49,36 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "ChessMove{" +
-                "startPosition=" + startPosition +
-                ", endPosition=" + endPosition +
-                ", promotionPiece=" + promotionPiece +
-                '}';
+        StringBuilder s = new StringBuilder();
+        s.append(startPosition.getRow());
+        switch(startPosition.getColumn()){
+            case 1 -> s.append("A");
+            case 2 -> s.append("B");
+            case 3 -> s.append("C");
+            case 4 -> s.append("D");
+            case 5 -> s.append("E");
+            case 6 -> s.append("F");
+            case 7 -> s.append("G");
+            case 8 -> s.append("H");
+            default -> s.append(startPosition.getColumn());
+        }
+        s.append(" to ");
+        s.append(endPosition.getRow());
+        switch(endPosition.getColumn()){
+            case 1 -> s.append("A");
+            case 2 -> s.append("B");
+            case 3 -> s.append("C");
+            case 4 -> s.append("D");
+            case 5 -> s.append("E");
+            case 6 -> s.append("F");
+            case 7 -> s.append("G");
+            case 8 -> s.append("H");
+            default -> s.append(endPosition.getColumn());
+        }
+        if (promotionPiece != null){
+            s.append(" with promotion to ").append(getPromotionPiece());
+        }
+        return s.toString();
     }
 
     @Override

@@ -426,8 +426,29 @@ public class Service {
             if(valid.contains(command.getMove())){
                 try {
                     game.game().makeMove(command.getMove());
-                    //System.out.println(game.game().getBoard().toString());
                     memory.saveGameData(game.gameID(), game);
+                    ArrayList<Session> peers;
+                    if (!sessions.containsKey(game.gameID())){
+                        peers = new ArrayList<>();
+                    }
+                    else{
+                        peers = sessions.get(game.gameID());
+                    }
+                    for (Session peer : peers){
+                        if(peer == session){
+                            continue;
+                        }
+                        try {
+                            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                                    userName + " made move: " + command.getMove().toString());
+                            packet.setBoard(game.game().getBoard());
+                            packet.setRole(ServerMessage.clientRole.noChange);
+                            peer.getRemote().sendString(new Gson().toJson(packet));
+                        }
+                        catch (Exception e){
+                            System.out.println("error sending move notification to peers");
+                        }
+                    }
                 } catch (InvalidMoveException e) {
                     System.out.println("Error making move: " + e);
                     return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(2)");
