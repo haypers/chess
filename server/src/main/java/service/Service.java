@@ -465,10 +465,11 @@ public class Service {
             leftMessage = " as Black has resigned the game, and lost. WHITE WINS!";
             for (Session peer : peers) {
                 if (peer == session) {
+                    //break out of this loop iteration, because this is the actual player.
                     continue;}
                 try {
-                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            userName + leftMessage);
+                    ServerMessage packet = new ServerMessage(
+                            ServerMessage.ServerMessageType.NOTIFICATION, userName + leftMessage);
                     packet.setRole(ServerMessage.ClientRole.non);
                     peer.getRemote().sendString(new Gson().toJson(packet));
                 } catch (Exception e) {

@@ -179,14 +179,22 @@ public class SQLDataAccess implements DataAccess {
 
     public boolean saveGameData(int gameID, GameData gameData)  {
         String lookForOldGame = "SELECT COUNT(*) FROM games WHERE id = ?";
-        try (var conn = DatabaseManager.getConnection();
-             var prepStatement = conn.prepareStatement(lookForOldGame)) {
+        try (var conn = DatabaseManager.getConnection(); var prepStatement = conn.prepareStatement(lookForOldGame))
+        {
             prepStatement.setInt(1, gameID);
-            try (var rs = prepStatement.executeQuery()) {
+
+            try (var rs = prepStatement.executeQuery())
+
+            {
                 if (rs.next() && rs.getInt(1) > 0) {
-                    String deleteQuery = "DELETE FROM games WHERE id = ?";
+
+                    String deleteQuery = """
+                            DELETE FROM games WHERE id = ?""";
+
                     try (var deletePrepStatement = conn.prepareStatement(deleteQuery)) {
+
                         deletePrepStatement.setInt(1, gameID);
+
                         deletePrepStatement.executeUpdate();
                     }
                 }

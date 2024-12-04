@@ -48,17 +48,17 @@ public class RenderBoard {
         else{
             for (int row = 9; row >= 0; row--) {
 
-                for (int col = 0; col <= 9; col++) {
+                for (int col = 0;  col <= 9; col++) {
 
                     if (gridColor[row][col] == 2)
                     {
-                        temp.append(SET_BG_COLOR_BLUE).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
+                        temp.append(SET_BG_COLOR_BLUE + getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     } else if (gridColor[row][col] == 0)
                     {
                         temp.append(SET_BG_COLOR_LIGHT_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     } else if (gridColor[row][col] == 1)
                     {
-                        temp.append(SET_BG_COLOR_DARK_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
+                        temp.append(SET_BG_COLOR_DARK_GREY + getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                 }
                 temp.append("\n");
@@ -113,16 +113,16 @@ public class RenderBoard {
                         temp.append(SET_BG_COLOR_BLUE).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                     else if (gridColor[row][col] == 0) {
-                        temp.append(SET_BG_COLOR_LIGHT_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
+                        temp.append(SET_BG_COLOR_LIGHT_GREY + getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                     else if (gridColor[row][col] == 1) {
                         temp.append(SET_BG_COLOR_DARK_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                     else if (gridColor[row][col] == 3) {
-                        temp.append(SET_BG_COLOR_RED).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
+                        temp.append(SET_BG_COLOR_RED + getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                     else if (gridColor[row][col] == 5) {
-                        temp.append(SET_BG_COLOR_DARK_GREEN).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
+                        temp.append(SET_BG_COLOR_DARK_GREEN + getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                     else if (gridColor[row][col] == 4) {
                         temp.append(SET_BG_COLOR_GREEN).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
