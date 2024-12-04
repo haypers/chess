@@ -258,10 +258,12 @@ public class Repl {
                 json.addProperty("playerColor", params[1].toUpperCase());
                 sf.joinGame(json, authToken);
                 if(params[1].equalsIgnoreCase("WHITE")){
-                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.ClientRole.White)));
+                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                            authToken, currentGameID, ServerMessage.ClientRole.White)));
                 }
                 else if(params[1].equalsIgnoreCase("BLACK")){
-                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.ClientRole.Black)));
+                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                            authToken, currentGameID, ServerMessage.ClientRole.Black)));
                 }
                 else{
                     return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
@@ -285,7 +287,8 @@ public class Repl {
                     break;
                 }
             }
-            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.ClientRole.Observer)));
+            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                    authToken, currentGameID, ServerMessage.ClientRole.Observer)));
             isInGame = true;
             return "Observing Game";
         }

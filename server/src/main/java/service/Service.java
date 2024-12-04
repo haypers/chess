@@ -50,15 +50,12 @@ public class Service {
                 } else {
                     return new ResponseObject(403, """
                             {"message": "Error: already taken"}
-                            """);
-                }
+                            """);}
             }
         }
         return new ResponseObject(400, """
                 {"message": "Error: bad request"}
-                """);
-    }
-
+                """);}
     public ResponseObject loginUser(String body) {
         String username;
         String password;
@@ -70,8 +67,7 @@ public class Service {
                 System.out.println("bad credentials sent for login");
                 return new ResponseObject(401, """
                         { "message": "Error: unauthorized" }
-                        """);
-            }
+                        """);}
             if (memory.checkIfUsersExists(username)) {
                 String oldHash = memory.getPassHash(username);
                 try {
@@ -82,26 +78,20 @@ public class Service {
                     } else {
                         return new ResponseObject(401, """
                                 { "message": "Error: unauthorized" }
-                                """);
-                    }
+                                """);}
                 } catch (Exception e) {
                     System.out.println("error hashing login password");
                     return new ResponseObject(500, """
                             { "message": "Error: hashing algorithm failed" }
-                            """);
-                }
+                            """);}
             } else {
                 return new ResponseObject(401, """
                         { "message": "Error: unauthorized" }
-                        """);
-            }
-
+                        """);}
         }
         return new ResponseObject(401, """
                 { "message": "Error: unauthorized" }
-                """);
-    }
-
+                """);}
     public String makeAuthToken(String userName) {
         String combinedInput = "";
         if (memory.checkIfUsersExists(userName)) {
@@ -128,7 +118,6 @@ public class Service {
             return "";
         }
     }
-
     public ResponseObject clearDatabase() {
         System.out.println("clearing database");
         try {
@@ -137,16 +126,13 @@ public class Service {
             } else {
                 throw new ResponseException(200, """
                         {"message": "Error: database offline"}
-                        """);
-            }
+                        """);}
         } catch (ResponseException e) {
             System.out.println(e.statusCode());
             return new ResponseObject(500, """
                     {"message": "Error: database offline"}
-                    """);
-        }
+                    """);}
     }
-
     public ResponseObject logoutUser(String token) {
         if (!token.isEmpty()) {
             String userName = memory.getUserFromToken(token);
@@ -158,15 +144,12 @@ public class Service {
                     System.out.println("logout unsuccessful");
                     return new ResponseObject(500, """
                             { "message": "Error: database lost value before modifying it" }
-                            """);
-                }
+                            """);}
             }
         }
         return new ResponseObject(401, """
                 { "message": "Error: unauthorized" }
-                """);
-    }
-
+                """);}
     public ResponseObject createGame(String token, String body) {
         if (!token.isEmpty()) {
             System.out.println(token);
@@ -178,8 +161,7 @@ public class Service {
                 if (!jsonObject.has("gameName")) {
                     return new ResponseObject(400, """
                             { "message": "Error: bad request" }
-                            """);
-                }
+                            """);}
                 gameName = jsonObject.get("gameName").getAsString();
                 if (!gameName.isEmpty()) {
                     int gameID = rand.nextInt(100000);
@@ -192,16 +174,13 @@ public class Service {
                     } else {
                         return new ResponseObject(500, """
                                 { "message": "Error: database offline" }
-                                """);
-                    }
+                                """);}
                 }
             }
         }
         return new ResponseObject(401, """
                 { "message": "Error: unauthorized" }
-                """);
-    }
-
+                """);}
     public ResponseObject getGames(String token) {
         if (!token.isEmpty()) {
             String userName = memory.getUserFromToken(token);
@@ -209,14 +188,11 @@ public class Service {
                 ArrayList<PublicGameData> games;
                 games = memory.getAllGames();
                 var json = serializer.toJson(games);
-                return new ResponseObject(200, "{ \"games\": " + json + "}");
-            }
+                return new ResponseObject(200, "{ \"games\": " + json + "}");}
         }
         return new ResponseObject(401, """
                 { "message": "Error: unauthorized" }
-                """);
-    }
-
+                """);}
     public ResponseObject joinGame(String token, String body) {
         if (!token.isEmpty()) {
             String userName = memory.getUserFromToken(token);
@@ -235,13 +211,11 @@ public class Service {
                     } else {
                         return new ResponseObject(400, """
                                 { "message": "Error: bad request" }
-                                """);
-                    }
+                                """);}
                     if (!memory.checkIfGameExists(gameID)) {
                         return new ResponseObject(400, """
                                 { "message": "Error: bad request" }
-                                """);
-                    }
+                                """);}
                     GameData game = memory.getGame(gameID);
                     if (teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() == null) {
                         GameData newGame = new GameData(game.gameID(), userName, game.blackUsername(), game.gameName(), game.game());
@@ -254,19 +228,15 @@ public class Service {
                     } else {
                         return new ResponseObject(403, """
                                 { "message": "Error: already taken" }
-                                """);
-                    }
+                                """);}
                 }
                 return new ResponseObject(400, """
                         { "message": "Error: bad request" }
-                        """);
-            }
+                        """);}
         }
         return new ResponseObject(401, """
                 { "message": "Error: unauthorized" }
-                """);
-    }
-
+                """);}
     public ServerMessage connect(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
         if (userName.isEmpty()) {
@@ -277,7 +247,8 @@ public class Service {
             System.out.println("username for user: " + userName);
             System.out.println("username on black record: " + game.blackUsername());
             System.out.println("username on white record: " + game.whiteUsername());
-            if (game.blackUsername() != null && game.blackUsername().equals(userName) && command.getRequestedRole() == ServerMessage.ClientRole.Black) {
+            if (game.blackUsername() != null && game.blackUsername().equals(userName)
+                    && command.getRequestedRole() == ServerMessage.ClientRole.Black) {
                 ArrayList<Session> peers;
                 if (!sessions.containsKey(game.gameID())) {
                     peers = new ArrayList<>();
@@ -291,8 +262,7 @@ public class Service {
                         packet.setRole(ServerMessage.ClientRole.noChange);
                         peer.getRemote().sendString(new Gson().toJson(packet));
                     } catch (Exception e) {
-                        System.out.println("error sending join notification to peers");
-                    }
+                        System.out.println("error sending join notification to peers");}
                 }
                 peers.add(session);
                 sessions.put(game.gameID(), peers);
@@ -300,13 +270,13 @@ public class Service {
                 packet.setBoard(game.game().getBoard());
                 packet.setRole(ServerMessage.ClientRole.Black);
                 return packet;
-            } else if (game.whiteUsername() != null && game.whiteUsername().equals(userName) && command.getRequestedRole() == ServerMessage.ClientRole.White) {
+            } else if (game.whiteUsername() != null && game.whiteUsername().equals(userName) &&
+                    command.getRequestedRole() == ServerMessage.ClientRole.White) {
                 ArrayList<Session> peers;
                 if (!sessions.containsKey(game.gameID())) {
                     peers = new ArrayList<>();
                 } else {
-                    peers = sessions.get(game.gameID());
-                }
+                    peers = sessions.get(game.gameID());}
                 for (Session peer : peers) {
                     try {
                         ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
@@ -328,8 +298,7 @@ public class Service {
                 if (!sessions.containsKey(game.gameID())) {
                     peers = new ArrayList<>();
                 } else {
-                    peers = sessions.get(game.gameID());
-                }
+                    peers = sessions.get(game.gameID());}
                 for (Session peer : peers) {
                     try {
                         ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
@@ -357,16 +326,13 @@ public class Service {
             return packet;
         }
     }
-
     public ServerMessage makeMove(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
-        }
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");}
         if (!memory.checkIfGameExists(command.getGameID())) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
-        }
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");}
         game = memory.getGame(command.getGameID());
         Collection<ChessMove> valid = game.game().validMoves(command.getMove().getStartPosition());
         if (valid.isEmpty()) {
@@ -384,27 +350,21 @@ public class Service {
                 game.game().makeMove(command.getMove());
                 memory.saveGameData(game.gameID(), game);
                 if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                    messageExtra = " and White is in CheckMate!";
-                }
+                    messageExtra = " and White is in CheckMate!";}
                 if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
-                    messageExtra += " and Black is in checkMate!";
-                }
+                    messageExtra += " and Black is in checkMate!";}
                 if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
-                    messageExtra += " and White is in Check!";
-                }
+                    messageExtra += " and White is in Check!";}
                 if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
-                    messageExtra += " and Black is in Check!";
-                }
+                    messageExtra += " and Black is in Check!";}
                 ArrayList<Session> peers;
                 if (!sessions.containsKey(game.gameID())) {
                     peers = new ArrayList<>();
                 } else {
-                    peers = sessions.get(game.gameID());
-                }
+                    peers = sessions.get(game.gameID());}
                 for (Session peer : peers) {
                     if (peer == session) {
-                        continue;
-                    }
+                        continue;}
                     try {
                         ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
                                 userName + " made move: " + command.getMove().toString() + messageExtra);
@@ -412,8 +372,7 @@ public class Service {
                         packet.setRole(ServerMessage.ClientRole.noChange);
                         peer.getRemote().sendString(new Gson().toJson(packet));
                     } catch (Exception e) {
-                        System.out.println("error sending move notification to peers");
-                    }
+                        System.out.println("error sending move notification to peers");}
                 }
             } catch (InvalidMoveException e) {
                 System.out.println("Error making move: " + e);
@@ -427,19 +386,13 @@ public class Service {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
         }
     }
-
     public ServerMessage leave(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
-
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
-        }
-
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");}
         if (!memory.checkIfGameExists(command.getGameID())) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
-        }
-
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");}
         game = memory.getGame(command.getGameID());
         ArrayList<Session> peers;
         if (!sessions.containsKey(game.gameID())) {
@@ -461,8 +414,7 @@ public class Service {
         }
         for (Session peer : peers) {
             if (peer == session) {
-                continue;
-            }
+                continue;}
             try {
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                         userName + " left the game" + leftMessage);
@@ -498,8 +450,7 @@ public class Service {
             leftMessage = " as White has resigned the game, and lost. BLACK WINS!";
             for (Session peer : peers) {
                 if (peer == session) {
-                    continue;
-                }
+                    continue;}
                 try {
                     ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                             userName + leftMessage);
@@ -514,8 +465,7 @@ public class Service {
             leftMessage = " as Black has resigned the game, and lost. WHITE WINS!";
             for (Session peer : peers) {
                 if (peer == session) {
-                    continue;
-                }
+                    continue;}
                 try {
                     ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                             userName + leftMessage);
@@ -528,8 +478,7 @@ public class Service {
         } else {
             for (Session peer : peers) {
                 if (peer == session) {
-                    continue;
-                }
+                    continue;}
                 try {
                     ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                             userName + " left the game as an Observer.");
@@ -541,7 +490,8 @@ public class Service {
             }
             peers.remove(session);
             sessions.put(game.gameID(), peers);
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "As an observer, you can only leave the game, not resign. You have left the game.");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                    "As an observer, you can only leave the game, not resign. You have left the game.");
         }
         return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Resign instruction confirmed.");
     }
