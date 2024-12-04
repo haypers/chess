@@ -329,7 +329,7 @@ public class Repl {
                         help    / h                              -- Print this key
                         move    / m <startCord> <endCord>        -- Make a move
                         see     / s                              -- Re-print Board
-                        focus   / f <Cord>                       -- Show all possible moves for a piece
+                        focus   / f <startCord>                  -- Show all possible moves for a piece
                         resign  / r                              -- Admit defeat, end game.
                         leave   / l                              -- Stop viewing this game.
                         
@@ -470,7 +470,27 @@ public class Repl {
         }
         return "";
     }
+
     public String highlightSpace(String... params){
-        return "highlight";
+        if (params.length != 1){
+            return SET_TEXT_COLOR_YELLOW + "Expected: focus <startCord (Ex:A3)>";
+        }
+        ChessPosition start = parseCord(params[0]);
+        if(board.getPiece(start) == null){
+            return SET_TEXT_COLOR_YELLOW + "No piece there.";
+        }
+        if (start.getRow() < 1 || start.getRow() > 8){
+            return SET_TEXT_COLOR_YELLOW + "Expected: focus <StartCord (Ex:A3)>";
+        }
+        ChessGame tempGame = new ChessGame();
+        tempGame.setBoard(board);
+        if (ws.myRole == ServerMessage.clientRole.White){
+            System.out.println();
+            System.out.println(new RenderBoard().getBoardRender(false, board, tempGame.validMoves(start)));
+        }else if(ws.myRole == ServerMessage.clientRole.Black){
+            System.out.println();
+            System.out.println(new RenderBoard().getBoardRender(true, board, tempGame.validMoves(start)));
+        }
+        return "";
     }
 }
