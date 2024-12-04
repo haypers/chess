@@ -46,6 +46,8 @@ public class Server {
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.LEAVE){
             System.out.println("leave");
+            ServerMessage reply = service.leave(command, session);
+            session.getRemote().sendString(new Gson().toJson(reply));
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
             System.out.println("make move");
@@ -54,6 +56,8 @@ public class Server {
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.RESIGN){
             System.out.println("Resign");
+            ServerMessage reply = service.resign(command, session);
+            session.getRemote().sendString(new Gson().toJson(reply));
         }
         System.out.println("sent response object");
     }

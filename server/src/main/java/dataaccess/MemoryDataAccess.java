@@ -75,6 +75,10 @@ public class MemoryDataAccess implements DataAccess{
         return dataAccess.get(userName).password();
     }
 
+    public void removeGame(Integer gameID){
+        gameAccess.remove(gameID);
+    }
+
     public String getUserFromToken(String authToken){
         return authAccess.getOrDefault(authToken, "");
     }

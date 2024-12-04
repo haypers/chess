@@ -73,6 +73,7 @@ public class Repl {
                 System.out.println(SET_TEXT_COLOR_BLUE + result);
                 if (isInGame){
                     inGameREPL();
+                    System.out.println(SET_TEXT_COLOR_BLUE + this.evalPostLogin("help"));
                 }
             } catch (Throwable e) {
                 System.out.println("error 2:");
@@ -440,10 +441,31 @@ public class Repl {
     }
 
     public String leave(String... params){
-        return "leave";
+        if(params.length != 0){
+            return SET_TEXT_COLOR_YELLOW + "Expected: leave (no params)";
+        }
+        UserGameCommand packet = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, currentGameID);
+        packet.setRole(ws.myRole);
+        ws.send(new Gson().toJson(packet));
+        isInGame = false;
+        ws.myRole = ServerMessage.clientRole.non;
+        currentGameID = -1;
+        board = null;
+        return "Left Game";
     }
+
     public String resign(String... params){
-        return "resign";
+        if(params.length != 0){
+            return SET_TEXT_COLOR_YELLOW + "Expected: resign (no params)";
+        }
+        UserGameCommand packet = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, currentGameID);
+        packet.setRole(ws.myRole);
+        ws.send(new Gson().toJson(packet));
+        isInGame = false;
+        ws.myRole = ServerMessage.clientRole.non;
+        currentGameID = -1;
+        board = null;
+        return "Resigned";
     }
     public String printBoard(String... params){
         if (ws.myRole == ServerMessage.clientRole.White){

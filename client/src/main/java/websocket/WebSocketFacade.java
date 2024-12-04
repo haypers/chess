@@ -20,7 +20,7 @@ public class WebSocketFacade extends Endpoint {
     Session session;
     String userName = "err";
     private ui.Repl parentClass = null;
-    public ServerMessage.clientRole myRole = ServerMessage.clientRole.non;
+    public ServerMessage.clientRole myRole = ServerMessage.clientRole.noChange;
 
     public WebSocketFacade(String url, ui.Repl parentClass) {
         try {
@@ -68,6 +68,11 @@ public class WebSocketFacade extends Endpoint {
         if (sm.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
             System.out.println(SET_TEXT_COLOR_YELLOW + sm.getNotificationMessage());
             System.out.print(RESET_TEXT_COLOR + userName + " > ");
+            if (sm.getRole() == non){
+                myRole = non;
+                parentClass.isInGame = false;
+                parentClass.board = null;
+            }
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             parentClass.board = sm.getBoard();

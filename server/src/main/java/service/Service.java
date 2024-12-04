@@ -330,8 +330,10 @@ public class Service {
                 }
                 for (Session peer : peers){
                     try {
-                        peer.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                                userName + " joined as black.")));
+                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                userName + " joined as black.");
+                        packet.setRole(ServerMessage.clientRole.noChange);
+                        peer.getRemote().sendString(new Gson().toJson(packet));
                     }
                     catch (Exception e){
                         System.out.println("error sending join notification to peers");
@@ -354,8 +356,10 @@ public class Service {
                 }
                 for (Session peer : peers){
                     try {
-                        peer.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                                userName + " joined as white.")));
+                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                userName + " joined as white.");
+                        packet.setRole(ServerMessage.clientRole.noChange);
+                        peer.getRemote().sendString(new Gson().toJson(packet));
                     }
                     catch (Exception e){
                         System.out.println("error sending join notification to peers");
@@ -378,8 +382,10 @@ public class Service {
                 }
                 for (Session peer : peers){
                     try {
-                        peer.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                                userName + " joined as an observer.")));
+                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                        userName + " joined as an observer.");
+                        packet.setRole(ServerMessage.clientRole.noChange);
+                        peer.getRemote().sendString(new Gson().toJson(packet));
                     }
                     catch (Exception e){
                         System.out.println("error sending join notification to peers");
@@ -466,4 +472,130 @@ public class Service {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It's not your turn!");
         }
     }
+
+    public ServerMessage leave(UserGameCommand command, Session session){
+        String userName = memory.getUserFromToken(command.getAuthToken());
+        GameData game;
+        if (userName.isEmpty()){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
+        }
+        if (!memory.checkIfGameExists(command.getGameID())){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
+        }
+        game = memory.getGame(command.getGameID());
+        ArrayList<Session> peers;
+        if (!sessions.containsKey(game.gameID())){
+            peers = new ArrayList<>();
+        }
+        else{
+            peers = sessions.get(game.gameID());
+        }
+        String leftMessage;
+        if (command.getRequestedRole() == ServerMessage.clientRole.White){
+            leftMessage = " as White.";
+            GameData modified = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
+            memory.saveGameData(game.gameID(), modified);
+        }
+        else if (command.getRequestedRole() == ServerMessage.clientRole.Black){
+            leftMessage = " as Black.";
+            GameData modified = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), game.game());
+            memory.saveGameData(game.gameID(), modified);
+        } else{
+            leftMessage = " as an Observer.";
+        }
+        for (Session peer : peers){
+            if(peer == session){
+                continue;
+            }
+            try {
+                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        userName + " left the game" + leftMessage);
+                packet.setRole(ServerMessage.clientRole.noChange);
+                peer.getRemote().sendString(new Gson().toJson(packet));
+            }
+            catch (Exception e){
+                System.out.println("error sending move notification to peers");
+            }
+        }
+        peers.remove(session);
+        sessions.put(game.gameID(), peers);
+        return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Leave instruction confirmed.");
+    }
+
+
+    public ServerMessage resign(UserGameCommand command, Session session){
+        String userName = memory.getUserFromToken(command.getAuthToken());
+        GameData game;
+        if (userName.isEmpty()){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
+        }
+        if (!memory.checkIfGameExists(command.getGameID())){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
+        }
+        game = memory.getGame(command.getGameID());
+        ArrayList<Session> peers;
+        if (!sessions.containsKey(game.gameID())){
+            peers = new ArrayList<>();
+        }
+        else{
+            peers = sessions.get(game.gameID());
+        }
+        String leftMessage;
+        if (command.getRequestedRole() == ServerMessage.clientRole.White){
+            leftMessage = " as White has resigned the game, and lost. BLACK WINS!";
+            for (Session peer : peers){
+                if(peer == session){
+                    continue;
+                }
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            userName + leftMessage);
+                    packet.setRole(ServerMessage.clientRole.non);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                }
+                catch (Exception e){
+                    System.out.println("error sending move notification to peers");
+                }
+            }
+            memory.removeGame(game.gameID());
+        }
+        else if (command.getRequestedRole() == ServerMessage.clientRole.Black){
+            leftMessage = " as Black has resigned the game, and lost. WHITE WINS!";
+            for (Session peer : peers){
+                if(peer == session){
+                    continue;
+                }
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            userName + leftMessage);
+                    packet.setRole(ServerMessage.clientRole.non);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                }
+                catch (Exception e){
+                    System.out.println("error sending move notification to peers");
+                }
+            }
+        } else{
+            for (Session peer : peers){
+                if(peer == session){
+                    continue;
+                }
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            userName + " left the game as an Observer.");
+                    packet.setRole(ServerMessage.clientRole.noChange);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                }
+                catch (Exception e){
+                    System.out.println("error sending move notification to peers");
+                }
+            }
+            peers.remove(session);
+            sessions.put(game.gameID(), peers);
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "As an observer, you can only leave the game, not resign. You have left the game.");
+        }
+        return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Resign instruction confirmed.");
+    }
+
+
 }

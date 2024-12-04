@@ -19,6 +19,8 @@ public interface DataAccess {
 
     boolean saveGameData(int gameID, GameData gameData);
 
+    void removeGame(Integer gameID);
+
     ArrayList<PublicGameData> getAllGames() ;
 
     GameData getGame(int gameID) ;
