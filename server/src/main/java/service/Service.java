@@ -463,15 +463,15 @@ public class Service {
             memory.removeGame(game.gameID());
         } else if (command.getRequestedRole() == ServerMessage.ClientRole.Black) {
             leftMessage = " as Black has resigned the game, and lost. WHITE WINS!";
-            for (Session peer : peers) {
-                if (peer == session) {
+            for (Session aPeer:peers) {
+                if (aPeer == session) {
                     //break out of this loop iteration, because this is the actual player!
                     continue;}
                 try {
                     ServerMessage packet = new ServerMessage(
                             ServerMessage.ServerMessageType.NOTIFICATION, userName + leftMessage);
                     packet.setRole(ServerMessage.ClientRole.non);
-                    peer.getRemote().sendString(new Gson().toJson(packet));
+                    aPeer.getRemote().sendString(new Gson().toJson(packet));
                 } catch (Exception e) {
                     System.out.println("error sending move notification to peers");
                 }
