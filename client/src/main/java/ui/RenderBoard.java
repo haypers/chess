@@ -47,12 +47,17 @@ public class RenderBoard {
         }
         else{
             for (int row = 9; row >= 0; row--) {
+
                 for (int col = 0; col <= 9; col++) {
-                    if (gridColor[row][col] == 2) {
+
+                    if (gridColor[row][col] == 2)
+                    {
                         temp.append(SET_BG_COLOR_BLUE).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 0) {
+                    } else if (gridColor[row][col] == 0)
+                    {
                         temp.append(SET_BG_COLOR_LIGHT_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 1) {
+                    } else if (gridColor[row][col] == 1)
+                    {
                         temp.append(SET_BG_COLOR_DARK_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                 }
@@ -73,26 +78,10 @@ public class RenderBoard {
                     gridColor[row][col] = 2; //BLUE border
                 }
                 else if (row % 2 == 1 - (col % 2)){
-                    gridColor[row][col] = 0; //white spaces
-                    for(ChessMove move : moves){
-                        if (move.getStartPosition().getRow() == row && move.getStartPosition().getColumn() == col){
-                            gridColor[row][col] = 3; //red spaces
-                        }
-                        else if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col){
-                            gridColor[row][col] = 4; //green white
-                        }
-                    }
+                    gridColor[row][col] = checkForValidMoves(moves, row, col, true); //white spaces
                 }
                 else{
-                    gridColor[row][col] = 1; //black spaces
-                    for(ChessMove move : moves){
-                        if (move.getStartPosition().getRow() == row && move.getStartPosition().getColumn() == col){
-                            gridColor[row][col] = 3; //red spaces
-                        }
-                        else if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col){
-                            gridColor[row][col] = 5; //green black
-                        }
-                    }
+                    gridColor[row][col] = checkForValidMoves(moves, row, col, false); //black spaces
                 }
             }
         }
@@ -122,15 +111,20 @@ public class RenderBoard {
                 for (int col = 0; col <= 9; col++) {
                     if (gridColor[row][col] == 2) {
                         temp.append(SET_BG_COLOR_BLUE).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 0) {
+                    }
+                    else if (gridColor[row][col] == 0) {
                         temp.append(SET_BG_COLOR_LIGHT_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 1) {
+                    }
+                    else if (gridColor[row][col] == 1) {
                         temp.append(SET_BG_COLOR_DARK_GREY).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 3) {
+                    }
+                    else if (gridColor[row][col] == 3) {
                         temp.append(SET_BG_COLOR_RED).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 5) {
+                    }
+                    else if (gridColor[row][col] == 5) {
                         temp.append(SET_BG_COLOR_DARK_GREEN).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
-                    } else if (gridColor[row][col] == 4) {
+                    }
+                    else if (gridColor[row][col] == 4) {
                         temp.append(SET_BG_COLOR_GREEN).append(getBoardCharacters(board, row, col)).append(RESET_BG_COLOR);
                     }
                 }
@@ -213,5 +207,24 @@ public class RenderBoard {
             }
         }
         return EMPTY;
+    }
+    public Integer checkForValidMoves(Collection<ChessMove> moves, int row, int col, boolean white){
+        for(ChessMove move : moves){
+            if (move.getStartPosition().getRow() == row && move.getStartPosition().getColumn() == col){
+                return 3; //red spaces
+            }
+            else if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col){
+                if (white){
+                    return 4;
+                }
+                return 5;
+            }
+        }
+        if (white) {
+            return 0;
+        }
+        else{
+            return 1;
+        }
     }
 }

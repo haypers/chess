@@ -1,9 +1,7 @@
 package websocket;
 
 import com.google.gson.Gson;
-import exception.ResponseException;
 import ui.RenderBoard;
-import ui.Repl;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -13,7 +11,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static ui.EscapeSequences.*;
-import static websocket.messages.ServerMessage.clientRole.*;
+import static websocket.messages.ServerMessage.ClientRole.*;
 
 //need to extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
@@ -21,7 +19,7 @@ public class WebSocketFacade extends Endpoint {
     Session session;
     String userName = "err";
     private ui.Repl parentClass = null;
-    public ServerMessage.clientRole myRole = ServerMessage.clientRole.noChange;
+    public ServerMessage.ClientRole myRole = ServerMessage.ClientRole.noChange;
 
     public WebSocketFacade(String url, ui.Repl parentClass) {
         try {
@@ -88,7 +86,7 @@ public class WebSocketFacade extends Endpoint {
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
 
             }
-            else if(sm.getRole() == ServerMessage.clientRole.Black) {
+            else if(sm.getRole() == ServerMessage.ClientRole.Black) {
                 myRole = Black;
                 parentClass.isInGame = true;
                 System.out.println();
@@ -96,7 +94,7 @@ public class WebSocketFacade extends Endpoint {
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
-            else if (sm.getRole() == ServerMessage.clientRole.Observer){
+            else if (sm.getRole() == ServerMessage.ClientRole.Observer){
                 myRole = Observer;
                 parentClass.isInGame = true;
                 System.out.println();
@@ -107,7 +105,7 @@ public class WebSocketFacade extends Endpoint {
                 System.out.println(sm.getNotificationMessage());
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
-            else if (sm.getRole() == ServerMessage.clientRole.noChange){
+            else if (sm.getRole() == ServerMessage.ClientRole.noChange){
                 if (myRole == White){
                     System.out.println();
                     System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));

@@ -18,7 +18,7 @@ public class UserGameCommand {
     private final String authToken;
 
     private final Integer gameID;
-    private ServerMessage.clientRole requestedRole;
+    private ServerMessage.ClientRole requestedRole;
 
     private ChessMove move = null;
 
@@ -28,7 +28,7 @@ public class UserGameCommand {
         this.gameID = gameID;
     }
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ServerMessage.clientRole newRole) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, ServerMessage.ClientRole newRole) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
@@ -65,11 +65,11 @@ public class UserGameCommand {
         return this.move;
     }
 
-    public ServerMessage.clientRole getRequestedRole(){
+    public ServerMessage.ClientRole getRequestedRole(){
         return this.requestedRole;
     }
 
-    public void setRole(ServerMessage.clientRole role){
+    public void setRole(ServerMessage.ClientRole role){
         this.requestedRole = role;
     }
 

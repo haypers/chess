@@ -32,14 +32,12 @@ public class Repl {
     private int currentGameID;
     public ChessBoard board;
 
-
     public Repl(String serverUrl){
         serverURL = serverUrl;
         sf = new ServerFacade(serverURL);
         ws = new WebSocketFacade("ws://localhost:8080/ws", this);
         scanner = new Scanner(System.in);
     }
-
     public void preLoginREPL() {
         var result = "";
         System.out.println(SET_TEXT_COLOR_BLUE + this.evalPreLogin("help"));
@@ -60,7 +58,6 @@ public class Repl {
             }
         }
     }
-
     public void postLoginREPL(){
         var result = "";
         System.out.println(SET_TEXT_COLOR_BLUE + this.evalPostLogin("help"));
@@ -81,7 +78,6 @@ public class Repl {
             }
         }
     }
-
     public void inGameREPL(){
         var result = "";
         System.out.println(SET_TEXT_COLOR_BLUE + this.evalInGame("help"));
@@ -98,7 +94,6 @@ public class Repl {
             }
         }
     }
-
     public String evalPreLogin(String input){
         input = input.trim().toLowerCase();
         try {
@@ -128,7 +123,6 @@ public class Repl {
             return e.getMessage();
         }
     }
-
     public String registerUser(String... params) throws ResponseException {
         if (params.length == 3) {
             JsonObject json = new JsonObject();
@@ -146,7 +140,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: signup <username> <password> <email>";
         }
     }
-
     public String loginUser(String... params) throws ResponseException {
         if (params.length == 2) {
             JsonObject json = new JsonObject();
@@ -163,7 +156,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: login <username> <password>";
         }
     }
-
     public String evalPostLogin(String input){
         input = input.trim().toLowerCase();
         try {
@@ -198,7 +190,6 @@ public class Repl {
             return e.getMessage();
         }
     }
-
     public String logoutUser(String... params) throws ResponseException {
         if (params.length == 0) {
             sf.logoutUser(authToken);
@@ -209,7 +200,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: logout (no parameters)";
         }
     }
-
     public String createGame(String... params) throws ResponseException {
         if (params.length == 1) {
             JsonObject json = new JsonObject();
@@ -224,7 +214,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: create <gameName>";
         }
     }
-
     public String listGames(String... params) throws ResponseException {
         if (params.length == 0) {
             ServerResponseObject reply = sf.listGames(authToken);
@@ -254,7 +243,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: list (no parameters)";
         }
     }
-
     public String joinGame(String... params) throws ResponseException {
         if (params.length == 2) {
             if(parseInt(params[0]) < nextGameIndex && parseInt(params[0]) > 0 &&
@@ -270,10 +258,10 @@ public class Repl {
                 json.addProperty("playerColor", params[1].toUpperCase());
                 sf.joinGame(json, authToken);
                 if(params[1].equalsIgnoreCase("WHITE")){
-                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.clientRole.White)));
+                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.ClientRole.White)));
                 }
                 else if(params[1].equalsIgnoreCase("BLACK")){
-                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.clientRole.Black)));
+                    ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.ClientRole.Black)));
                 }
                 else{
                     return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
@@ -289,7 +277,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
         }
     }
-
     public String observeGame(String... params) throws ResponseException {
         if (params.length == 1 && parseInt(params[0]) < nextGameIndex && parseInt(params[0]) >= 1) {
             for (GameRecord game : games) {
@@ -298,7 +285,7 @@ public class Repl {
                     break;
                 }
             }
-            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.clientRole.Observer)));
+            ws.send(new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, currentGameID, ServerMessage.ClientRole.Observer)));
             isInGame = true;
             return "Observing Game";
         }
@@ -306,7 +293,6 @@ public class Repl {
             return SET_TEXT_COLOR_YELLOW + "Expected: observe <gameIndex>";
         }
     }
-
     public String evalInGame(String input){
         input = input.trim().toLowerCase();
         try {
@@ -341,9 +327,8 @@ public class Repl {
             return e.getMessage();
         }
     }
-
     public String makeMove(String... params) throws ResponseException {
-        if(ws.myRole == ServerMessage.clientRole.non || ws.myRole == ServerMessage.clientRole.Observer){
+        if(ws.myRole == ServerMessage.ClientRole.non || ws.myRole == ServerMessage.ClientRole.Observer){
             return SET_TEXT_COLOR_YELLOW + "You are not participating in this game.";
         }
         if (params.length == 2 || params.length == 3) {
@@ -384,62 +369,54 @@ public class Repl {
             packet.setRole(ws.myRole);
             ws.send(new Gson().toJson(packet));
 
-            //return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
-
             return "Making Move...";
         }
         else{
             return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord> <EndCord> [promo Q,K,R, or B (optional)]";
         }
     }
-
     public ChessPosition parseCord(String input){
-        int Row = -1;
-        int Col = -1;
+        int row = -1;
+        int col = -1;
         char first;
         char second;
         if (input.length() == 2) {
             first = input.charAt(0);
             second = input.charAt(1);
             if (Character.isDigit(first)) {
-                Row = parseInt(String.valueOf(first));
-                //System.out.println("new row: " + Row);
+                row = parseInt(String.valueOf(first));
             } else {
                 switch (first) {
-                    case 'a', 'A' -> Col = 1;
-                    case 'b', 'B' -> Col = 2;
-                    case 'c', 'C' -> Col = 3;
-                    case 'd', 'D' -> Col = 4;
-                    case 'e', 'E' -> Col = 5;
-                    case 'f', 'F' -> Col = 6;
-                    case 'g', 'G' -> Col = 7;
-                    case 'h', 'H' -> Col = 8;
-                    default -> Col = -1;
+                    case 'a', 'A' -> col = 1;
+                    case 'b', 'B' -> col = 2;
+                    case 'c', 'C' -> col = 3;
+                    case 'd', 'D' -> col = 4;
+                    case 'e', 'E' -> col = 5;
+                    case 'f', 'F' -> col = 6;
+                    case 'g', 'G' -> col = 7;
+                    case 'h', 'H' -> col = 8;
+                    default -> col = -1;
                 }
-                //System.out.println("new col: " + Col);
             }
             if (Character.isDigit(second)) {
-                Row = parseInt(String.valueOf(second));
-                //System.out.println("new row: " + Row);
+                row = parseInt(String.valueOf(second));
             } else {
                 switch (second) {
-                    case 'a', 'A' -> Col = 1;
-                    case 'b', 'B' -> Col = 2;
-                    case 'c', 'C' -> Col = 3;
-                    case 'd', 'D' -> Col = 4;
-                    case 'e', 'E' -> Col = 5;
-                    case 'f', 'F' -> Col = 6;
-                    case 'g', 'G' -> Col = 7;
-                    case 'h', 'H' -> Col = 8;
-                    default -> Col = -1;
+                    case 'a', 'A' -> col = 1;
+                    case 'b', 'B' -> col = 2;
+                    case 'c', 'C' -> col = 3;
+                    case 'd', 'D' -> col = 4;
+                    case 'e', 'E' -> col = 5;
+                    case 'f', 'F' -> col = 6;
+                    case 'g', 'G' -> col = 7;
+                    case 'h', 'H' -> col = 8;
+                    default -> col = -1;
                 }
-                //System.out.println("new col: " + Col);
             }
 
         }
-        return new ChessPosition(Row, Col);
+        return new ChessPosition(row, col);
     }
-
     public String leave(String... params){
         if(params.length != 0){
             return SET_TEXT_COLOR_YELLOW + "Expected: leave (no params)";
@@ -448,12 +425,11 @@ public class Repl {
         packet.setRole(ws.myRole);
         ws.send(new Gson().toJson(packet));
         isInGame = false;
-        ws.myRole = ServerMessage.clientRole.non;
+        ws.myRole = ServerMessage.ClientRole.non;
         currentGameID = -1;
         board = null;
         return "Left Game";
     }
-
     public String resign(String... params){
         if(params.length != 0){
             return SET_TEXT_COLOR_YELLOW + "Expected: resign (no params)";
@@ -462,24 +438,24 @@ public class Repl {
         packet.setRole(ws.myRole);
         ws.send(new Gson().toJson(packet));
         isInGame = false;
-        ws.myRole = ServerMessage.clientRole.non;
+        ws.myRole = ServerMessage.ClientRole.non;
         currentGameID = -1;
         board = null;
         games = new ArrayList<>();
         return "Resigned";
     }
     public String printBoard(String... params){
-        if (ws.myRole == ServerMessage.clientRole.White){
+        if (ws.myRole == ServerMessage.ClientRole.White){
             System.out.println();
             System.out.println(new RenderBoard().getBoardRender(false, board));
 
 
         }
-        else if (ws.myRole == ServerMessage.clientRole.Black){
+        else if (ws.myRole == ServerMessage.ClientRole.Black){
             System.out.println();
             System.out.println(new RenderBoard().getBoardRender(true, board));
         }
-        else if(ws.myRole == ServerMessage.clientRole.Observer){
+        else if(ws.myRole == ServerMessage.ClientRole.Observer){
             System.out.println();
             System.out.println("White's view: ");
             System.out.println(new RenderBoard().getBoardRender(false, board));
@@ -493,7 +469,6 @@ public class Repl {
         }
         return "";
     }
-
     public String highlightSpace(String... params){
         if (params.length != 1){
             return SET_TEXT_COLOR_YELLOW + "Expected: focus <startCord (Ex:A3)>";
@@ -507,10 +482,10 @@ public class Repl {
         }
         ChessGame tempGame = new ChessGame();
         tempGame.setBoard(board);
-        if (ws.myRole == ServerMessage.clientRole.White){
+        if (ws.myRole == ServerMessage.ClientRole.White){
             System.out.println();
             System.out.println(new RenderBoard().getBoardRender(false, board, tempGame.validMoves(start)));
-        }else if(ws.myRole == ServerMessage.clientRole.Black){
+        }else if(ws.myRole == ServerMessage.ClientRole.Black){
             System.out.println();
             System.out.println(new RenderBoard().getBoardRender(true, board, tempGame.validMoves(start)));
         }

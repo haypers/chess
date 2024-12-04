@@ -14,14 +14,14 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     ChessBoard boardData;
     String message = "";
-    clientRole role;
+    ClientRole role;
 
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
         NOTIFICATION
     }
-    public enum clientRole{
+    public enum ClientRole {
         White,
         Black,
         Observer,
@@ -46,7 +46,7 @@ public class ServerMessage {
         return boardData;
     }
 
-    public clientRole getRole(){
+    public ClientRole getRole(){
         return this.role;
     }
 
@@ -54,7 +54,7 @@ public class ServerMessage {
         return this.message;
     }
 
-    public void setRole (clientRole newRole){
+    public void setRole (ClientRole newRole){
         this.role = newRole;
     }
 
