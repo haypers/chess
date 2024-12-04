@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     ChessBoard boardData;
-    String message = "";
+    String errorMessage = "";
     ClientRole role;
 
     public enum ServerMessageType {
@@ -35,7 +35,7 @@ public class ServerMessage {
 
     public ServerMessage(ServerMessageType type, String messageForUser) {
         this.serverMessageType = type;
-        this.message = messageForUser;
+        this.errorMessage = messageForUser;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -51,7 +51,7 @@ public class ServerMessage {
     }
 
     public String getNotificationMessage(){
-        return this.message;
+        return this.errorMessage;
     }
 
     public void setRole (ClientRole newRole){
