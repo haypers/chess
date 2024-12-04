@@ -427,49 +427,60 @@ public class Service {
         }
         System.out.println("sent move: " + command.getMove());
         System.out.println("valid moves: " + valid.toString());
-        if (game.game().turnColor == ChessGame.TeamColor.WHITE && command.getRequestedRole() == ServerMessage.clientRole.White
-            || game.game().turnColor == ChessGame.TeamColor.BLACK && command.getRequestedRole() == ServerMessage.clientRole.Black){
-            if(valid.contains(command.getMove())){
-                try {
-                    game.game().makeMove(command.getMove());
-                    memory.saveGameData(game.gameID(), game);
-                    ArrayList<Session> peers;
-                    if (!sessions.containsKey(game.gameID())){
-                        peers = new ArrayList<>();
-                    }
-                    else{
-                        peers = sessions.get(game.gameID());
-                    }
-                    for (Session peer : peers){
-                        if(peer == session){
-                            continue;
-                        }
-                        try {
-                            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                                    userName + " made move: " + command.getMove().toString());
-                            packet.setBoard(game.game().getBoard());
-                            packet.setRole(ServerMessage.clientRole.noChange);
-                            peer.getRemote().sendString(new Gson().toJson(packet));
-                        }
-                        catch (Exception e){
-                            System.out.println("error sending move notification to peers");
-                        }
-                    }
-                } catch (InvalidMoveException e) {
-                    System.out.println("Error making move: " + e);
-                    return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(2)");
+        if (!(game.game().turnColor == ChessGame.TeamColor.WHITE && command.getRequestedRole() == ServerMessage.clientRole.White)
+            && !(game.game().turnColor == ChessGame.TeamColor.BLACK && command.getRequestedRole() == ServerMessage.clientRole.Black)){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It's not your turn!");
+        }
+        if(valid.contains(command.getMove())){
+            String messageExtra = "";
+            try {
+                game.game().makeMove(command.getMove());
+                memory.saveGameData(game.gameID(), game);
+                if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+                    messageExtra = " and White is in CheckMate!";
                 }
-                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-                packet.setBoard(game.game().getBoard());
-                packet.setRole(command.getRequestedRole());
-                return packet;
+                 if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+                    messageExtra += " and Black is in checkMate!";
+                }
+                if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
+                    messageExtra += " and White is in Check!";
+                }
+                 if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
+                    messageExtra += " and Black is in Check!";
+                }
+                ArrayList<Session> peers;
+                if (!sessions.containsKey(game.gameID())){
+                    peers = new ArrayList<>();
+                }
+                else{
+                    peers = sessions.get(game.gameID());
+                }
+                for (Session peer : peers){
+                    if(peer == session){
+                        continue;
+                    }
+                    try {
+                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                                userName + " made move: " + command.getMove().toString() + messageExtra);
+                        packet.setBoard(game.game().getBoard());
+                        packet.setRole(ServerMessage.clientRole.noChange);
+                        peer.getRemote().sendString(new Gson().toJson(packet));
+                    }
+                    catch (Exception e){
+                        System.out.println("error sending move notification to peers");
+                    }
+                }
+            } catch (InvalidMoveException e) {
+                System.out.println("Error making move: " + e);
+                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(2)");
             }
-            else{
-                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
-            }
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "Move made" + messageExtra);
+            packet.setBoard(game.game().getBoard());
+            packet.setRole(command.getRequestedRole());
+            return packet;
         }
         else{
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It's not your turn!");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
         }
     }
 

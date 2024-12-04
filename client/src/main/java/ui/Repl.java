@@ -465,6 +465,7 @@ public class Repl {
         ws.myRole = ServerMessage.clientRole.non;
         currentGameID = -1;
         board = null;
+        games = new ArrayList<>();
         return "Resigned";
     }
     public String printBoard(String... params){
