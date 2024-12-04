@@ -10,6 +10,7 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import static ui.EscapeSequences.*;
 import static websocket.messages.ServerMessage.clientRole.*;
@@ -72,6 +73,7 @@ public class WebSocketFacade extends Endpoint {
                 myRole = non;
                 parentClass.isInGame = false;
                 parentClass.board = null;
+                parentClass.games = new ArrayList<>();
             }
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){

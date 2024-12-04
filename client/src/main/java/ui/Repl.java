@@ -26,7 +26,7 @@ public class Repl {
     private String authToken = null;
     private boolean isSignedIn = false;
     private Scanner scanner = null;
-    private List<GameRecord> games = new ArrayList<>();
+    public List<GameRecord> games = new ArrayList<>();
     private Integer nextGameIndex = 1;
     public boolean isInGame = false;
     private int currentGameID;
