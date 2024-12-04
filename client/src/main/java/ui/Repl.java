@@ -1,8 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import exception.ResponseException;
@@ -347,7 +345,8 @@ public class Repl {
         if(ws.myRole == ServerMessage.clientRole.non || ws.myRole == ServerMessage.clientRole.Observer){
             return SET_TEXT_COLOR_YELLOW + "You are not participating in this game.";
         }
-        if (params.length == 2) {
+        if (params.length == 2 || params.length == 3) {
+            ChessMove move;
             ChessPosition start = parseCord(params[0]);
             if (start.getRow() < 1 || start.getRow() > 8){
                 return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord (Ex:A3)> <EndCord (Ex:E5)>";
@@ -356,7 +355,30 @@ public class Repl {
             if (end.getRow() < 1 || end.getRow() > 8){
                 return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord (Ex:A3)> <EndCord (Ex:E5)>";
             }
-            ChessMove move = new ChessMove(start, end, null);
+            if(params.length == 3){
+                switch (new String(params[2])){
+                    case "Q", "q" -> move = new ChessMove(start, end, ChessPiece.PieceType.QUEEN);
+                    case "R", "r" -> move = new ChessMove(start, end, ChessPiece.PieceType.ROOK);
+                    case "B", "b" -> move = new ChessMove(start, end, ChessPiece.PieceType.BISHOP);
+                    case "K", "k" -> move = new ChessMove(start, end, ChessPiece.PieceType.KING);
+                    default -> {
+                        return SET_TEXT_COLOR_YELLOW +
+                                "provided promotion code is not valid. Use Q, R, B, or K (representing queen, rook, bishop, knight)";
+                    }
+                }
+            } else{
+                move = new ChessMove(start, end, null);
+            }
+            ChessPiece pieceToMove = board.getPiece(start);
+            if(pieceToMove == null){
+                return "Provided move is not valid. No piece at that location.";
+            }
+            ChessGame tempGame = new ChessGame();
+            tempGame.setBoard(board);
+            if (!tempGame.validMoves(start).contains(move)){
+                return "Provided move is not valid. Invalid end state.";
+            }
+
             UserGameCommand packet = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, currentGameID, move);
             packet.setRole(ws.myRole);
             ws.send(new Gson().toJson(packet));
@@ -366,7 +388,7 @@ public class Repl {
             return "Making Move...";
         }
         else{
-            return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord> <EndCord>";
+            return SET_TEXT_COLOR_YELLOW + "Expected: move <StartCord> <EndCord> [promo Q,K,R, or B (optional)]";
         }
     }
 
