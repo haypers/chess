@@ -331,15 +331,14 @@ public class Service {
         game = memory.getGame(command.getGameID());
         Collection<ChessMove> valid = game.game().validMoves(command.getMove().getStartPosition());
         if (valid.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "ISever error: nvalid Move");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Invalid Move");
         }
         System.out.println("sent move: " + command.getMove());
         System.out.println("valid moves: " + valid);
         ChessPiece piece = game.game().getBoard().getPiece(command.getMove().getStartPosition());
         /*if (!(game.game().turnColor == ChessGame.TeamColor.WHITE && command.getRequestedRole() == ServerMessage.ClientRole.White)
                 && !(game.game().turnColor == ChessGame.TeamColor.BLACK && command.getRequestedRole() == ServerMessage.ClientRole.Black)) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: It's not your turn!");
-        }*/
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: It's not your turn!");}*/
         if (!(piece.getTeamColor() == ChessGame.TeamColor.WHITE && Objects.equals(game.whiteUsername(), userName)) &&
                 !(piece.getTeamColor() == ChessGame.TeamColor.BLACK && Objects.equals(game.blackUsername(), userName))) {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: That's not your piece");
