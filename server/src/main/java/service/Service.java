@@ -343,61 +343,62 @@ public class Service {
                 !(piece.getTeamColor() == ChessGame.TeamColor.BLACK && Objects.equals(game.blackUsername(), userName))) {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: That's not your piece");
         }
-        if (valid.contains(command.getMove())) {
-            String messageExtra = "";
-            try {
-                game.game().makeMove(command.getMove());
-                memory.saveGameData(game.gameID(), game);
-                if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
-                    messageExtra += "'s move put White in Check!";}
-                if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
-                    messageExtra += "'s move put Black in Check!";}
-                if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                    messageExtra = "'s move put White in CheckMate!";}
-                if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
-                    messageExtra = "'s move put Black in checkMate!";}
-                ArrayList<Session> peers;
-                if (!sessions.containsKey(game.gameID())) {
-                    peers = new ArrayList<>();
-                } else {
-                    peers = sessions.get(game.gameID());}
+
+        if (!valid.contains(command.getMove())){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Invalid Move");
+        }
+        String messageExtra = "";
+        try {
+            game.game().makeMove(command.getMove());
+            memory.saveGameData(game.gameID(), game);
+            if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+                messageExtra += "'s move put White in Check!";}
+            if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+                messageExtra += "'s move put Black in Check!";}
+            if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                messageExtra = "'s move put White in CheckMate!";}
+            if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                messageExtra = "'s move put Black in checkMate!";}
+            ArrayList<Session> peers;
+            if (!sessions.containsKey(game.gameID())) {
+                peers = new ArrayList<>();
+            } else {
+                peers = sessions.get(game.gameID());}
+            for (Session peer : peers) {
+                if (peer == session) {
+                    continue;}
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+                    packet.setBoard(game.game().getBoard());
+                    packet.setRole(ServerMessage.ClientRole.noChange);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                    packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                    packet.setMessage(userName + " made move: " + command.getMove().toString());
+                    packet.setRole(ServerMessage.ClientRole.noChange);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                } catch (Exception e) {
+                    System.out.println("error sending move notification to peers");}
+            }
+            if (!messageExtra.equals("")){
                 for (Session peer : peers) {
-                    if (peer == session) {
-                        continue;}
                     try {
-                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-                        packet.setBoard(game.game().getBoard());
-                        packet.setRole(ServerMessage.ClientRole.noChange);
-                        peer.getRemote().sendString(new Gson().toJson(packet));
-                        packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-                        packet.setMessage(userName + " made move: " + command.getMove().toString());
+                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                        packet.setMessage(userName + messageExtra);
                         packet.setRole(ServerMessage.ClientRole.noChange);
                         peer.getRemote().sendString(new Gson().toJson(packet));
                     } catch (Exception e) {
                         System.out.println("error sending move notification to peers");}
                 }
-                if (!messageExtra.equals("")){
-                    for (Session peer : peers) {
-                        try {
-                            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-                            packet.setMessage(userName + messageExtra);
-                            packet.setRole(ServerMessage.ClientRole.noChange);
-                            peer.getRemote().sendString(new Gson().toJson(packet));
-                        } catch (Exception e) {
-                            System.out.println("error sending move notification to peers");}
-                    }
-                }
-            } catch (InvalidMoveException e) {
-                System.out.println("Error making move: " + e);
-                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Not your turn.");
             }
-            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-            packet.setBoard(game.game().getBoard());
-            packet.setRole(command.getRequestedRole());
-            return packet;
-        } else {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Invalid Move");
+        } catch (InvalidMoveException e) {
+            System.out.println("Error making move: " + e);
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Not your turn.");
         }
+        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        packet.setBoard(game.game().getBoard());
+        packet.setRole(command.getRequestedRole());
+        return packet;
+
     }
     public void leave(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
