@@ -12,9 +12,10 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-    ChessBoard boardData;
-    String errorMessage = "";
+    ChessBoard game;
+    String errorMessage;
     ClientRole role;
+    String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -38,12 +39,16 @@ public class ServerMessage {
         this.errorMessage = messageForUser;
     }
 
+    public void setMessage(String message){
+        this.message = message;
+    }
+
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
 
     public ChessBoard getBoard(){
-        return boardData;
+        return game;
     }
 
     public ClientRole getRole(){
@@ -59,7 +64,7 @@ public class ServerMessage {
     }
 
     public void setBoard(ChessBoard board){
-        this.boardData = board;
+        this.game = board;
     }
 
     @Override
@@ -78,4 +83,18 @@ public class ServerMessage {
     public int hashCode() {
         return Objects.hash(getServerMessageType());
     }
+
+    @Override
+    public String toString() {
+        return "ServerMessage{" +
+                "serverMessageType=" + serverMessageType +
+                ", game=" + game +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", role=" + role +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
+
+
+

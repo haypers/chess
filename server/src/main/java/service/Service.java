@@ -238,91 +238,85 @@ public class Service {
                 { "message": "Error: unauthorized" }
                 """);}
     public ServerMessage connect(UserGameCommand command, Session session) {
+        System.out.println("in connect" + command.getRequestedRole());
         String userName = memory.getUserFromToken(command.getAuthToken());
         if (userName.isEmpty()) {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
         }
-        if (memory.checkIfGameExists(command.getGameID())) {
-            GameData game = memory.getGame(command.getGameID());
-            System.out.println("username for user: " + userName);
-            System.out.println("username on black record: " + game.blackUsername());
-            System.out.println("username on white record: " + game.whiteUsername());
-            if (game.blackUsername() != null && game.blackUsername().equals(userName)
-                    && command.getRequestedRole() == ServerMessage.ClientRole.Black) {
-                ArrayList<Session> peers;
-                if (!sessions.containsKey(game.gameID())) {
-                    peers = new ArrayList<>();
-                } else {
-                    peers = sessions.get(game.gameID());
-                }
-                for (Session peer : peers) {
-                    try {
-                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                                userName + " joined as black.");
-                        packet.setRole(ServerMessage.ClientRole.noChange);
-                        peer.getRemote().sendString(new Gson().toJson(packet));
-                    } catch (Exception e) {
-                        System.out.println("error sending join notification to peers");}
-                }
-                peers.add(session);
-                sessions.put(game.gameID(), peers);
-                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as black");
-                packet.setBoard(game.game().getBoard());
-                packet.setRole(ServerMessage.ClientRole.Black);
-                return packet;
-            } else if (game.whiteUsername() != null && game.whiteUsername().equals(userName) &&
-                    command.getRequestedRole() == ServerMessage.ClientRole.White) {
-                ArrayList<Session> peers;
-                if (!sessions.containsKey(game.gameID())) {
-                    peers = new ArrayList<>();
-                } else {
-                    peers = sessions.get(game.gameID());}
-                for (Session peer : peers) {
-                    try {
-                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                                userName + " joined as white.");
-                        packet.setRole(ServerMessage.ClientRole.noChange);
-                        peer.getRemote().sendString(new Gson().toJson(packet));
-                    } catch (Exception e) {
-                        System.out.println("error sending join notification to peers");
-                    }
-                }
-                peers.add(session);
-                sessions.put(game.gameID(), peers);
-                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as white");
-                packet.setBoard(game.game().getBoard());
-                packet.setRole(ServerMessage.ClientRole.White);
-                return packet;
-            } else if (command.getRequestedRole() == ServerMessage.ClientRole.Observer) {
-                ArrayList<Session> peers;
-                if (!sessions.containsKey(game.gameID())) {
-                    peers = new ArrayList<>();
-                } else {
-                    peers = sessions.get(game.gameID());}
-                for (Session peer : peers) {
-                    try {
-                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                                userName + " joined as an observer.");
-                        packet.setRole(ServerMessage.ClientRole.noChange);
-                        peer.getRemote().sendString(new Gson().toJson(packet));
-                    } catch (Exception e) {
-                        System.out.println("error sending join notification to peers");
-                    }
-                }
-                peers.add(session);
-                sessions.put(game.gameID(), peers);
-                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "You are joining as an observer");
-                packet.setBoard(game.game().getBoard());
-                packet.setRole(ServerMessage.ClientRole.Observer);
-                return packet;
-            } else {
-                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Request. Try Again.");
-                packet.setRole(ServerMessage.ClientRole.non);
-                return packet;
-            }
-        } else {
+        if (!memory.checkIfGameExists(command.getGameID())){
             ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Request. Try Again.");
             packet.setRole(ServerMessage.ClientRole.non);
+            return packet;
+        }
+        GameData game = memory.getGame(command.getGameID());
+        System.out.println("username for user: " + userName);
+        System.out.println("username on black record: " + game.blackUsername());
+        System.out.println("username on white record: " + game.whiteUsername());
+        if (game.blackUsername() != null && game.blackUsername().equals(userName)) {
+            ArrayList<Session> peers;
+            if (!sessions.containsKey(game.gameID())) {
+                peers = new ArrayList<>();
+            } else {
+                peers = sessions.get(game.gameID());
+            }
+            for (Session peer : peers) {
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                    packet.setMessage(userName + " joined as black.");
+                    packet.setRole(ServerMessage.ClientRole.noChange);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                } catch (Exception e) {
+                    System.out.println("error sending join notification to peers");}
+            }
+            peers.add(session);
+            sessions.put(game.gameID(), peers);
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            packet.setBoard(game.game().getBoard());
+            packet.setRole(ServerMessage.ClientRole.Black);
+            return packet;
+        } else if (game.whiteUsername() != null && game.whiteUsername().equals(userName)) {
+            ArrayList<Session> peers;
+            if (!sessions.containsKey(game.gameID())) {
+                peers = new ArrayList<>();
+            } else {
+                peers = sessions.get(game.gameID());}
+            for (Session peer : peers) {
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                    packet.setMessage(userName + " joined as white.");
+                    packet.setRole(ServerMessage.ClientRole.noChange);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                } catch (Exception e) {
+                    System.out.println("error sending join notification to peers");
+                }
+            }
+            peers.add(session);
+            sessions.put(game.gameID(), peers);
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            packet.setBoard(game.game().getBoard());
+            packet.setRole(ServerMessage.ClientRole.White);
+            return packet;
+        } else {
+            ArrayList<Session> peers;
+            if (!sessions.containsKey(game.gameID())) {
+                peers = new ArrayList<>();
+            } else {
+                peers = sessions.get(game.gameID());}
+            for (Session peer : peers) {
+                try {
+                    ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                    packet.setMessage(userName + " joined as an observer.");
+                    packet.setRole(ServerMessage.ClientRole.noChange);
+                    peer.getRemote().sendString(new Gson().toJson(packet));
+                } catch (Exception e) {
+                    System.out.println("error sending join notification to peers");
+                }
+            }
+            peers.add(session);
+            sessions.put(game.gameID(), peers);
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            packet.setBoard(game.game().getBoard());
+            packet.setRole(ServerMessage.ClientRole.Observer);
             return packet;
         }
     }

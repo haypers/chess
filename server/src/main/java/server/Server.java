@@ -43,6 +43,7 @@ public class Server {
             System.out.println("connect");
             ServerMessage reply = service.connect(command, session);
             session.getRemote().sendString(new Gson().toJson(reply));
+            System.out.println(reply);
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.LEAVE){
             System.out.println("leave");
