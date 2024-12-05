@@ -386,7 +386,7 @@ public class Repl {
         if (input.length() == 2) {
             first = input.charAt(0);
             second = input.charAt(1);
-            if (Character.isDigit(first)) {
+            if (Character.isDigit(first) && Character.isAlphabetic(second)) {
                 row = parseInt(String.valueOf(first));
             } else {
                 switch (first) {
@@ -401,7 +401,7 @@ public class Repl {
                     default -> col = -1;
                 }
             }
-            if (Character.isDigit(second)) {
+            if (Character.isDigit(second) && Character.isAlphabetic(first)) {
                 row = parseInt(String.valueOf(second));
             } else {
                 switch (second) {
@@ -460,10 +460,10 @@ public class Repl {
         }
         else if(ws.myRole == ServerMessage.ClientRole.Observer){
             System.out.println();
-            System.out.println("White's view: ");
+            //System.out.println("White's view: ");
             System.out.println(new RenderBoard().getBoardRender(false, board));
-            System.out.println("Blacks's view: ");
-            System.out.println(new RenderBoard().getBoardRender(true, board));
+            //System.out.println("Blacks's view: ");
+            //System.out.println(new RenderBoard().getBoardRender(true, board));
         }
         else{
             System.out.println();
@@ -485,7 +485,7 @@ public class Repl {
         }
         ChessGame tempGame = new ChessGame();
         tempGame.setBoard(board);
-        if (ws.myRole == ServerMessage.ClientRole.White){
+        if (ws.myRole == ServerMessage.ClientRole.White || ws.myRole == ServerMessage.ClientRole.Observer){
             System.out.println();
             System.out.println(new RenderBoard().getBoardRender(false, board, tempGame.validMoves(start)));
         }else if(ws.myRole == ServerMessage.ClientRole.Black){

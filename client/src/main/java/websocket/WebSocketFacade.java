@@ -101,10 +101,10 @@ public class WebSocketFacade extends Endpoint {
                 myRole = Observer;
                 parentClass.isInGame = true;
                 System.out.println();
-                System.out.println("White's view: ");
+                //System.out.println("White's view: ");
                 System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
-                System.out.println("Blacks's view: ");
-                System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
+                //System.out.println("Blacks's view: ");
+                //System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
                 if (sm.getNotificationMessage() != null){
                     System.out.println(sm.getNotificationMessage());
                 }
@@ -129,10 +129,10 @@ public class WebSocketFacade extends Endpoint {
                 }
                 else{
                     System.out.println();
-                    System.out.println("White's view: ");
+                    //System.out.println("White's view: ");
                     System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
-                    System.out.println("Blacks's view: ");
-                    System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
+                    //System.out.println("Blacks's view: ");
+                    //System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
                     if (sm.getNotificationMessage() != null){
                         System.out.println(sm.getNotificationMessage());
                     }

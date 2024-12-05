@@ -348,14 +348,14 @@ public class Service {
             try {
                 game.game().makeMove(command.getMove());
                 memory.saveGameData(game.gameID(), game);
-                if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                    messageExtra = " and White is in CheckMate!";}
-                if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
-                    messageExtra += " and Black is in checkMate!";}
                 if (game.game().isInCheck(ChessGame.TeamColor.WHITE)) {
-                    messageExtra += " and White is in Check!";}
+                    messageExtra += "'s move put White in Check!";}
                 if (game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
-                    messageExtra += " and Black is in Check!";}
+                    messageExtra += "'s move put Black in Check!";}
+                if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                    messageExtra = "'s move put White in CheckMate!";}
+                if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                    messageExtra = "'s move put Black in checkMate!";}
                 ArrayList<Session> peers;
                 if (!sessions.containsKey(game.gameID())) {
                     peers = new ArrayList<>();
@@ -370,11 +370,22 @@ public class Service {
                         packet.setRole(ServerMessage.ClientRole.noChange);
                         peer.getRemote().sendString(new Gson().toJson(packet));
                         packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-                        packet.setMessage(userName + " made move: " + command.getMove().toString() + messageExtra);
+                        packet.setMessage(userName + " made move: " + command.getMove().toString());
                         packet.setRole(ServerMessage.ClientRole.noChange);
                         peer.getRemote().sendString(new Gson().toJson(packet));
                     } catch (Exception e) {
                         System.out.println("error sending move notification to peers");}
+                }
+                if (!messageExtra.equals("")){
+                    for (Session peer : peers) {
+                        try {
+                            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                            packet.setMessage(userName + messageExtra);
+                            packet.setRole(ServerMessage.ClientRole.noChange);
+                            peer.getRemote().sendString(new Gson().toJson(packet));
+                        } catch (Exception e) {
+                            System.out.println("error sending move notification to peers");}
+                    }
                 }
             } catch (InvalidMoveException e) {
                 System.out.println("Error making move: " + e);
