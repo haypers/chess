@@ -241,7 +241,7 @@ public class Service {
         System.out.println("in connect" + command.getRequestedRole());
         String userName = memory.getUserFromToken(command.getAuthToken());
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Authentication error. Please try again.");
         }
         if (!memory.checkIfGameExists(command.getGameID())){
             ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Request. Try Again.");
@@ -266,7 +266,7 @@ public class Service {
                     packet.setRole(ServerMessage.ClientRole.noChange);
                     peer.getRemote().sendString(new Gson().toJson(packet));
                 } catch (Exception e) {
-                    System.out.println("error sending join notification to peers");}
+                    System.out.println("Sever error: error sending join notification to peers");}
             }
             peers.add(session);
             sessions.put(game.gameID(), peers);
@@ -309,7 +309,7 @@ public class Service {
                     packet.setRole(ServerMessage.ClientRole.noChange);
                     peer.getRemote().sendString(new Gson().toJson(packet));
                 } catch (Exception e) {
-                    System.out.println("error sending join notification to peers");
+                    System.out.println("Sever error: error sending join notification to peers");
                 }
             }
             peers.add(session);
@@ -324,20 +324,20 @@ public class Service {
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");}
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Authentication error. Please try again.");}
         if (!memory.checkIfGameExists(command.getGameID())) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");}
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(1)");}
         game = memory.getGame(command.getGameID());
         Collection<ChessMove> valid = game.game().validMoves(command.getMove().getStartPosition());
         if (valid.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "ISever error: nvalid Move");
         }
         System.out.println("sent move: " + command.getMove());
         System.out.println("valid moves: " + valid);
-        if (!(game.game().turnColor == ChessGame.TeamColor.WHITE && command.getRequestedRole() == ServerMessage.ClientRole.White)
+        /*if (!(game.game().turnColor == ChessGame.TeamColor.WHITE && command.getRequestedRole() == ServerMessage.ClientRole.White)
                 && !(game.game().turnColor == ChessGame.TeamColor.BLACK && command.getRequestedRole() == ServerMessage.ClientRole.Black)) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "It's not your turn!");
-        }
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: It's not your turn!");
+        }*/
         if (valid.contains(command.getMove())) {
             String messageExtra = "";
             try {
@@ -360,9 +360,12 @@ public class Service {
                     if (peer == session) {
                         continue;}
                     try {
-                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                                userName + " made move: " + command.getMove().toString() + messageExtra);
+                        ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
                         packet.setBoard(game.game().getBoard());
+                        packet.setRole(ServerMessage.ClientRole.noChange);
+                        peer.getRemote().sendString(new Gson().toJson(packet));
+                        packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                        packet.setMessage(userName + " made move: " + command.getMove().toString() + messageExtra);
                         packet.setRole(ServerMessage.ClientRole.noChange);
                         peer.getRemote().sendString(new Gson().toJson(packet));
                     } catch (Exception e) {
@@ -370,23 +373,23 @@ public class Service {
                 }
             } catch (InvalidMoveException e) {
                 System.out.println("Error making move: " + e);
-                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(2)");
+                return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(2)");
             }
-            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, "Move made" + messageExtra);
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
             packet.setBoard(game.game().getBoard());
             packet.setRole(command.getRequestedRole());
             return packet;
         } else {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Invalid Move");
         }
     }
     public ServerMessage leave(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");}
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Authentication error. Please try again.");}
         if (!memory.checkIfGameExists(command.getGameID())) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");}
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(1)");}
         game = memory.getGame(command.getGameID());
         ArrayList<Session> peers;
         if (!sessions.containsKey(game.gameID())) {
@@ -427,10 +430,10 @@ public class Service {
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Authentication error. Please try again.");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Authentication error. Please try again.");
         }
         if (!memory.checkIfGameExists(command.getGameID())) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Bad request. Try again.(1)");
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(1)");
         }
         game = memory.getGame(command.getGameID());
         ArrayList<Session> peers;
@@ -486,7 +489,7 @@ public class Service {
             peers.remove(session);
             sessions.put(game.gameID(), peers);
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                    "As an observer, you can only leave the game, not resign. You have left the game.");
+                    "Sever error: As an observer, you can only leave the game, not resign. You have left the game.");
         }
         return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Resign instruction confirmed.");
     }

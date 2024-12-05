@@ -56,6 +56,10 @@ public class ServerMessage {
     }
 
     public String getNotificationMessage(){
+        return this.message;
+    }
+
+    public String getErrorMessage(){
         return this.errorMessage;
     }
 

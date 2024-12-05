@@ -76,7 +76,6 @@ public class WebSocketFacade extends Endpoint {
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             parentClass.board = sm.getBoard();
-            //System.out.println(parentClass.board);
             if (sm.getRole() == White){
                 myRole = White;
                 parentClass.isInGame = true;
@@ -137,7 +136,7 @@ public class WebSocketFacade extends Endpoint {
 
         }
         else if (sm.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
-            System.out.println(SET_TEXT_COLOR_RED + "Sever error: " + sm.getNotificationMessage() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED + sm.getErrorMessage() + RESET_TEXT_COLOR);
             if (sm.getRole() == non){
                 parentClass.isInGame = false;
                 System.out.println("You are not currently playing a game.");
