@@ -81,7 +81,9 @@ public class WebSocketFacade extends Endpoint {
                 parentClass.isInGame = true;
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
-                System.out.println(sm.getNotificationMessage());
+                if (sm.getNotificationMessage() != null){
+                    System.out.println(sm.getNotificationMessage());
+                }
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
 
             }
@@ -90,7 +92,9 @@ public class WebSocketFacade extends Endpoint {
                 parentClass.isInGame = true;
                 System.out.println();
                 System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
-                System.out.println(sm.getNotificationMessage());
+                if (sm.getNotificationMessage() != null){
+                    System.out.println(sm.getNotificationMessage());
+                }
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
             else if (sm.getRole() == ServerMessage.ClientRole.Observer){
@@ -101,20 +105,26 @@ public class WebSocketFacade extends Endpoint {
                 System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
                 System.out.println("Blacks's view: ");
                 System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
-                System.out.println(sm.getNotificationMessage());
+                if (sm.getNotificationMessage() != null){
+                    System.out.println(sm.getNotificationMessage());
+                }
                 System.out.print(RESET_TEXT_COLOR + userName + " > ");
             }
             else if (sm.getRole() == ServerMessage.ClientRole.noChange){
                 if (myRole == White){
                     System.out.println();
                     System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
-                    System.out.println(sm.getNotificationMessage());
+                    if (sm.getNotificationMessage() != null){
+                        System.out.println(sm.getNotificationMessage());
+                    }
                     System.out.print(RESET_TEXT_COLOR + userName + " > ");
                 }
                 else if (myRole == Black){
                     System.out.println();
                     System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
-                    System.out.println(sm.getNotificationMessage());
+                    if (sm.getNotificationMessage() != null){
+                        System.out.println(sm.getNotificationMessage());
+                    }
                     System.out.print(RESET_TEXT_COLOR + userName + " > ");
                 }
                 else{
@@ -123,7 +133,9 @@ public class WebSocketFacade extends Endpoint {
                     System.out.println(new RenderBoard().getBoardRender(false, parentClass.board));
                     System.out.println("Blacks's view: ");
                     System.out.println(new RenderBoard().getBoardRender(true, parentClass.board));
-                    System.out.println(sm.getNotificationMessage());
+                    if (sm.getNotificationMessage() != null){
+                        System.out.println(sm.getNotificationMessage());
+                    }
                     System.out.print(RESET_TEXT_COLOR + userName + " > ");
                 }
 
