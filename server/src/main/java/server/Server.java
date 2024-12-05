@@ -47,9 +47,7 @@ public class Server {
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.LEAVE){
             System.out.println("leave");
-            ServerMessage reply = service.leave(command, session);
-            session.getRemote().sendString(new Gson().toJson(reply));
-            System.out.println(reply);
+            service.leave(command, session);
         }
         else if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
             System.out.println("make move");

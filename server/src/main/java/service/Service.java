@@ -385,13 +385,13 @@ public class Service {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Invalid Move");
         }
     }
-    public ServerMessage leave(UserGameCommand command, Session session) {
+    public void leave(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
         GameData game;
         if (userName.isEmpty()) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Authentication error. Please try again.");}
+            return;}
         if (!memory.checkIfGameExists(command.getGameID())) {
-            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(1)");}
+            return;}
         game = memory.getGame(command.getGameID());
         ArrayList<Session> peers;
         if (!sessions.containsKey(game.gameID())) {
@@ -415,8 +415,8 @@ public class Service {
             if (peer == session) {
                 continue;}
             try {
-                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        userName + " left the game" + leftMessage);
+                ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+                packet.setMessage(userName + " left the game" + leftMessage);
                 packet.setRole(ServerMessage.ClientRole.noChange);
                 peer.getRemote().sendString(new Gson().toJson(packet));
             } catch (Exception e) {
@@ -425,7 +425,7 @@ public class Service {
         }
         peers.remove(session);
         sessions.put(game.gameID(), peers);
-        return new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Leave instruction confirmed.");
+        return;
     }
     public ServerMessage resign(UserGameCommand command, Session session) {
         String userName = memory.getUserFromToken(command.getAuthToken());
