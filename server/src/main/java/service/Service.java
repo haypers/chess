@@ -444,12 +444,15 @@ public class Service {
             peers = sessions.get(game.gameID());
         }
         String leftMessage;
-        if (command.getRequestedRole() == ServerMessage.ClientRole.Black) {
-            leftMessage = " as White has resigned the game, and lost. WHITE WINS!";
-        } else if (command.getRequestedRole() == ServerMessage.ClientRole.White){
+        if (game.whiteUsername().equals(userName)) {
             leftMessage = " as White has resigned the game, and lost. BLACK WINS!";
+        } else if (game.blackUsername().equals(userName)){
+            leftMessage = " as Black has resigned the game, and lost. WHITE WINS!";
         } else{
-            leftMessage = " as an observer has resigned, and closed the game, and for some reason, THAT'S ALLOWED!";
+            leftMessage = " you can't resign as an observer";
+            ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.ERROR, userName + leftMessage);
+            packet.setRole(ServerMessage.ClientRole.noChange);
+            return packet;
         }
         for (Session peer : peers) {
             if (peer == session) {
@@ -463,6 +466,9 @@ public class Service {
                 System.out.println("error sending move notification to peers");
             }
         }
+        sessions.remove(game.gameID());
+        memory.removeGame(game.gameID());
+
         ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         packet.setMessage(userName + leftMessage);
         packet.setRole(ServerMessage.ClientRole.non);
