@@ -9,10 +9,7 @@ import websocket.WebSocketFacade;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static java.lang.Integer.parseInt;
 import static ui.EscapeSequences.*;
@@ -31,6 +28,7 @@ public class Repl {
     public boolean isInGame = false;
     private int currentGameID;
     public ChessBoard board;
+    private Boolean confirmed = false;
 
     public Repl(String serverUrl){
         serverURL = serverUrl;
@@ -245,8 +243,17 @@ public class Repl {
     }
     public String joinGame(String... params) throws ResponseException {
         if (params.length == 2) {
+            if (params[0] == null || params[0].isEmpty()) {
+                return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
+            }
+            for (char c : params[0].toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    return SET_TEXT_COLOR_YELLOW + "Expected: play <gameIndex> [BLACK|WHITE]";
+                }
+            }
             if(parseInt(params[0]) < nextGameIndex && parseInt(params[0]) > 0 &&
                     (params[1].equalsIgnoreCase("white") || params[1].equalsIgnoreCase("black"))){
+
                 JsonObject json = new JsonObject();
                 for (GameRecord game : games) {
                     if (game.getIndex() == parseInt(params[0])){
@@ -305,6 +312,9 @@ public class Repl {
             }
             String cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            if (confirmed && ((!Objects.equals(cmd, "resign")) && (!Objects.equals(cmd, "r"))) ){
+                confirmed = false;
+            }
             return switch (cmd) {
                 case "move", "m" -> makeMove(params);
                 case "leave", "l" -> leave(params);
@@ -437,14 +447,15 @@ public class Repl {
         if(params.length != 0){
             return SET_TEXT_COLOR_YELLOW + "Expected: resign (no params)";
         }
+        if(!confirmed){
+            confirmed = true;
+            return("""
+                    Please type "resign" again to confirm """);
+        }
         UserGameCommand packet = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, currentGameID);
         packet.setRole(ws.myRole);
         ws.send(new Gson().toJson(packet));
-        isInGame = false;
-        ws.myRole = ServerMessage.ClientRole.non;
-        currentGameID = -1;
-        board = null;
-        games = new ArrayList<>();
+        confirmed = false;
         return "Resigned";
     }
     public String printBoard(String... params){

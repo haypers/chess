@@ -3,7 +3,7 @@ package model;
 import chess.ChessGame;
 import com.google.gson.Gson;
 
-public record GameData(Integer gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+public record GameData(Integer gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game, Boolean locked) {
 
     @Override
     public Integer gameID() {
@@ -23,6 +23,11 @@ public record GameData(Integer gameID, String whiteUsername, String blackUsernam
     @Override
     public String gameName() {
         return gameName;
+    }
+
+
+    public Boolean isLocked() {
+        return locked;
     }
 
     @Override

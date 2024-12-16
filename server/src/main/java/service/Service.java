@@ -169,7 +169,7 @@ public class Service {
                     while (memory.checkIfGameExists(gameID)) {
                         gameID = rand.nextInt(100000);
                     }
-                    GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
+                    GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame(),  false);
                     if (memory.saveGameData(gameID, gameData)) {
                         return new ResponseObject(200, "{ \"gameID\": " + gameID + " }");
                     } else {
@@ -220,11 +220,11 @@ public class Service {
                     GameData game = memory.getGame(gameID);
                     System.out.println(game.toString());
                     if (teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() == null) {
-                        GameData newGame = new GameData(game.gameID(), userName, game.blackUsername(), game.gameName(), game.game());
+                        GameData newGame = new GameData(game.gameID(), userName, game.blackUsername(), game.gameName(), game.game(), false);
                         memory.saveGameData(gameID, newGame);
                         return new ResponseObject(200, "{}");
                     } else if (teamColor == ChessGame.TeamColor.BLACK && game.blackUsername() == null) {
-                        GameData newGame = new GameData(game.gameID(), game.whiteUsername(), userName, game.gameName(), game.game());
+                        GameData newGame = new GameData(game.gameID(), game.whiteUsername(), userName, game.gameName(), game.game(), false);
                         memory.saveGameData(gameID, newGame);
                         return new ResponseObject(200, "{}");
                     } else {
@@ -332,6 +332,9 @@ public class Service {
         if (!memory.checkIfGameExists(command.getGameID())) {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(1)");}
         game = memory.getGame(command.getGameID());
+        if (game.isLocked()){
+            return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: This room is closed");
+        }
         Collection<ChessMove> valid = game.game().validMoves(command.getMove().getStartPosition());
         if (valid.isEmpty()) {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Invalid Move");
@@ -417,11 +420,11 @@ public class Service {
         String leftMessage;
         if (Objects.equals(game.whiteUsername(), userName)) {
             leftMessage = " as White.";
-            GameData modified = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
+            GameData modified = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game(), false);
             memory.saveGameData(game.gameID(), modified);
         } else if (Objects.equals(game.blackUsername(), userName)) {
             leftMessage = " as Black.";
-            GameData modified = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), game.game());
+            GameData modified = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), game.game(), false);
             memory.saveGameData(game.gameID(), modified);
         } else {
             leftMessage = " as an Observer.";
@@ -451,6 +454,8 @@ public class Service {
             return new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Sever error: Bad request. Try again.(1)");
         }
         game = memory.getGame(command.getGameID());
+        GameData replace = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game(), true);
+        memory.saveGameData(game.gameID(), replace);
         ArrayList<Session> peers;
         if (!sessions.containsKey(game.gameID())) {
             peers = new ArrayList<>();
@@ -474,18 +479,16 @@ public class Service {
             try {
                 ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
                 packet.setMessage(userName + leftMessage);
-                packet.setRole(ServerMessage.ClientRole.non);
+                packet.setRole(ServerMessage.ClientRole.noChange);
                 peer.getRemote().sendString(new Gson().toJson(packet));
             } catch (Exception e) {
                 System.out.println("error sending move notification to peers");
             }
         }
-        sessions.remove(game.gameID());
-        memory.removeGame(game.gameID());
 
         ServerMessage packet = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         packet.setMessage(userName + leftMessage);
-        packet.setRole(ServerMessage.ClientRole.non);
+        packet.setRole(ServerMessage.ClientRole.noChange);
         return packet;
     }
 }
